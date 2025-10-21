@@ -135,7 +135,7 @@ const CirclePackChart = ({
       .style("display", (d) =>
         d.parent === root || d.parent?.parent === root ? "inline" : "none"
       )
-      .style("font-size", (d) => `${Math.max(18, Math.min(24, d.r / 4))}px`)
+      .style("font-size", (d) => `${Math.max(10, Math.min(16, d.r / 5))}px`)
       .style("font-family", "sans-serif")
       .each(function (this: SVGTextElement, d) {
         const textSel = d3.select<
@@ -225,7 +225,7 @@ const CirclePackChart = ({
         const y = (d.y - v[1]) * k;
         // 如果有子節點，將文字移到圓圈頂部
         if (d.children && d.children.length > 0) {
-          const offsetY = -d.r * k * 0.7;
+          const offsetY = -d.r * k * 0.88;
           return `translate(${x}, ${y + offsetY})`;
         }
         return `translate(${x}, ${y})`;
