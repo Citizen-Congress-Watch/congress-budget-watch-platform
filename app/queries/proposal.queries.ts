@@ -232,6 +232,7 @@ export const GET_PAGINATED_PROPOSALS_QUERY = graphql(`
     proposals(skip: $skip, take: $take, orderBy: $orderBy, where: $where) {
       id
       description
+      year
       reason
       publishStatus
       result
@@ -267,6 +268,10 @@ export const GET_PAGINATED_PROPOSALS_QUERY = graphql(`
         type
         description
         party {
+          id
+          name
+        }
+        committees {
           id
           name
         }

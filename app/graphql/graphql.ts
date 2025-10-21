@@ -1090,15 +1090,18 @@ export enum OrderDirection {
 
 export type Party = {
   __typename?: 'Party';
+  color?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
 };
 
 export type PartyCreateInput = {
+  color?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PartyOrderByInput = {
+  color?: InputMaybe<OrderDirection>;
   id?: InputMaybe<OrderDirection>;
   name?: InputMaybe<OrderDirection>;
 };
@@ -1120,6 +1123,7 @@ export type PartyUpdateArgs = {
 };
 
 export type PartyUpdateInput = {
+  color?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1127,6 +1131,7 @@ export type PartyWhereInput = {
   AND?: InputMaybe<Array<PartyWhereInput>>;
   NOT?: InputMaybe<Array<PartyWhereInput>>;
   OR?: InputMaybe<Array<PartyWhereInput>>;
+  color?: InputMaybe<StringFilter>;
   id?: InputMaybe<IdFilter>;
   name?: InputMaybe<StringFilter>;
 };
@@ -1149,7 +1154,8 @@ export type People = {
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
   party?: Maybe<Party>;
-  term?: Maybe<Term>;
+  term?: Maybe<Array<Term>>;
+  termCount?: Maybe<Scalars['Int']['output']>;
   type?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1167,12 +1173,26 @@ export type PeopleCommitteesCountArgs = {
   where?: CommitteeWhereInput;
 };
 
+
+export type PeopleTermArgs = {
+  cursor?: InputMaybe<TermWhereUniqueInput>;
+  orderBy?: Array<TermOrderByInput>;
+  skip?: Scalars['Int']['input'];
+  take?: InputMaybe<Scalars['Int']['input']>;
+  where?: TermWhereInput;
+};
+
+
+export type PeopleTermCountArgs = {
+  where?: TermWhereInput;
+};
+
 export type PeopleCreateInput = {
   committees?: InputMaybe<CommitteeRelateToManyForCreateInput>;
   description?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   party?: InputMaybe<PartyRelateToOneForCreateInput>;
-  term?: InputMaybe<TermRelateToOneForCreateInput>;
+  term?: InputMaybe<TermRelateToManyForCreateInput>;
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1211,7 +1231,7 @@ export type PeopleUpdateInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   party?: InputMaybe<PartyRelateToOneForUpdateInput>;
-  term?: InputMaybe<TermRelateToOneForUpdateInput>;
+  term?: InputMaybe<TermRelateToManyForUpdateInput>;
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1224,7 +1244,7 @@ export type PeopleWhereInput = {
   id?: InputMaybe<IdFilter>;
   name?: InputMaybe<StringFilter>;
   party?: InputMaybe<PartyWhereInput>;
-  term?: InputMaybe<TermWhereInput>;
+  term?: InputMaybe<TermManyRelationFilter>;
   type?: InputMaybe<StringFilter>;
 };
 
@@ -1239,7 +1259,7 @@ export type Proposal = {
   coSigners?: Maybe<Array<People>>;
   coSignersCount?: Maybe<Scalars['Int']['output']>;
   description?: Maybe<Scalars['String']['output']>;
-  freezeAmount?: Maybe<Scalars['Int']['output']>;
+  freezeAmount?: Maybe<Scalars['Float']['output']>;
   government?: Maybe<Government>;
   historicalProposals?: Maybe<Array<Proposal>>;
   historicalProposalsCount?: Maybe<Scalars['Int']['output']>;
@@ -1258,11 +1278,12 @@ export type Proposal = {
   react_whatever?: Maybe<Scalars['Int']['output']>;
   reason?: Maybe<Scalars['String']['output']>;
   recognitionAnswer?: Maybe<Scalars['String']['output']>;
-  reductionAmount?: Maybe<Scalars['Int']['output']>;
+  reductionAmount?: Maybe<Scalars['Float']['output']>;
   result?: Maybe<Scalars['String']['output']>;
   unfreezeHistory?: Maybe<Array<Meeting>>;
   unfreezeHistoryCount?: Maybe<Scalars['Int']['output']>;
   unfreezeStatus?: Maybe<Scalars['String']['output']>;
+  year?: Maybe<Scalars['Int']['output']>;
 };
 
 
@@ -1354,7 +1375,7 @@ export type ProposalCreateInput = {
   budgetImageUrl?: InputMaybe<Scalars['String']['input']>;
   coSigners?: InputMaybe<PeopleRelateToManyForCreateInput>;
   description?: InputMaybe<Scalars['String']['input']>;
-  freezeAmount?: InputMaybe<Scalars['Int']['input']>;
+  freezeAmount?: InputMaybe<Scalars['Float']['input']>;
   government?: InputMaybe<GovernmentRelateToOneForCreateInput>;
   historicalProposals?: InputMaybe<ProposalRelateToManyForCreateInput>;
   meetings?: InputMaybe<MeetingRelateToManyForCreateInput>;
@@ -1368,10 +1389,11 @@ export type ProposalCreateInput = {
   react_whatever?: InputMaybe<Scalars['Int']['input']>;
   reason?: InputMaybe<Scalars['String']['input']>;
   recognitionAnswer?: InputMaybe<Scalars['String']['input']>;
-  reductionAmount?: InputMaybe<Scalars['Int']['input']>;
+  reductionAmount?: InputMaybe<Scalars['Float']['input']>;
   result?: InputMaybe<Scalars['String']['input']>;
   unfreezeHistory?: InputMaybe<MeetingRelateToManyForCreateInput>;
   unfreezeStatus?: InputMaybe<Scalars['String']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ProposalManyRelationFilter = {
@@ -1395,6 +1417,7 @@ export type ProposalOrderByInput = {
   reductionAmount?: InputMaybe<OrderDirection>;
   result?: InputMaybe<OrderDirection>;
   unfreezeStatus?: InputMaybe<OrderDirection>;
+  year?: InputMaybe<OrderDirection>;
 };
 
 export enum ProposalProposalTypeType {
@@ -1425,7 +1448,7 @@ export type ProposalUpdateInput = {
   budgetImageUrl?: InputMaybe<Scalars['String']['input']>;
   coSigners?: InputMaybe<PeopleRelateToManyForUpdateInput>;
   description?: InputMaybe<Scalars['String']['input']>;
-  freezeAmount?: InputMaybe<Scalars['Int']['input']>;
+  freezeAmount?: InputMaybe<Scalars['Float']['input']>;
   government?: InputMaybe<GovernmentRelateToOneForUpdateInput>;
   historicalProposals?: InputMaybe<ProposalRelateToManyForUpdateInput>;
   meetings?: InputMaybe<MeetingRelateToManyForUpdateInput>;
@@ -1439,10 +1462,11 @@ export type ProposalUpdateInput = {
   react_whatever?: InputMaybe<Scalars['Int']['input']>;
   reason?: InputMaybe<Scalars['String']['input']>;
   recognitionAnswer?: InputMaybe<Scalars['String']['input']>;
-  reductionAmount?: InputMaybe<Scalars['Int']['input']>;
+  reductionAmount?: InputMaybe<Scalars['Float']['input']>;
   result?: InputMaybe<Scalars['String']['input']>;
   unfreezeHistory?: InputMaybe<MeetingRelateToManyForUpdateInput>;
   unfreezeStatus?: InputMaybe<Scalars['String']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ProposalWhereInput = {
@@ -1453,7 +1477,7 @@ export type ProposalWhereInput = {
   budgetImageUrl?: InputMaybe<StringNullableFilter>;
   coSigners?: InputMaybe<PeopleManyRelationFilter>;
   description?: InputMaybe<StringNullableFilter>;
-  freezeAmount?: InputMaybe<IntNullableFilter>;
+  freezeAmount?: InputMaybe<FloatNullableFilter>;
   government?: InputMaybe<GovernmentWhereInput>;
   historicalProposals?: InputMaybe<ProposalManyRelationFilter>;
   id?: InputMaybe<IdFilter>;
@@ -1467,10 +1491,11 @@ export type ProposalWhereInput = {
   react_whatever?: InputMaybe<IntNullableFilter>;
   reason?: InputMaybe<StringNullableFilter>;
   recognitionAnswer?: InputMaybe<StringNullableFilter>;
-  reductionAmount?: InputMaybe<IntNullableFilter>;
+  reductionAmount?: InputMaybe<FloatNullableFilter>;
   result?: InputMaybe<StringNullableFilter>;
   unfreezeHistory?: InputMaybe<MeetingManyRelationFilter>;
   unfreezeStatus?: InputMaybe<StringNullableFilter>;
+  year?: InputMaybe<IntFilter>;
 };
 
 export type ProposalWhereUniqueInput = {
@@ -1984,12 +2009,30 @@ export type TermCreateInput = {
   termNumber?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type TermManyRelationFilter = {
+  every?: InputMaybe<TermWhereInput>;
+  none?: InputMaybe<TermWhereInput>;
+  some?: InputMaybe<TermWhereInput>;
+};
+
 export type TermOrderByInput = {
   description?: InputMaybe<OrderDirection>;
   endDate?: InputMaybe<OrderDirection>;
   id?: InputMaybe<OrderDirection>;
   startDate?: InputMaybe<OrderDirection>;
   termNumber?: InputMaybe<OrderDirection>;
+};
+
+export type TermRelateToManyForCreateInput = {
+  connect?: InputMaybe<Array<TermWhereUniqueInput>>;
+  create?: InputMaybe<Array<TermCreateInput>>;
+};
+
+export type TermRelateToManyForUpdateInput = {
+  connect?: InputMaybe<Array<TermWhereUniqueInput>>;
+  create?: InputMaybe<Array<TermCreateInput>>;
+  disconnect?: InputMaybe<Array<TermWhereUniqueInput>>;
+  set?: InputMaybe<Array<TermWhereUniqueInput>>;
 };
 
 export type TermRelateToOneForCreateInput = {
@@ -2134,7 +2177,7 @@ export type GetPaginatedProposalsQueryVariables = Exact<{
 }>;
 
 
-export type GetPaginatedProposalsQuery = { __typename?: 'Query', proposalsCount?: number | null, proposals?: Array<{ __typename?: 'Proposal', id: string, description?: string | null, reason?: string | null, publishStatus?: string | null, result?: string | null, freezeAmount?: number | null, reductionAmount?: number | null, budgetImageUrl?: string | null, proposalTypes?: Array<ProposalProposalTypeType> | null, recognitionAnswer?: string | null, unfreezeStatus?: string | null, react_angry?: number | null, react_disappoint?: number | null, react_good?: number | null, react_whatever?: number | null, government?: { __typename?: 'Government', id: string, name?: string | null, category?: string | null, description?: string | null } | null, budget?: { __typename?: 'Budget', id: string, projectName?: string | null, budgetAmount?: number | null, year?: number | null, type?: string | null, majorCategory?: string | null, mediumCategory?: string | null, minorCategory?: string | null } | null, proposers?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null, description?: string | null, party?: { __typename?: 'Party', id: string, name?: string | null } | null }> | null, coSigners?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null }> | null }> | null };
+export type GetPaginatedProposalsQuery = { __typename?: 'Query', proposalsCount?: number | null, proposals?: Array<{ __typename?: 'Proposal', id: string, description?: string | null, year?: number | null, reason?: string | null, publishStatus?: string | null, result?: string | null, freezeAmount?: number | null, reductionAmount?: number | null, budgetImageUrl?: string | null, proposalTypes?: Array<ProposalProposalTypeType> | null, recognitionAnswer?: string | null, unfreezeStatus?: string | null, react_angry?: number | null, react_disappoint?: number | null, react_good?: number | null, react_whatever?: number | null, government?: { __typename?: 'Government', id: string, name?: string | null, category?: string | null, description?: string | null } | null, budget?: { __typename?: 'Budget', id: string, projectName?: string | null, budgetAmount?: number | null, year?: number | null, type?: string | null, majorCategory?: string | null, mediumCategory?: string | null, minorCategory?: string | null } | null, proposers?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null, description?: string | null, party?: { __typename?: 'Party', id: string, name?: string | null } | null, committees?: Array<{ __typename?: 'Committee', id: string, name?: string | null }> | null }> | null, coSigners?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null }> | null }> | null };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -2322,6 +2365,7 @@ export const GetPaginatedProposalsDocument = new TypedDocumentString(`
   proposals(skip: $skip, take: $take, orderBy: $orderBy, where: $where) {
     id
     description
+    year
     reason
     publishStatus
     result
@@ -2357,6 +2401,10 @@ export const GetPaginatedProposalsDocument = new TypedDocumentString(`
       type
       description
       party {
+        id
+        name
+      }
+      committees {
         id
         name
       }

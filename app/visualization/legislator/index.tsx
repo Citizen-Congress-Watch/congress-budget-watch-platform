@@ -1,14 +1,88 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { sumBy, filter } from "lodash";
 import SessionChart from "./session-chart";
 import BudgetTypeLegend from "~/components/budget-type-legend";
 import { BUDGET_TYPE_LEGEND_ITEMS } from "~/constants/legends";
+import {
+  GET_PAGINATED_PROPOSALS_QUERY,
+  proposalQueryKeys,
+} from "~/queries/proposal.queries";
+import { execute } from "~/graphql/execute";
+import { OrderDirection, type ProposalWhereInput } from "~/graphql/graphql";
+import { transformToGroupedSessionData } from "../helpers";
 
 const VisualizationLegislator = () => {
   const [selectedType, setSelectedType] = useState<
     "proposal" | "proposal-cosign"
   >("proposal");
   const [mode, setMode] = useState<"amount" | "count">("amount");
+
+  const proposerId = "665"; // This can be dynamic
+  const year = 2025; // This can be dynamic
+
+  const whereFilter = useMemo((): ProposalWhereInput => {
+    return {
+      AND: [
+        {
+          proposers: {
+            every: {
+              id: {
+                equals: proposerId,
+              },
+            },
+          },
+        }
+      ],
+    };
+  }, [proposerId, year]);
+
+  const {
+    data: proposalsData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: proposalQueryKeys.list({ whereFilter }),
+    queryFn: () =>
+      execute(GET_PAGINATED_PROPOSALS_QUERY, {
+        skip: 0,
+        take: 1000, // Assuming we want to fetch all proposals for this view
+        orderBy: [{ id: OrderDirection.Desc }],
+        where: whereFilter,
+      }),
+  });
+
+  // 轉換資料供 SessionChart 使用
+  const sessionData = useMemo(() => {
+    if (!proposalsData) return [];
+    console.log("proposalsData", proposalsData);
+    return transformToGroupedSessionData(proposalsData, mode);
+  }, [proposalsData, mode]);
+  console.log("sessionData", sessionData);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error fetching data</div>;
+  }
+
+  const proposals = proposalsData?.proposals || [];
+  const totalReductionAmount = sumBy(proposals, (p) => p.reductionAmount || 0);
+  const totalFreezeAmount = sumBy(proposals, (p) => p.freezeAmount || 0);
+  const reductionProposalsCount = filter(
+    proposals,
+    (p) => p.reductionAmount
+  ).length;
+  const freezeProposalsCount = filter(proposals, (p) => p.freezeAmount).length;
+  const mainResolutionCount = filter(
+    proposals,
+    (p) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      p.proposalTypes?.includes("other" as any)
+  ).length;
 
   return (
     <div>
@@ -70,22 +144,33 @@ const VisualizationLegislator = () => {
         {/* statistics */}
         <div className="mt-4 flex flex-col items-center justify-center rounded-lg border-2 p-2.5">
           <p>
-            總共刪減 <span className="text-[#E9808E]">28,470,404</span>元（
-            <span className="text-[#E9808E]">32</span>個提案）
+            總共刪減{" "}
+            <span className="text-[#E9808E]">
+              {totalReductionAmount.toLocaleString()}
+            </span>
+            元（
+            <span className="text-[#E9808E]">{reductionProposalsCount}</span>
+            個提案）
           </p>
           <p>
-            凍結 <span className="text-[#E9808E]">28,470</span>元（
-            <span className="text-[#E9808E]">134</span>個提案）
+            凍結{" "}
+            <span className="text-[#E9808E]">
+              {totalFreezeAmount.toLocaleString()}
+            </span>
+            元（
+            <span className="text-[#E9808E]">{freezeProposalsCount}</span>
+            個提案）
           </p>
           <p>
-            主決議提案數： <span className="text-[#E9808E]">32</span>個
+            主決議提案數：{" "}
+            <span className="text-[#E9808E]">{mainResolutionCount}</span>個
           </p>
         </div>
         <div className="mt-6">
           <BudgetTypeLegend items={BUDGET_TYPE_LEGEND_ITEMS} />
         </div>
         {/* session chart */}
-        <SessionChart />
+        <SessionChart data={sessionData} />
       </div>
     </div>
   );

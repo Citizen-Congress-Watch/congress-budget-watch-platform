@@ -1,4 +1,5 @@
 import type { GetPaginatedProposalsQuery } from "~/graphql/graphql";
+import { groupBy } from "lodash";
 
 export type NodeDatum = {
   name: string;
@@ -6,10 +7,11 @@ export type NodeDatum = {
   color?: string;
   id: string;
   isFrozen?: boolean;
+  committeeName?: string;
   children?: NodeDatum[];
 };
 
-const PARTY_COLORS = new Map<string, string>([
+export const PARTY_COLORS = new Map<string, string>([
   ["中國國民黨", "#6B7FFF"],
   ["民主進步黨", "#00CD26"],
   ["親民黨", "#FF852E"],
@@ -22,10 +24,10 @@ const PARTY_COLORS = new Map<string, string>([
   ["無黨團結聯盟", "#E5AEAF"],
   ["無黨籍", "#D5D5D5"],
 ]);
-const DEFAULT_COLOR = "#D5D5D5"; // 無黨籍
+export const DEFAULT_COLOR = "#D5D5D5"; // 無黨籍
 
 export const transformToCirclePackData = (
-  data: GetPaginatedProposalsQuery,
+  data: GetPaginatedProposalsQuery
 ): NodeDatum => {
   const children = data.proposals?.map((proposal) => {
     const { id, proposers, freezeAmount, reductionAmount } = proposal;
@@ -51,4 +53,87 @@ export const transformToCirclePackData = (
     name: "root",
     children: children,
   };
+};
+
+/**
+ * 將 proposals 按年度和部會分組，轉換為 SessionChart 需要的 NodeDatum[]
+ *
+ * 資料結構：
+ * - 第一層：年度（從 budget.year）
+ * - 第二層：政府部門（從 government）
+ * - 第三層：各提案（可點擊導航）
+ *
+ * @param data - GraphQL query 回傳的資料
+ * @param mode - 'amount' 或 'count'，決定 value 的計算方式
+ * @returns NodeDatum[] - 每個元素代表一個年度的 session
+ */
+export const transformToGroupedSessionData = (
+  data: GetPaginatedProposalsQuery,
+  mode: "amount" | "count" = "amount"
+): NodeDatum[] => {
+  const proposals = data.proposals || [];
+
+  if (proposals.length === 0) {
+    return [];
+  }
+
+  // 第一步：單層分組（年度）
+  const groupedData = groupBy(proposals, (p) => p.year ?? "未知年度");
+
+  // 第二步：轉換為 NodeDatum[]
+  const result: NodeDatum[] = [];
+
+  // 遍歷每個年度
+  Object.entries(groupedData).forEach(([year, yearProposals]) => {
+    // 建立提案節點
+    const proposalNodes: NodeDatum[] = yearProposals.map((proposal) => {
+      const { id, government, freezeAmount, reductionAmount } = proposal;
+      const party = proposal.proposers?.[0]?.party?.name ?? "無黨籍";
+
+      // 根據 mode 計算 value
+      let value: number;
+      if (mode === "amount") {
+        value = (freezeAmount || 0) + (reductionAmount || 0);
+      } else {
+        value = 1; // count mode: 每個 proposal 等權重
+      }
+
+      // 格式化顯示文字
+      const displayValue =
+        mode === "amount" ? `${value.toLocaleString()}元` : "1案";
+      const name = `${id}\n${government?.name ?? "未知部會"}\n${displayValue}`;
+
+      const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
+
+      return {
+        id: id,
+        name,
+        value,
+        color,
+        isFrozen: !!freezeAmount,
+        children: [],
+      };
+    });
+
+    const firstProposalOfYaer = yearProposals[0];
+    const committeeName =
+      firstProposalOfYaer?.proposers?.[0]?.committees?.[0]?.name;
+
+    // 建立年度節點（第一層）
+    result.push({
+      id: `session-${year}`,
+      name: `${year}年度`, // 可以根據年度映射到屆別
+      committeeName: committeeName ?? "委員會",
+      children: proposalNodes,
+    });
+  });
+
+  // 按年度排序（降序）
+  result.sort((a, b) => {
+    const yearA = parseInt(a.id.replace("session-", ""));
+    const yearB = parseInt(b.id.replace("session-", ""));
+    return yearB - yearA;
+  });
+
+  return result;
 };

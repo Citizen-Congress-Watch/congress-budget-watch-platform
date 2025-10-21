@@ -662,15 +662,18 @@ enum OrderDirection {
 }
 
 type Party {
+  color: String
   id: ID!
   name: String
 }
 
 input PartyCreateInput {
+  color: String
   name: String
 }
 
 input PartyOrderByInput {
+  color: OrderDirection
   id: OrderDirection
   name: OrderDirection
 }
@@ -692,6 +695,7 @@ input PartyUpdateArgs {
 }
 
 input PartyUpdateInput {
+  color: String
   name: String
 }
 
@@ -699,6 +703,7 @@ input PartyWhereInput {
   AND: [PartyWhereInput!]
   NOT: [PartyWhereInput!]
   OR: [PartyWhereInput!]
+  color: StringFilter
   id: IDFilter
   name: StringFilter
 }
@@ -719,7 +724,8 @@ type People {
   id: ID!
   name: String
   party: Party
-  term: Term
+  term(cursor: TermWhereUniqueInput, orderBy: [TermOrderByInput!]! = [], skip: Int! = 0, take: Int, where: TermWhereInput! = {}): [Term!]
+  termCount(where: TermWhereInput! = {}): Int
   type: String
 }
 
@@ -728,7 +734,7 @@ input PeopleCreateInput {
   description: String
   name: String
   party: PartyRelateToOneForCreateInput
-  term: TermRelateToOneForCreateInput
+  term: TermRelateToManyForCreateInput
   type: String
 }
 
@@ -767,7 +773,7 @@ input PeopleUpdateInput {
   description: String
   name: String
   party: PartyRelateToOneForUpdateInput
-  term: TermRelateToOneForUpdateInput
+  term: TermRelateToManyForUpdateInput
   type: String
 }
 
@@ -780,7 +786,7 @@ input PeopleWhereInput {
   id: IDFilter
   name: StringFilter
   party: PartyWhereInput
-  term: TermWhereInput
+  term: TermManyRelationFilter
   type: StringFilter
 }
 
@@ -794,7 +800,7 @@ type Proposal {
   coSigners(cursor: PeopleWhereUniqueInput, orderBy: [PeopleOrderByInput!]! = [], skip: Int! = 0, take: Int, where: PeopleWhereInput! = {}): [People!]
   coSignersCount(where: PeopleWhereInput! = {}): Int
   description: String
-  freezeAmount: Int
+  freezeAmount: Float
   government: Government
   historicalProposals(cursor: ProposalWhereUniqueInput, orderBy: [ProposalOrderByInput!]! = [], skip: Int! = 0, take: Int, where: ProposalWhereInput! = {}): [Proposal!]
   historicalProposalsCount(where: ProposalWhereInput! = {}): Int
@@ -813,11 +819,12 @@ type Proposal {
   react_whatever: Int
   reason: String
   recognitionAnswer: String
-  reductionAmount: Int
+  reductionAmount: Float
   result: String
   unfreezeHistory(cursor: MeetingWhereUniqueInput, orderBy: [MeetingOrderByInput!]! = [], skip: Int! = 0, take: Int, where: MeetingWhereInput! = {}): [Meeting!]
   unfreezeHistoryCount(where: MeetingWhereInput! = {}): Int
   unfreezeStatus: String
+  year: Int
 }
 
 input ProposalCreateInput {
@@ -825,7 +832,7 @@ input ProposalCreateInput {
   budgetImageUrl: String
   coSigners: PeopleRelateToManyForCreateInput
   description: String
-  freezeAmount: Int
+  freezeAmount: Float
   government: GovernmentRelateToOneForCreateInput
   historicalProposals: ProposalRelateToManyForCreateInput
   meetings: MeetingRelateToManyForCreateInput
@@ -839,10 +846,11 @@ input ProposalCreateInput {
   react_whatever: Int
   reason: String
   recognitionAnswer: String
-  reductionAmount: Int
+  reductionAmount: Float
   result: String
   unfreezeHistory: MeetingRelateToManyForCreateInput
   unfreezeStatus: String
+  year: Int
 }
 
 input ProposalManyRelationFilter {
@@ -866,6 +874,7 @@ input ProposalOrderByInput {
   reductionAmount: OrderDirection
   result: OrderDirection
   unfreezeStatus: OrderDirection
+  year: OrderDirection
 }
 
 enum ProposalProposalTypeType {
@@ -896,7 +905,7 @@ input ProposalUpdateInput {
   budgetImageUrl: String
   coSigners: PeopleRelateToManyForUpdateInput
   description: String
-  freezeAmount: Int
+  freezeAmount: Float
   government: GovernmentRelateToOneForUpdateInput
   historicalProposals: ProposalRelateToManyForUpdateInput
   meetings: MeetingRelateToManyForUpdateInput
@@ -910,10 +919,11 @@ input ProposalUpdateInput {
   react_whatever: Int
   reason: String
   recognitionAnswer: String
-  reductionAmount: Int
+  reductionAmount: Float
   result: String
   unfreezeHistory: MeetingRelateToManyForUpdateInput
   unfreezeStatus: String
+  year: Int
 }
 
 input ProposalWhereInput {
@@ -924,7 +934,7 @@ input ProposalWhereInput {
   budgetImageUrl: StringNullableFilter
   coSigners: PeopleManyRelationFilter
   description: StringNullableFilter
-  freezeAmount: IntNullableFilter
+  freezeAmount: FloatNullableFilter
   government: GovernmentWhereInput
   historicalProposals: ProposalManyRelationFilter
   id: IDFilter
@@ -938,10 +948,11 @@ input ProposalWhereInput {
   react_whatever: IntNullableFilter
   reason: StringNullableFilter
   recognitionAnswer: StringNullableFilter
-  reductionAmount: IntNullableFilter
+  reductionAmount: FloatNullableFilter
   result: StringNullableFilter
   unfreezeHistory: MeetingManyRelationFilter
   unfreezeStatus: StringNullableFilter
+  year: IntFilter
 }
 
 input ProposalWhereUniqueInput {
@@ -1214,12 +1225,30 @@ input TermCreateInput {
   termNumber: Int
 }
 
+input TermManyRelationFilter {
+  every: TermWhereInput
+  none: TermWhereInput
+  some: TermWhereInput
+}
+
 input TermOrderByInput {
   description: OrderDirection
   endDate: OrderDirection
   id: OrderDirection
   startDate: OrderDirection
   termNumber: OrderDirection
+}
+
+input TermRelateToManyForCreateInput {
+  connect: [TermWhereUniqueInput!]
+  create: [TermCreateInput!]
+}
+
+input TermRelateToManyForUpdateInput {
+  connect: [TermWhereUniqueInput!]
+  create: [TermCreateInput!]
+  disconnect: [TermWhereUniqueInput!]
+  set: [TermWhereUniqueInput!]
 }
 
 input TermRelateToOneForCreateInput {
