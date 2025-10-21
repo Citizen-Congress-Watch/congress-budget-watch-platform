@@ -1,5 +1,5 @@
 import type { GetPaginatedProposalsQuery } from "~/graphql/graphql";
-import { groupBy } from "lodash";
+import { groupBy, mapValues, sumBy } from "lodash";
 
 export type NodeDatum = {
   name: string;
@@ -77,54 +77,91 @@ export const transformToGroupedSessionData = (
     return [];
   }
 
-  // 第一步：單層分組（年度）
-  const groupedData = groupBy(proposals, (p) => p.year ?? "未知年度");
+  // 第一步：雙層分組（年度 -> 政府類別）
+  const groupedData = mapValues(
+    groupBy(proposals, (p) => p.year ?? "未知年度"),
+    (yearProposals) =>
+      groupBy(yearProposals, (p) => p.government?.category ?? "未知類別")
+  );
 
   // 第二步：轉換為 NodeDatum[]
   const result: NodeDatum[] = [];
 
   // 遍歷每個年度
-  Object.entries(groupedData).forEach(([year, yearProposals]) => {
-    // 建立提案節點
-    const proposalNodes: NodeDatum[] = yearProposals.map((proposal) => {
-      const { id, government, freezeAmount, reductionAmount } = proposal;
-      const party = proposal.proposers?.[0]?.party?.name ?? "無黨籍";
+  Object.entries(groupedData).forEach(([year, categoryGroups]) => {
+    const categoryNodes: NodeDatum[] = [];
 
-      // 根據 mode 計算 value
-      let value: number;
-      if (mode === "amount") {
-        value = (freezeAmount || 0) + (reductionAmount || 0);
-      } else {
-        value = 1; // count mode: 每個 proposal 等權重
+    Object.entries(categoryGroups).forEach(([category, categoryProposals]) => {
+      const proposalsToProcess =
+        mode === "amount"
+          ? categoryProposals.filter(
+              (p) => (p.freezeAmount ?? 0) > 0 || (p.reductionAmount ?? 0) > 0
+            )
+          : categoryProposals;
+
+      if (proposalsToProcess.length === 0) {
+        return;
       }
 
-      // 格式化顯示文字
-      const displayValue =
-        mode === "amount" ? `${value.toLocaleString()}元` : "1案";
-      const name = `${id}\n${government?.name ?? "未知部會"}\n${displayValue}`;
+      // 建立提案節點（第三層）
+      const proposalNodes: NodeDatum[] = proposalsToProcess.map((proposal) => {
+        const { id, government, freezeAmount, reductionAmount } = proposal;
+        const party = proposal.proposers?.[0]?.party?.name ?? "無黨籍";
 
-      const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
+        let originalValue: number;
+        let scaledValue: number;
 
-      return {
-        id: id,
-        name,
-        value,
-        color,
-        isFrozen: !!freezeAmount,
-        children: [],
-      };
+        if (mode === "amount") {
+          originalValue = (freezeAmount ?? 0) + (reductionAmount ?? 0);
+          scaledValue = Math.pow(originalValue, 0.45);
+        } else {
+          originalValue = 1;
+          scaledValue = 1;
+        }
+
+        const displayValue =
+          mode === "amount" ? `${originalValue.toLocaleString()}元` : "1案";
+        const name = `${id}\n${
+          government?.name ?? "未知部會"
+        }\n${displayValue}`;
+
+        const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
+
+        return {
+          id: id,
+          name,
+          value: scaledValue,
+          color,
+          isFrozen: !!freezeAmount,
+          children: [],
+        };
+      });
+
+      const categoryValue = sumBy(proposalNodes, (n) => n.value || 0);
+
+      // 建立類別節點（第二層）
+      categoryNodes.push({
+        id: `category-${year}-${category}`,
+        name: category,
+        value: categoryValue,
+        color: "#6B7FFF",
+        children: proposalNodes,
+      });
     });
 
-    const firstProposalOfYaer = yearProposals[0];
-    const committeeName =
-      firstProposalOfYaer?.proposers?.[0]?.committees?.[0]?.name;
+    if (categoryNodes.length === 0) {
+      return;
+    }
+
+    const firstProposalOfYear = categoryNodes[0]?.children?.[0];
+    const committeeName = firstProposalOfYear?.proposers?.[0]?.committees?.[0]?.name;
 
     // 建立年度節點（第一層）
     result.push({
       id: `session-${year}`,
-      name: `${year}年度`, // 可以根據年度映射到屆別
+      name: `${year}年度`,
       committeeName: committeeName ?? "委員會",
-      children: proposalNodes,
+      children: categoryNodes,
     });
   });
 

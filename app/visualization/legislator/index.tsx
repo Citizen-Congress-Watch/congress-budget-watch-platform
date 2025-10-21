@@ -170,7 +170,7 @@ const VisualizationLegislator = () => {
           <BudgetTypeLegend items={BUDGET_TYPE_LEGEND_ITEMS} />
         </div>
         {/* session chart */}
-        <SessionChart data={sessionData} />
+        <SessionChart data={sessionData}/>
       </div>
     </div>
   );

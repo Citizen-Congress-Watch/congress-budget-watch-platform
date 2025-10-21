@@ -33,7 +33,8 @@ const SessionChart = ({ data }: SessionChartProps) => {
                 name: "root",
                 children: session.children,
               }}
-              padding={4}
+              //TODO: set 50 for padding now
+              padding={50}
             />
           </div>
         </div>
