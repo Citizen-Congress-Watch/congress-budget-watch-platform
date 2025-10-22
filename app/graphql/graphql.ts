@@ -2186,6 +2186,14 @@ export type GetPaginatedProposalsQueryVariables = Exact<{
 
 export type GetPaginatedProposalsQuery = { __typename?: 'Query', proposalsCount?: number | null, proposals?: Array<{ __typename?: 'Proposal', id: string, description?: string | null, year?: number | null, reason?: string | null, publishStatus?: string | null, result?: string | null, freezeAmount?: number | null, reductionAmount?: number | null, budgetImageUrl?: string | null, proposalTypes?: Array<ProposalProposalTypeType> | null, recognitionAnswer?: string | null, unfreezeStatus?: string | null, react_angry?: number | null, react_disappoint?: number | null, react_good?: number | null, react_whatever?: number | null, government?: { __typename?: 'Government', id: string, name?: string | null, category?: string | null, description?: string | null } | null, budget?: { __typename?: 'Budget', id: string, projectName?: string | null, budgetAmount?: number | null, year?: number | null, type?: string | null, majorCategory?: string | null, mediumCategory?: string | null, minorCategory?: string | null } | null, proposers?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null, description?: string | null, party?: { __typename?: 'Party', id: string, name?: string | null } | null, committees?: Array<{ __typename?: 'Committee', id: string, name?: string | null }> | null }> | null, coSigners?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null }> | null }> | null };
 
+export type Update_Proposal_ReactsMutationVariables = Exact<{
+  where: ProposalWhereUniqueInput;
+  data: ProposalUpdateInput;
+}>;
+
+
+export type Update_Proposal_ReactsMutation = { __typename?: 'Mutation', updateProposal?: { __typename?: 'Proposal', id: string, react_angry?: number | null, react_disappoint?: number | null, react_good?: number | null, react_whatever?: number | null } | null };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -2453,3 +2461,14 @@ export const GetPaginatedProposalsDocument = new TypedDocumentString(`
   proposalsCount(where: $where)
 }
     `) as unknown as TypedDocumentString<GetPaginatedProposalsQuery, GetPaginatedProposalsQueryVariables>;
+export const Update_Proposal_ReactsDocument = new TypedDocumentString(`
+    mutation UPDATE_PROPOSAL_REACTS($where: ProposalWhereUniqueInput!, $data: ProposalUpdateInput!) {
+  updateProposal(where: $where, data: $data) {
+    id
+    react_angry
+    react_disappoint
+    react_good
+    react_whatever
+  }
+}
+    `) as unknown as TypedDocumentString<Update_Proposal_ReactsMutation, Update_Proposal_ReactsMutationVariables>;

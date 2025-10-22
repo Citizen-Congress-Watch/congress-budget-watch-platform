@@ -286,3 +286,18 @@ export const GET_PAGINATED_PROPOSALS_QUERY = graphql(`
     proposalsCount(where: $where)
   }
 `);
+
+export const UPDATE_PROPOSAL_REACTS = graphql(`
+  mutation UPDATE_PROPOSAL_REACTS(
+    $where: ProposalWhereUniqueInput!
+    $data: ProposalUpdateInput!
+  ) {
+    updateProposal(where: $where, data: $data) {
+      id
+      react_angry
+      react_disappoint
+      react_good
+      react_whatever
+    }
+  }
+`);

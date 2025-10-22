@@ -1,10 +1,10 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useVoteActions, useVotes } from "../stores/vote.store";
 import { NavLink } from "react-router";
 import Image from "./image";
-import { useRef, type RefObject } from "react";
+import { useRef, type RefObject,  } from "react";
 import { useOnClickOutside, useToggle } from "usehooks-ts";
 import React from "react";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 export type BudgetTableData = {
   id: string;
@@ -22,6 +22,11 @@ export type BudgetTableData = {
   status: string; // Assuming 'committeed' is a valid status
   committeedDate?: string | null; // This can be optional or string
   totalReacts: number;
+  // Add reacts to the table data
+  react_angry?: number | null;
+  react_disappoint?: number | null;
+  react_good?: number | null;
+  react_whatever?: number | null;
 };
 
 type BudgetTableProps = {
@@ -61,6 +66,9 @@ const ProposalContent = ({ content }: { content: string; itemId: string }) => (
           <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 bg-black/40" />
             <Dialog.Content className="fixed top-1/2 left-1/2 max-h-[80vh] w-[90vw] max-w-[720px] -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-md bg-white p-4 shadow-lg">
+              <VisuallyHidden.Root>
+                <Dialog.Title>提案內容</Dialog.Title>
+              </VisuallyHidden.Root>
               <div className="leading-relaxed whitespace-pre-wrap">
                 {content}
               </div>
@@ -80,9 +88,6 @@ const ProposalContent = ({ content }: { content: string; itemId: string }) => (
 );
 
 const VoteButtons = ({ proposalId }: { proposalId: string }) => {
-  const { setVote } = useVoteActions();
-  const votes = useVotes();
-  const currentVote = votes[proposalId];
 
   const voteOptions = [
     { label: "sad", value: "sad" },
@@ -98,11 +103,8 @@ const VoteButtons = ({ proposalId }: { proposalId: string }) => {
           key={value}
           onClick={(e) => {
             e.preventDefault();
-            setVote(proposalId, value);
           }}
-          className={`rounded-full p-2 ${
-            currentVote === value ? "bg-gray-300" : ""
-          }`}
+          className={`rounded-full p-2 `}
         >
           <Image src={`/image/vote-${label}.svg`} alt={label} />
         </button>
