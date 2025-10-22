@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { VisualizationSelector } from "~/components/visualization-selector";
 import CirclePackChart from "./circle-pack-chart";
 import DepartmentChart from "./department";
@@ -16,6 +16,43 @@ import {
 import { sortOptions } from "~/components/sort-toolbar";
 import { transformToCirclePackData } from "./helpers";
 
+const useChartDimensions = () => {
+  const [width, setWidth] = useState(300); // Start with a non-zero default
+  const observerRef = useRef<ResizeObserver | null>(null);
+
+  const ref = useCallback((node: HTMLDivElement | null) => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    if (node) {
+      const measure = () => {
+        const newWidth = node.getBoundingClientRect().width;
+        if (newWidth > 0) {
+          setWidth(newWidth);
+        }
+      };
+
+      // Perform an initial measurement in the next frame to ensure layout is stable
+      const animationFrameId = requestAnimationFrame(measure);
+
+      observerRef.current = new ResizeObserver((entries) => {
+        if (entries.length > 0 && entries[0]) {
+          setWidth(entries[0].contentRect.width);
+        }
+      });
+
+      observerRef.current.observe(node);
+
+      return () => {
+        cancelAnimationFrame(animationFrameId);
+      };
+    }
+  }, []);
+
+  return { ref, width };
+};
+
 type OptionType = {
   value: string;
   label: string;
@@ -28,13 +65,14 @@ const yearOptions: OptionType[] = [
 
 // data layer
 const Visualization = () => {
+  const { ref: chartContainerRef, width: chartWidth } = useChartDimensions();
   // "department" || "legislator"
   const [activeTab, setActiveTab] = useState("legislator");
   const [mode, setMode] = useState<"amount" | "count">("amount");
   const [selectOptions, setSelectOptions] = useState<OptionType[]>(yearOptions);
   const selectedSort = "id-asc";
   const currentPage = 1;
-  const pageSize = 10;
+  const pageSize = 1000;
   const whereFilter = () => {
     const filters: ProposalWhereInput = {};
 
@@ -70,7 +108,7 @@ const Visualization = () => {
       }),
     placeholderData: keepPreviousData, // 避免切頁時閃爍
   });
-
+  console.log("data", data);
   const summaryStats = useMemo(() => {
     if (!data?.proposals) {
       return {
@@ -84,11 +122,11 @@ const Visualization = () => {
 
     return data.proposals.reduce(
       (acc, proposal) => {
-        if (proposal.reductionAmount) {
+        if (proposal.reductionAmount && proposal.reductionAmount > 0) {
           acc.totalReductionAmount += proposal.reductionAmount;
           acc.reductionCount += 1;
         }
-        if (proposal.freezeAmount) {
+        if (proposal.freezeAmount && proposal.freezeAmount > 0) {
           acc.totalFreezeAmount += proposal.freezeAmount;
           acc.freezeCount += 1;
         }
@@ -106,12 +144,12 @@ const Visualization = () => {
       }
     );
   }, [data]);
-
+  console.log("summaryStats", summaryStats);
   const circlePackData = useMemo(() => {
     if (!data) return null;
     return transformToCirclePackData(data);
   }, [data]);
-
+  console.log("circlePackData", circlePackData);
   if (isLoading) {
     return (
       <div className="flex h-96 items-center justify-center">
@@ -223,7 +261,17 @@ const Visualization = () => {
         </div>
         <BudgetTypeLegend items={BUDGET_TYPE_LEGEND_ITEMS} />
         {activeTab === "legislator" && circlePackData && (
-          <CirclePackChart data={circlePackData} />
+          <div
+            ref={chartContainerRef}
+            className="w-full lg:max-w-[1000px] xl:max-w-[1200px]"
+          >
+            <CirclePackChart
+              data={circlePackData}
+              padding={50}
+              width={chartWidth}
+              height={chartWidth}
+            />
+          </div>
         )}
         {activeTab === "department" && <DepartmentChart />}
       </div>

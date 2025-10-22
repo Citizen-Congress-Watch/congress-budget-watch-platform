@@ -5,7 +5,8 @@ export type NodeDatum = {
   name: string;
   value?: number;
   color?: string;
-  id: string;
+  id: string; // 代表提案 ID
+  proposerId?: string; // 代表提案人 ID
   isFrozen?: boolean;
   children?: NodeDatum[];
 };
@@ -26,26 +27,37 @@ export const PARTY_COLORS = new Map<string, string>([
 export const DEFAULT_COLOR = "#D5D5D5"; // 無黨籍
 
 export const transformToCirclePackData = (
-  data: GetPaginatedProposalsQuery
+  data: GetPaginatedProposalsQuery,
 ): NodeDatum => {
-  const children = data.proposals?.map((proposal) => {
-    const { id, proposers, freezeAmount, reductionAmount } = proposal;
-    const proposer = proposers?.[0]; // Assuming the first proposer is the main one
-    const party = proposer?.party?.name ?? "無黨籍";
-    const value = freezeAmount || reductionAmount || 0;
-    const name = `${proposer?.name}\n${party}\n${value.toLocaleString()}元`;
+  const proposals = data.proposals || [];
+  const children = proposals
+    .map((proposal) => {
+      const { id, proposers, freezeAmount, reductionAmount } = proposal;
+      const proposer = proposers?.[0]; // Assuming the first proposer is the main one
+      const party = proposer?.party?.name ?? "無黨籍";
+      const originalValue = (freezeAmount ?? 0) + (reductionAmount ?? 0);
 
-    const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
+      if (originalValue === 0) {
+        return null;
+      }
 
-    return {
-      name,
-      value,
-      color: color,
-      isFrozen: !!freezeAmount,
-      id: id,
-      children: [],
-    };
-  });
+      const scaledValue = Math.pow(originalValue, 0.2);
+      const name = `${
+        proposer?.name
+      }\n${party}\n${originalValue.toLocaleString()}元`;
+      const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
+
+      return {
+        name,
+        value: scaledValue,
+        color: color,
+        isFrozen: !!freezeAmount && freezeAmount > 0,
+        id: id,
+        proposerId: proposer?.id,
+        children: [],
+      };
+    })
+    .filter((p): p is NodeDatum => p !== null);
 
   return {
     id: "root",
@@ -102,8 +114,10 @@ export const transformToGroupedSessionData = (
 
         const proposalNodes: NodeDatum[] = proposalsToProcess.map(
           (proposal) => {
-            const { id, government, freezeAmount, reductionAmount } = proposal;
-            const party = proposal.proposers?.[0]?.party?.name ?? "無黨籍";
+            const { id, government, freezeAmount, reductionAmount, proposers } =
+              proposal;
+            const proposer = proposers?.[0];
+            const party = proposer?.party?.name ?? "無黨籍";
             const originalValue = (freezeAmount ?? 0) + (reductionAmount ?? 0);
             const scaledValue = Math.pow(originalValue, 0.45);
             const displayValue = `${originalValue.toLocaleString()}元`;
@@ -118,6 +132,7 @@ export const transformToGroupedSessionData = (
               value: scaledValue,
               color,
               isFrozen: !!freezeAmount,
+              proposerId: proposer?.id,
               children: [],
             };
           },
@@ -141,14 +156,22 @@ export const transformToGroupedSessionData = (
         const governmentNodes: NodeDatum[] = Object.entries(groupedByGov).map(
           ([govName, govProposals]) => {
             const proposalNodes: NodeDatum[] = govProposals.map((proposal) => {
-              const { id, government } = proposal;
-              const party = proposal.proposers?.[0]?.party?.name ?? "無黨籍";
+              const { id, government, proposers } = proposal;
+              const proposer = proposers?.[0];
+              const party = proposer?.party?.name ?? "無黨籍";
               const name = `${id}\n${
                 government?.name ?? "未知部會"
               }\n1案`;
               const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
 
-              return { id, name, value: 1, color, children: [] };
+              return {
+                id,
+                name,
+                value: 1,
+                color,
+                children: [],
+                proposerId: proposer?.id,
+              };
             });
 
             return {

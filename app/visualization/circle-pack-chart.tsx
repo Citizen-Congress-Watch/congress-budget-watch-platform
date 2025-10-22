@@ -374,8 +374,8 @@ const CirclePackChart = ({
       if (event.defaultPrevented) return;
 
       // 如果節點有 id，則導航到詳情頁
-      if (d.data.id && isVisualizationRoute && !d.children) {
-        navigate(`/visualization/legislator/${d.data.id}`);
+      if (d.data.proposerId && isVisualizationRoute && !d.children) {
+        navigate(`/visualization/legislator/${d.data.proposerId}`);
         event.stopPropagation();
         return;
       }
