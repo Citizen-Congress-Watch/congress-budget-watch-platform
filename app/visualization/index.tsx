@@ -18,7 +18,6 @@ import { sortOptions } from "~/components/sort-toolbar";
 import {
   transformToCirclePackData,
   transformToGroupedByLegislatorData,
-  // transformToGroupedByDepartmentData,
   type NodeDatum,
 } from "./helpers";
 import CirclePackChart from "./circle-pack-chart";
@@ -127,7 +126,7 @@ const Visualization = () => {
         navigate(`/visualization/legislator/${node.proposerId}`);
       }
     },
-    [navigate],
+    [navigate]
   );
 
   const summaryStats = useMemo(() => {

@@ -26,20 +26,40 @@ const VisualizationLegislator = () => {
   const [mode, setMode] = useState<"amount" | "count">("amount");
 
   const whereFilter = useMemo((): ProposalWhereInput => {
-    return {
-      AND: [
-        {
-          proposers: {
-            some: {
-              id: {
-                equals: proposerId,
+    if (selectedType === "proposal-cosign") {
+      return {
+        OR: [
+          {
+            proposers: {
+              some: {
+                id: {
+                  equals: proposerId,
+                },
               },
             },
           },
+          {
+            coSigners: {
+              some: {
+                id: {
+                  equals: proposerId,
+                },
+              },
+            },
+          },
+        ],
+      };
+    }
+    return {
+      proposers: {
+        some: {
+          id: {
+            equals: proposerId,
+          },
         },
-      ],
+      },
     };
-  }, [proposerId]);
+  }, [proposerId, selectedType]);
 
   const {
     data: proposalsData,
