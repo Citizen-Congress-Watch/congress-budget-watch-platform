@@ -1,7 +1,8 @@
-import { useMemo, useState, useRef, useEffect, useCallback } from "react";
+import { useMemo, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router";
 import { VisualizationSelector } from "~/components/visualization-selector";
-import CirclePackChart from "./circle-pack-chart";
-import DepartmentChart from "./department";
+
+import { DepartmentVisualization } from "./department";
 import BudgetTypeLegend from "~/components/budget-type-legend";
 import { BUDGET_TYPE_LEGEND_ITEMS } from "~/constants/legends";
 import { GET_PAGINATED_PROPOSALS_QUERY, proposalQueryKeys } from "~/queries";
@@ -17,7 +18,10 @@ import { sortOptions } from "~/components/sort-toolbar";
 import {
   transformToCirclePackData,
   transformToGroupedByLegislatorData,
+  transformToGroupedByDepartmentData,
+  type NodeDatum,
 } from "./helpers";
+import CirclePackChart from "./circle-pack-chart";
 
 const useChartDimensions = () => {
   const [width, setWidth] = useState(300); // Start with a non-zero default
@@ -69,6 +73,7 @@ const yearOptions: OptionType[] = [
 // data layer
 const Visualization = () => {
   const { ref: chartContainerRef, width: chartWidth } = useChartDimensions();
+  const navigate = useNavigate();
   // "department" || "legislator"
   const [activeTab, setActiveTab] = useState("legislator");
   const [mode, setMode] = useState<"amount" | "count">("amount");
@@ -97,7 +102,7 @@ const Visualization = () => {
       },
     ];
   }, [selectedSort]);
-  const { data, isLoading, isError, isPlaceholderData } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: proposalQueryKeys.paginated(
       currentPage,
       pageSize,
@@ -115,6 +120,16 @@ const Visualization = () => {
     placeholderData: keepPreviousData, // 避免切頁時閃爍
   });
   console.log("data", data);
+
+  const handleNodeClick = useCallback(
+    (node: NodeDatum) => {
+      if (node.proposerId && !node.children?.length) {
+        navigate(`/visualization/legislator/${node.proposerId}`);
+      }
+    },
+    [navigate],
+  );
+
   const summaryStats = useMemo(() => {
     if (!data?.proposals) {
       return {
@@ -151,14 +166,14 @@ const Visualization = () => {
     );
   }, [data]);
   console.log("summaryStats", summaryStats);
-  const circlePackData = useMemo(() => {
+  const legislatorCirclePackData = useMemo(() => {
     if (!data) return null;
     if (mode === "count") {
       return transformToGroupedByLegislatorData(data);
     }
     return transformToCirclePackData(data);
   }, [data, mode]);
-  console.log("circlePackData", circlePackData);
+  console.log("circlePackData", legislatorCirclePackData);
   if (isLoading) {
     return (
       <div className="flex h-96 items-center justify-center">
@@ -269,20 +284,32 @@ const Visualization = () => {
           </div>
         </div>
         <BudgetTypeLegend items={BUDGET_TYPE_LEGEND_ITEMS} />
-        {activeTab === "legislator" && circlePackData && (
+        {activeTab === "legislator" && legislatorCirclePackData && (
           <div
             ref={chartContainerRef}
             className="mx-auto w-full lg:max-w-[1000px] xl:max-w-[1200px]"
           >
             <CirclePackChart
-              data={circlePackData}
-              padding={50}
+              data={legislatorCirclePackData}
+              onNodeClick={handleNodeClick}
               width={chartWidth}
               height={chartWidth}
             />
           </div>
         )}
-        {activeTab === "department" && <DepartmentChart />}
+        {activeTab === "department" && data && (
+          <div
+            ref={chartContainerRef}
+            className="mx-auto w-full lg:max-w-[1000px] xl:max-w-[1200px]"
+          >
+            <DepartmentVisualization
+              data={data}
+              onNodeClick={handleNodeClick}
+              width={chartWidth}
+              height={chartWidth}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

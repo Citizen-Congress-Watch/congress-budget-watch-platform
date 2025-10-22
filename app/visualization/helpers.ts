@@ -41,7 +41,7 @@ export const transformToCirclePackData = (
         return null;
       }
 
-      const scaledValue = Math.pow(originalValue, 0.2);
+      const scaledValue = Math.pow(originalValue, 0.45);
       const name = `${
         proposer?.name
       }\n${party}\n${originalValue.toLocaleString()}元`;
@@ -252,4 +252,55 @@ export const transformToGroupedSessionData = (
   });
 
   return result;
+};
+
+export const transformToCategorizedData = (
+  data: GetPaginatedProposalsQuery,
+): Record<string, NodeDatum> => {
+  const proposals = data.proposals || [];
+
+  // 過濾掉沒有金額的提案
+  const proposalsWithAmount = proposals.filter(
+    (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0) > 0,
+  );
+
+  // 第一層：按 government.category 分組
+  const groupedByCategory = groupBy(
+    proposalsWithAmount,
+    (p) => p.government?.category ?? "未分類",
+  );
+
+  return mapValues(groupedByCategory, (categoryProposals, categoryName) => {
+    // 第二層：在類別內按 proposer.id 分組
+    const groupedByProposer = groupBy(
+      categoryProposals,
+      (p) => p.proposers?.[0]?.id ?? "unknown-proposer",
+    );
+
+    const proposerNodes: NodeDatum[] = Object.entries(groupedByProposer).map(
+      ([proposerId, proposerProposals]) => {
+        const mainProposer = proposerProposals[0]?.proposers?.[0];
+        const party = mainProposer?.party?.name ?? "無黨籍";
+        const totalAmount = sumBy(
+          proposerProposals,
+          (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0),
+        );
+        const scaledValue = Math.pow(totalAmount, 0.45);
+
+        return {
+          id: `proposer-${categoryName}-${proposerId}`,
+          name: `${mainProposer?.name ?? "未知"}\n${party}\n${totalAmount.toLocaleString()}元`,
+          value: scaledValue,
+          color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
+          proposerId: mainProposer?.id,
+        };
+      },
+    );
+
+    return {
+      id: "root",
+      name: "root",
+      children: proposerNodes,
+    };
+  });
 };
