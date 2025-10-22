@@ -66,6 +66,39 @@ export const transformToCirclePackData = (
   };
 };
 
+export const transformToGroupedByLegislatorData = (
+  data: GetPaginatedProposalsQuery,
+): NodeDatum => {
+  const proposals = data.proposals || [];
+
+  const groupedByLegislator = groupBy(proposals, (p) => {
+    return p.proposers?.[0]?.id ?? "未知提案人";
+  });
+
+  const legislatorNodes: NodeDatum[] = Object.entries(groupedByLegislator).map(
+    ([proposerId, legislatorProposals]) => {
+      const mainProposer = legislatorProposals[0]?.proposers?.[0];
+      const party = mainProposer?.party?.name ?? "無黨籍";
+      const proposalCount = legislatorProposals.length;
+
+      return {
+        id: `legislator-${proposerId}`,
+        name: `${mainProposer?.name ?? "未知"}\n${party}\n${proposalCount}案`,
+        value: proposalCount,
+        children: [], // No children in this view
+        color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
+        proposerId: mainProposer?.id,
+      };
+    },
+  );
+
+  return {
+    id: "root",
+    name: "root",
+    children: legislatorNodes,
+  };
+};
+
 /**
  * 將 proposals 按年度和部會分組，轉換為 SessionChart 需要的 NodeDatum[]
  *

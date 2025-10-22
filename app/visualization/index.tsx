@@ -14,7 +14,10 @@ import {
   type ProposalWhereInput,
 } from "~/graphql/graphql";
 import { sortOptions } from "~/components/sort-toolbar";
-import { transformToCirclePackData } from "./helpers";
+import {
+  transformToCirclePackData,
+  transformToGroupedByLegislatorData,
+} from "./helpers";
 
 const useChartDimensions = () => {
   const [width, setWidth] = useState(300); // Start with a non-zero default
@@ -100,7 +103,7 @@ const Visualization = () => {
       pageSize,
       selectedSort,
       whereFilter(),
-      selectedYear.value,
+      selectedYear.value
     ),
     queryFn: () =>
       execute(GET_PAGINATED_PROPOSALS_QUERY, {
@@ -150,8 +153,11 @@ const Visualization = () => {
   console.log("summaryStats", summaryStats);
   const circlePackData = useMemo(() => {
     if (!data) return null;
+    if (mode === "count") {
+      return transformToGroupedByLegislatorData(data);
+    }
     return transformToCirclePackData(data);
-  }, [data]);
+  }, [data, mode]);
   console.log("circlePackData", circlePackData);
   if (isLoading) {
     return (
@@ -266,7 +272,7 @@ const Visualization = () => {
         {activeTab === "legislator" && circlePackData && (
           <div
             ref={chartContainerRef}
-            className="w-full lg:max-w-[1000px] xl:max-w-[1200px]"
+            className="mx-auto w-full lg:max-w-[1000px] xl:max-w-[1200px]"
           >
             <CirclePackChart
               data={circlePackData}
