@@ -132,3 +132,22 @@ export type BudgetSelectStore = ReturnType<typeof createBudgetSelectStore>;
 // Export default store instance for backward compatibility
 const defaultBudgetSelectStore = createBudgetSelectStore();
 export default defaultBudgetSelectStore;
+
+// Selector Hooks
+import { useStore } from "zustand";
+
+export const useSelectedSort = () =>
+  useStore(defaultBudgetSelectStore, (s) => s.selectedSort);
+
+export const useDepartmentId = () =>
+  useStore(defaultBudgetSelectStore, (s) => s.departmentFilter.departmentId);
+
+export const usePersonId = () =>
+  useStore(defaultBudgetSelectStore, (s) => s.peopleFilter.personId);
+
+export const useSearchedValue = () =>
+  useStore(defaultBudgetSelectStore, (s) => s.searchedValue);
+
+// Action Hooks
+export const useSetSelectedSort = () =>
+  useStore(defaultBudgetSelectStore, (s) => s.setSelectedSort);

@@ -9,8 +9,13 @@ import ProgressBar from "~/components/progress-bar";
 import BudgetsSelector from "~/components/budgets-selector";
 import SortToolbar, { sortOptions } from "~/components/sort-toolbar";
 import BudgetTable from "~/components/budget-table";
-import { useStore } from "zustand";
-import useBudgetSelectStore from "~/stores/budget-selector";
+import {
+  useSelectedSort,
+  useSetSelectedSort,
+  useDepartmentId,
+  usePersonId,
+  useSearchedValue,
+} from "~/stores/budget-selector";
 import Image from "~/components/image";
 import { useMediaQuery } from "usehooks-ts";
 import type {
@@ -25,29 +30,17 @@ import { usePagination, usePaginationActions } from "~/stores/paginationStore";
 import { proposalToBudgetTableData } from "./helpers";
 import useDebounce from "~/hooks/useDebounce";
 
-const AllBudgets = () => {
+export const AllBudgets = () => {
   // 分頁狀態
   const { currentPage, pageSize } = usePagination();
   const { setTotalCount, setPage } = usePaginationActions();
 
   // 排序狀態（現有）
-  const selectedSort = useStore(useBudgetSelectStore, (s) => s.selectedSort);
-  const setSelectedSort = useStore(
-    useBudgetSelectStore,
-    (s) => s.setSelectedSort
-  );
-  const departmentId = useStore(
-    useBudgetSelectStore,
-    (s) => s.departmentFilter.departmentId
-  );
-  const personId = useStore(
-    useBudgetSelectStore,
-    (s) => s.peopleFilter.personId
-  );
-  const searchedValue = useStore(
-    useBudgetSelectStore,
-    (s) => s.searchedValue
-  );
+  const selectedSort = useSelectedSort();
+  const setSelectedSort = useSetSelectedSort();
+  const departmentId = useDepartmentId();
+  const personId = usePersonId();
+  const searchedValue = useSearchedValue();
   const debouncedSearchedValue = useDebounce(searchedValue, 500);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -143,22 +136,26 @@ const AllBudgets = () => {
     seenProposalIds.current.clear();
 
     // 檢測重複
-    data.proposals.forEach((proposal: NonNullable<GetPaginatedProposalsQuery['proposals']>[number]) => {
-      if (seenProposalIds.current.has(proposal.id)) {
-        if (import.meta.env.DEV) {
-          console.warn(
-            `[Pagination] 檢測到重複的 proposal ID: ${proposal.id}`,
-            {
-              currentPage,
-              selectedSort,
-              proposal,
-            }
-          );
+    data.proposals.forEach(
+      (
+        proposal: NonNullable<GetPaginatedProposalsQuery["proposals"]>[number]
+      ) => {
+        if (seenProposalIds.current.has(proposal.id)) {
+          if (import.meta.env.DEV) {
+            console.warn(
+              `[Pagination] 檢測到重複的 proposal ID: ${proposal.id}`,
+              {
+                currentPage,
+                selectedSort,
+                proposal,
+              }
+            );
+          }
+        } else {
+          seenProposalIds.current.set(proposal.id, true);
         }
-      } else {
-        seenProposalIds.current.set(proposal.id, true);
       }
-    });
+    );
   }, [data?.proposals, currentPage, selectedSort]);
 
   // tableData 邏輯保持不變（但不再需要排序，因為已在 GQL 處理）
