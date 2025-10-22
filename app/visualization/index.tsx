@@ -24,6 +24,7 @@ import CirclePackChart from "./circle-pack-chart";
 import { find, sumBy, filter } from "lodash";
 import BudgetDetailSkeleton from "~/components/skeleton/budget-detail-skeleton";
 import { useMediaQuery } from "usehooks-ts";
+import VisualizationSkeleton from "~/components/skeleton/visualization-skeleton";
 
 const useChartDimensions = () => {
   const [width, setWidth] = useState(300); // Start with a non-zero default
@@ -167,11 +168,7 @@ const Visualization = () => {
   }, [data, mode]);
 
   if (isLoading) {
-    return (
-      <div className="flex h-96 items-center justify-center">
-        <p>載入中...</p>
-      </div>
-    );
+    return <VisualizationSkeleton isDesktop={isDesktop} />;
   }
 
   if (isError) {
