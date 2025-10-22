@@ -256,17 +256,21 @@ export const transformToGroupedSessionData = (
 
 export const transformToCategorizedData = (
   data: GetPaginatedProposalsQuery,
+  mode: "amount" | "count",
 ): Record<string, NodeDatum> => {
   const proposals = data.proposals || [];
 
-  // 過濾掉沒有金額的提案
-  const proposalsWithAmount = proposals.filter(
-    (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0) > 0,
-  );
+  // 依 mode 決定是否過濾提案
+  const proposalsToProcess =
+    mode === "amount"
+      ? proposals.filter(
+          (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0) > 0,
+        )
+      : proposals;
 
   // 第一層：按 government.category 分組
   const groupedByCategory = groupBy(
-    proposalsWithAmount,
+    proposalsToProcess,
     (p) => p.government?.category ?? "未分類",
   );
 
@@ -281,19 +285,32 @@ export const transformToCategorizedData = (
       ([proposerId, proposerProposals]) => {
         const mainProposer = proposerProposals[0]?.proposers?.[0];
         const party = mainProposer?.party?.name ?? "無黨籍";
-        const totalAmount = sumBy(
-          proposerProposals,
-          (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0),
-        );
-        const scaledValue = Math.pow(totalAmount, 0.45);
 
-        return {
-          id: `proposer-${categoryName}-${proposerId}`,
-          name: `${mainProposer?.name ?? "未知"}\n${party}\n${totalAmount.toLocaleString()}元`,
-          value: scaledValue,
-          color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
-          proposerId: mainProposer?.id,
-        };
+        if (mode === "amount") {
+          const totalAmount = sumBy(
+            proposerProposals,
+            (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0),
+          );
+          const scaledValue = Math.pow(totalAmount, 0.45);
+
+          return {
+            id: `proposer-${categoryName}-${proposerId}`,
+            name: `${mainProposer?.name ?? "未知"}\n${party}\n${totalAmount.toLocaleString()}元`,
+            value: scaledValue,
+            color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
+            proposerId: mainProposer?.id,
+          };
+        } else {
+          // mode === "count"
+          const proposalCount = proposerProposals.length;
+          return {
+            id: `proposer-${categoryName}-${proposerId}`,
+            name: `${mainProposer?.name ?? "未知"}\n${party}\n${proposalCount}案`,
+            value: proposalCount,
+            color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
+            proposerId: mainProposer?.id,
+          };
+        }
       },
     );
 

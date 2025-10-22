@@ -7,14 +7,19 @@ type DepartmentVisualizationProps = {
   data: GetPaginatedProposalsQuery;
   width?: number;
   onNodeClick: (node: NodeDatum) => void;
+  mode: "amount" | "count";
 };
 
 export const DepartmentVisualization = ({
   data,
   width = 928,
   onNodeClick,
+  mode,
 }: DepartmentVisualizationProps) => {
-  const categorizedData = useMemo(() => transformToCategorizedData(data), [data]);
+  const categorizedData = useMemo(
+    () => transformToCategorizedData(data, mode),
+    [data, mode],
+  );
 
   const categories = Object.keys(categorizedData);
 

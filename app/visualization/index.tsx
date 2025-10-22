@@ -18,7 +18,7 @@ import { sortOptions } from "~/components/sort-toolbar";
 import {
   transformToCirclePackData,
   transformToGroupedByLegislatorData,
-  transformToGroupedByDepartmentData,
+  // transformToGroupedByDepartmentData,
   type NodeDatum,
 } from "./helpers";
 import CirclePackChart from "./circle-pack-chart";
@@ -306,7 +306,7 @@ const Visualization = () => {
               data={data}
               onNodeClick={handleNodeClick}
               width={chartWidth}
-              height={chartWidth}
+              mode={mode}
             />
           </div>
         )}
