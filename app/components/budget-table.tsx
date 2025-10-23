@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { NavLink } from "react-router";
 import Image from "./image";
-import { useRef, type RefObject,  } from "react";
+import { useRef, type RefObject } from "react";
 import { useOnClickOutside, useToggle } from "usehooks-ts";
 import React from "react";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
@@ -87,8 +87,7 @@ const ProposalContent = ({ content }: { content: string; itemId: string }) => (
   </div>
 );
 
-const VoteButtons = ({ proposalId }: { proposalId: string }) => {
-
+const VoteButtons = () => {
   const voteOptions = [
     { label: "sad", value: "sad" },
     { label: "angry", value: "angry" },
@@ -104,7 +103,7 @@ const VoteButtons = ({ proposalId }: { proposalId: string }) => {
           onClick={(e) => {
             e.preventDefault();
           }}
-          className={`rounded-full p-2 `}
+          className={`rounded-full p-2`}
         >
           <Image src={`/image/vote-${label}.svg`} alt={label} />
         </button>
@@ -132,7 +131,14 @@ const BudgetTableRow = ({ item }: { item: BudgetTableData }) => {
       </div>
       <TableRow label="部會">{item.department}</TableRow>
       <TableRow label="審議日期（階段）">{`${item.date} (${item.stage})`}</TableRow>
-      <TableRow label="提案人（連署）">{item.proposer}</TableRow>
+      <TableRow label="提案人（連署）">
+        {item.proposer.split(" ").map((name, index, arr) => (
+          <React.Fragment key={index}>
+            {name}
+            {index < arr.length - 1 && <br />}
+          </React.Fragment>
+        ))}
+      </TableRow>
 
       <div className="grid grid-cols-[1fr_1fr_2fr_2fr] grid-rows-[76px] justify-items-center text-center">
         <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:border-y-2 md:bg-[#C7C7C7] md:p-0">
@@ -150,7 +156,15 @@ const BudgetTableRow = ({ item }: { item: BudgetTableData }) => {
         <p className="w-full py-2">{item.proposalType}</p>
         <p className="w-full py-2">{item.proposalResult}</p>
         <p className="w-full py-2">{item.originalAmount}</p>
-        <p className="w-full py-2">{item.reducedAmount}</p>
+        <div className="w-full py-2">
+          {item.reducedAmount?.split(" / ").map((line, index, arr) => (
+            <React.Fragment key={index}>
+              {line}
+              {arr.length > 1 && index === 0 && " /"}
+              {arr.length > 1 && index === 0 && <br />}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
 
       <TableRow label="提案內容">
@@ -169,7 +183,7 @@ const BudgetTableRow = ({ item }: { item: BudgetTableData }) => {
             請支援心情
           </button>
           <div className="flex w-full items-center justify-center rounded-3xl border-2 bg-white">
-            <VoteButtons proposalId={item.id} />
+            <VoteButtons />
           </div>
         </div>
       </TableRow>
@@ -211,7 +225,12 @@ const DesktopTableRow = ({ item }: { item: BudgetTableData }) => {
         <div className="text-gray-600">({item.stage})</div>
       </div>
       <div className="flex items-start justify-center pt-3 text-sm">
-        {item.proposer}
+        {item.proposer.split(" ").map((name, index, arr) => (
+          <React.Fragment key={index}>
+            {name}
+            {index < arr.length - 1 && <br />}
+          </React.Fragment>
+        ))}
       </div>
       <div className="flex items-start justify-center pt-3 text-sm">
         {item.proposalType}
@@ -247,7 +266,15 @@ const DesktopTableRow = ({ item }: { item: BudgetTableData }) => {
         </div>
       </div>
       <div className="flex items-start justify-center pt-3 md:text-xs lg:text-sm">
-        {item.reducedAmount}
+        <div className="w-full py-2 text-center">
+          {item.reducedAmount?.split(" / ").map((line, index, arr) => (
+            <React.Fragment key={index}>
+              {line}
+              {arr.length > 1 && index === 0 && " /"}
+              {arr.length > 1 && index === 0 && <br />}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
       <div className="flex items-start justify-center pt-3 md:text-xs lg:text-sm">
         {item.originalAmount}
