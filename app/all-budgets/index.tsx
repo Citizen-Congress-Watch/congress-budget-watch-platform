@@ -1,9 +1,14 @@
 import { useMemo, useEffect, useRef } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { redirect } from "react-router";
+import Select, { type StylesConfig, type SingleValue } from "react-select";
 import { ERROR_REDIRECT_ROUTE } from "~/constants/endpoints";
 import { execute } from "~/graphql/execute";
-import { GET_PAGINATED_PROPOSALS_QUERY, proposalQueryKeys } from "~/queries";
+import {
+  GET_PAGINATED_PROPOSALS_QUERY,
+  GET_PROPOSAL_YEARS_QUERY,
+  proposalQueryKeys,
+} from "~/queries";
 import content from "./page-content";
 import ProgressBar from "~/components/progress-bar";
 import BudgetsSelector from "~/components/budgets-selector";
@@ -15,6 +20,8 @@ import {
   useDepartmentId,
   usePersonId,
   useSearchedValue,
+  useSelectedYear,
+  useSetSelectedYear,
 } from "~/stores/budget-selector";
 import Image from "~/components/image";
 import { useMediaQuery } from "usehooks-ts";
@@ -22,6 +29,7 @@ import type {
   ProposalOrderByInput,
   ProposalWhereInput,
   GetPaginatedProposalsQuery,
+  GetProposalYearsQuery,
 } from "~/graphql/graphql";
 import { OrderDirection } from "~/graphql/graphql";
 import { SortDirection } from "~/constants/enums";
@@ -33,6 +41,8 @@ import useDebounce from "~/hooks/useDebounce";
 import { SEARCH_DEBOUNCE_DELAY } from "~/constants/config";
 import { sortOptions } from "~/constants/options";
 import { find } from "lodash";
+
+type YearOptionType = { value: number | null; label: string };
 
 export const AllBudgets = () => {
   // 分頁狀態
@@ -50,9 +60,104 @@ export const AllBudgets = () => {
     SEARCH_DEBOUNCE_DELAY
   );
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const selectedYear = useSelectedYear();
+  const setSelectedYear = useSetSelectedYear();
 
   // 重複資料檢測 Map
   const seenProposalIds = useRef<Map<string, boolean>>(new Map());
+
+  const { data: yearsData } = useQuery({
+    queryKey: proposalQueryKeys.years(),
+    queryFn: () => execute(GET_PROPOSAL_YEARS_QUERY),
+  });
+
+  const yearOptions: YearOptionType[] = useMemo(() => {
+    const typedYearsData = yearsData as GetProposalYearsQuery | undefined;
+    if (!typedYearsData?.proposals) return [];
+    const years = typedYearsData.proposals
+      .map((p) => p.year)
+      .filter((y): y is number => y != null);
+    const uniqueYears = [...new Set(years)].sort((a, b) => b - a);
+    return [
+      { value: null, label: "全部年份" },
+      ...uniqueYears.map((year) => ({ value: year, label: `${year}年` })),
+    ];
+  }, [yearsData]);
+
+  const selectedOption: SingleValue<YearOptionType> = useMemo(
+    () => yearOptions.find((option) => option.value === selectedYear) ?? null,
+    [yearOptions, selectedYear]
+  );
+
+  const customSelectStyles: StylesConfig<YearOptionType> = useMemo(
+    () => ({
+      control: (provided) => ({
+        ...provided,
+        backgroundColor: "#E9808E",
+        border: "2px solid black",
+        borderBottom: "0",
+        borderRadius: "0.375rem 0.375rem 0 0", // rounded-t-md
+        boxShadow: "none",
+        cursor: "pointer",
+        minHeight: "38px",
+        height: "38px",
+        "&:hover": {
+          borderColor: "black",
+        },
+      }),
+      valueContainer: (provided) => ({
+        ...provided,
+        height: "38px",
+        padding: "0 8px",
+      }),
+      input: (provided) => ({
+        ...provided,
+        margin: "0px",
+      }),
+      indicatorSeparator: () => ({
+        display: "none",
+      }),
+      dropdownIndicator: (provided) => ({
+        ...provided,
+        color: "#f6f6f6",
+        padding: "8px",
+        "&:hover": {
+          color: "#f6f6f6",
+        },
+      }),
+      singleValue: (provided) => ({
+        ...provided,
+        color: "#f6f6f6",
+        fontWeight: "bold",
+        fontSize: "16px",
+      }),
+      placeholder: (provided) => ({
+        ...provided,
+        color: "#f6f6f6",
+        fontWeight: "bold",
+        fontSize: "16px",
+      }),
+      menu: (provided) => ({
+        ...provided,
+        backgroundColor: "white",
+        border: "2px solid black",
+        borderRadius: "0",
+        boxShadow: "none",
+      }),
+      option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isSelected
+          ? "#E9808E"
+          : state.isFocused
+            ? "#fde2e5"
+            : "white",
+        color: state.isSelected ? "white" : "black",
+        fontWeight: "bold",
+        cursor: "pointer",
+      }),
+    }),
+    []
+  );
 
   // 計算 GraphQL 參數
   const skip = (currentPage - 1) * pageSize;
@@ -103,9 +208,12 @@ export const AllBudgets = () => {
         { proposers: { some: { name: { contains: debouncedSearchedValue } } } },
       ];
     }
+    if (selectedYear) {
+      filters.year = { equals: selectedYear };
+    }
 
     return filters;
-  }, [departmentId, personId, debouncedSearchedValue]);
+  }, [departmentId, personId, debouncedSearchedValue, selectedYear]);
 
   // 修改後的 React Query（支援分頁）
   const { data, isLoading, isError, isPlaceholderData } = useQuery({
@@ -113,7 +221,8 @@ export const AllBudgets = () => {
       currentPage,
       pageSize,
       selectedSort,
-      whereFilter
+      whereFilter,
+      selectedYear
     ),
     queryFn: () =>
       execute(GET_PAGINATED_PROPOSALS_QUERY, {
@@ -135,7 +244,14 @@ export const AllBudgets = () => {
   // 排序或篩選變更時重置到第 1 頁
   useEffect(() => {
     setPage(1);
-  }, [selectedSort, departmentId, personId, debouncedSearchedValue, setPage]);
+  }, [
+    selectedSort,
+    departmentId,
+    personId,
+    debouncedSearchedValue,
+    selectedYear,
+    setPage,
+  ]);
 
   // 重複資料檢測
   useEffect(() => {
@@ -194,9 +310,15 @@ export const AllBudgets = () => {
           />
         </div>
         <div className="relative mb-5 hidden items-center justify-start border-b-[2px] border-black md:flex">
-          <div className="rounded-t-md border-[2px] border-b-0 border-black bg-[#E9808E] px-2.5 py-1 text-[16px] font-bold text-[#f6f6f6]">
-            {content.progressToggle}
-          </div>
+          <Select
+            styles={customSelectStyles}
+            value={selectedOption}
+            onChange={(option) =>
+              setSelectedYear((option as SingleValue<YearOptionType>)?.value ?? null)
+            }
+            options={yearOptions}
+            placeholder="選擇年份"
+          />
           <img
             src={`${import.meta.env.BASE_URL}image/eye.svg`}
             alt="eye icon"
@@ -216,9 +338,15 @@ export const AllBudgets = () => {
 
         {/* mobile progress start */}
         <div className="mb-5 flex items-center justify-center border-b-[2px] border-black md:hidden">
-          <div className="rounded-t-md border-[2px] border-b-0 border-black bg-[#E9808E] px-2.5 py-1 text-[16px] font-bold text-[#f6f6f6]">
-            {content.progressToggle}
-          </div>
+          <Select
+            styles={customSelectStyles}
+            value={selectedOption}
+            onChange={(option) =>
+              setSelectedYear((option as SingleValue<YearOptionType>)?.value ?? null)
+            }
+            options={yearOptions}
+            placeholder="選擇年份"
+          />
         </div>
         <section className="mb-2 flex w-full justify-center text-lg font-bold text-[#3E51FF] md:hidden">
           <p>最新進度</p>

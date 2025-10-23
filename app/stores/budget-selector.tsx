@@ -17,6 +17,7 @@ type BudgetSelectProps = {
   selectedSort: string;
   departmentFilter: DepartmentFilter;
   peopleFilter: PeopleFilter;
+  selectedYear: number | null;
 };
 
 type BudgetSelectState = BudgetSelectProps & {
@@ -30,6 +31,7 @@ type BudgetSelectState = BudgetSelectProps & {
   clearDepartmentFilter: () => void;
   setPersonId: (id: string | null) => void;
   clearPeopleFilter: () => void;
+  setSelectedYear: (year: number | null) => void;
 };
 
 /**
@@ -42,6 +44,7 @@ const DEFAULT_PROPS: BudgetSelectProps = {
   selectedSort: "id-asc",
   departmentFilter: { category: null, departmentId: null },
   peopleFilter: { personId: null },
+  selectedYear: null,
 };
 
 /**
@@ -121,6 +124,8 @@ export const createBudgetSelectStore = (
           personId: null,
         },
       })),
+    setSelectedYear: (year: number | null) =>
+      set((state) => ({ ...state, selectedYear: year })),
   }));
 };
 
@@ -148,6 +153,12 @@ export const usePersonId = () =>
 export const useSearchedValue = () =>
   useStore(defaultBudgetSelectStore, (s) => s.searchedValue);
 
+export const useSelectedYear = () =>
+  useStore(defaultBudgetSelectStore, (s) => s.selectedYear);
+
 // Action Hooks
 export const useSetSelectedSort = () =>
   useStore(defaultBudgetSelectStore, (s) => s.setSelectedSort);
+
+export const useSetSelectedYear = () =>
+  useStore(defaultBudgetSelectStore, (s) => s.setSelectedYear);

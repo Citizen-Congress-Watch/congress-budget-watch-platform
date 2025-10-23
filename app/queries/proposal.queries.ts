@@ -178,6 +178,14 @@ export const GET_PROPOSAL_BY_ID_QUERY = graphql(`
   }
 `);
 
+export const GET_PROPOSAL_YEARS_QUERY = graphql(`
+  query GetProposalYears {
+    proposals(orderBy: [{ year: desc }]) {
+      year
+    }
+  }
+`);
+
 /**
  * React Query keys for proposal-related queries
  * Following the recommended hierarchical pattern
@@ -195,7 +203,7 @@ export const proposalQueryKeys = {
     pageSize: number,
     sortBy: string,
     where?: Record<string, unknown>,
-    year?: number | string // 新增 year 參數
+    year?: number | string | null // 新增 year 參數
   ) =>
     [
       ...proposalQueryKeys.lists(),
@@ -204,6 +212,7 @@ export const proposalQueryKeys = {
     ] as const,
   details: () => [...proposalQueryKeys.all, "detail"] as const,
   detail: (id: string) => [...proposalQueryKeys.details(), id] as const,
+  years: () => [...proposalQueryKeys.all, "years"] as const,
 } as const;
 
 /**

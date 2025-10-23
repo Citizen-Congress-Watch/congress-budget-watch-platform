@@ -2176,6 +2176,11 @@ export type GetProposalByIdQueryVariables = Exact<{
 
 export type GetProposalByIdQuery = { __typename?: 'Query', proposal?: { __typename?: 'Proposal', id: string, description?: string | null, reason?: string | null, publishStatus?: string | null, result?: string | null, freezeAmount?: number | null, reductionAmount?: number | null, budgetImageUrl?: string | null, proposalTypes?: Array<ProposalProposalTypeType> | null, recognitionAnswer?: string | null, unfreezeStatus?: string | null, government?: { __typename?: 'Government', id: string, name?: string | null, category?: string | null, description?: string | null } | null, budget?: { __typename?: 'Budget', id: string, projectName?: string | null, projectDescription?: string | null, budgetAmount?: number | null, budgetUrl?: string | null, lastYearSettlement?: number | null, year?: number | null, type?: string | null, majorCategory?: string | null, mediumCategory?: string | null, minorCategory?: string | null, description?: string | null } | null, proposers?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null, description?: string | null }> | null, coSigners?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null }> | null, meetings?: Array<{ __typename?: 'Meeting', id: string, displayName?: string | null, meetingDate?: any | null, description?: string | null, location?: string | null, meetingRecordUrl?: string | null, type?: string | null }> | null, mergedProposals?: Array<{ __typename?: 'Proposal', id: string, proposers?: Array<{ __typename?: 'People', id: string, name?: string | null }> | null }> | null, historicalProposals?: Array<{ __typename?: 'Proposal', id: string, proposers?: Array<{ __typename?: 'People', id: string, name?: string | null }> | null }> | null } | null };
 
+export type GetProposalYearsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProposalYearsQuery = { __typename?: 'Query', proposals?: Array<{ __typename?: 'Proposal', year?: number | null }> | null };
+
 export type GetPaginatedProposalsQueryVariables = Exact<{
   skip: Scalars['Int']['input'];
   take: Scalars['Int']['input'];
@@ -2403,6 +2408,13 @@ export const GetProposalByIdDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetProposalByIdQuery, GetProposalByIdQueryVariables>;
+export const GetProposalYearsDocument = new TypedDocumentString(`
+    query GetProposalYears {
+        proposals(orderBy: [{ year: desc }]) {
+            year
+        }
+    }
+    `) as unknown as TypedDocumentString<GetProposalYearsQuery, GetProposalYearsQueryVariables>;
 export const GetPaginatedProposalsDocument = new TypedDocumentString(`
     query GetPaginatedProposals($skip: Int!, $take: Int!, $orderBy: [ProposalOrderByInput!]!, $where: ProposalWhereInput!) {
   proposals(skip: $skip, take: $take, orderBy: $orderBy, where: $where) {
