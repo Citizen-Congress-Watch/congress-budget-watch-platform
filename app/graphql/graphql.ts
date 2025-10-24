@@ -2157,6 +2157,11 @@ export type GetPeopleListQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetPeopleListQuery = { __typename?: 'Query', peopleList?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null, description?: string | null, party?: { __typename?: 'Party', id: string, name?: string | null } | null }> | null };
 
+export type RecognitionImagesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RecognitionImagesQuery = { __typename?: 'Query', recognitionImagesCount?: number | null, recognitionStatusesCount?: number | null };
+
 export type PeopleQueryVariables = Exact<{
   where: PeopleWhereUniqueInput;
 }>;
@@ -2264,6 +2269,12 @@ export const GetPeopleListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<GetPeopleListQuery, GetPeopleListQueryVariables>;
+export const RecognitionImagesDocument = new TypedDocumentString(`
+    query RecognitionImages {
+  recognitionImagesCount
+  recognitionStatusesCount
+}
+    `) as unknown as TypedDocumentString<RecognitionImagesQuery, RecognitionImagesQueryVariables>;
 export const PeopleDocument = new TypedDocumentString(`
     query People($where: PeopleWhereUniqueInput!) {
   people(where: $where) {
