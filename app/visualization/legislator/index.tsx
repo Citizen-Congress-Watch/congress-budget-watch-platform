@@ -17,6 +17,8 @@ import {
   peopleQueryKeys,
 } from "~/queries/people.queries";
 import { formatTermRange } from "~/utils/format";
+import VisualizationLegislatorSkeleton from "~/components/skeleton/visualization-legislator-skeleton";
+import { useMediaQuery } from "usehooks-ts";
 
 const VisualizationLegislator = () => {
   const { id: proposerId } = useParams();
@@ -127,8 +129,10 @@ const VisualizationLegislator = () => {
     };
   }, [peopleData]);
 
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   if (isLoading || isPeopleLoading) {
-    return <div>Loading...</div>;
+    return <VisualizationLegislatorSkeleton isDesktop={isDesktop} />;
   }
 
   if (isError || isPeopleError) {

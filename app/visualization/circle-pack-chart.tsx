@@ -1,6 +1,5 @@
 import * as d3 from "d3";
-import { useEffect, useMemo, useRef } from "react";
-import { useMatch, useNavigate } from "react-router";
+import { useEffect, useMemo, useRef, useCallback } from "react";
 import { FROZEN_PATH_D } from "~/constants/svg-paths";
 import type { NodeDatum } from "./helpers";
 
@@ -9,7 +8,7 @@ type CirclePackChartProps = {
   width?: number;
   height?: number;
   padding?: number;
-  onNodeClick?: (node: NodeDatum) => void;
+  onNodeClick?: (node: NodeDatum) => void | boolean;
 };
 
 const CirclePackChart = ({
@@ -20,11 +19,24 @@ const CirclePackChart = ({
   onNodeClick,
 }: CirclePackChartProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
-  const isVisualizationRoute = useMatch("/visualization");
+  const DEFAULT_CHART_WIDTH = 720;
+  const FROZEN_PATH_BASE = 55;
+  const FROZEN_OUTER_SCALE = 1.2;
+  const FROZEN_INNER_SCALE = 1.13;
+  const FROZEN_TRANSLATE_X = -26.5;
+  const FROZEN_TRANSLATE_Y = -27.5;
+  const LABEL_CHILDREN_OFFSET_FACTOR = 0.88;
+  const HOVER_STROKE_WIDTH = 2;
+  const BASE_STROKE_WIDTH = 1;
+
+  const createFrozenTransform = useCallback(
+    (radius: number, scale: number, zoomFactor = 1) =>
+      `scale(${((radius * zoomFactor * 2) / FROZEN_PATH_BASE) * scale}) translate(${FROZEN_TRANSLATE_X}, ${FROZEN_TRANSLATE_Y})`,
+    [FROZEN_PATH_BASE, FROZEN_TRANSLATE_X, FROZEN_TRANSLATE_Y]
+  );
 
   const { root, width, height, color } = useMemo(() => {
-    const width = customWidth;
+    const width = customWidth ?? DEFAULT_CHART_WIDTH;
     const height = customHeight ?? width;
 
     const color = d3
@@ -74,12 +86,16 @@ const CirclePackChart = ({
         d.data.id ? "pointer" : d.children ? "pointer" : "default"
       )
       .on("mouseover", function () {
-        d3.select(this).select("circle").attr("stroke-width", 1);
-        d3.select(this).select("path").attr("stroke-width", 1);
+        d3
+          .select(this)
+          .select("circle")
+          .attr("stroke-width", HOVER_STROKE_WIDTH);
       })
       .on("mouseout", function () {
-        d3.select(this).select("circle").attr("stroke-width", 1);
-        d3.select(this).select("path").style("filter", "none");
+        d3
+          .select(this)
+          .select("circle")
+          .attr("stroke-width", BASE_STROKE_WIDTH);
       });
 
     node
@@ -91,7 +107,7 @@ const CirclePackChart = ({
         (d) => d.data.color ?? (d.children ? color(d.depth) : "white")
       )
       .attr("stroke", "#000")
-      .attr("stroke-width", 1);
+      .attr("stroke-width", BASE_STROKE_WIDTH);
 
     const frozenNodes = node.filter((d) => d.data.isFrozen ?? false);
 
@@ -104,25 +120,23 @@ const CirclePackChart = ({
         (d) => d.data.color ?? (d.children ? color(d.depth) : "white")
       );
 
-    // Render the border from SVG path on top of the circle
-    // Layer 1: Outer border (pink) - defines the outer size
     frozenNodes
       .append("path")
+      .attr("class", "frozen-border frozen-border--outer")
       .attr("d", FROZEN_PATH_D)
       .attr("fill", "#FF43D3")
-      .attr(
-        "transform",
-        (d) => `scale(${((d.r * 2) / 55) * 1.2}) translate(-26.5, -27.5)`
+      .attr("transform", (d) =>
+        createFrozenTransform(d.r, FROZEN_OUTER_SCALE)
       );
 
     // Layer 2: Inner border (same color as circle) - creates the thin border effect
     frozenNodes
       .append("path")
+      .attr("class", "frozen-border frozen-border--inner")
       .attr("d", FROZEN_PATH_D)
       .attr("fill", (d) => d.data.color ?? "#6B7FFF")
-      .attr(
-        "transform",
-        (d) => `scale(${((d.r * 2) / 55) * 1.13}) translate(-26.5, -27.5)`
+      .attr("transform", (d) =>
+        createFrozenTransform(d.r, FROZEN_INNER_SCALE)
       );
 
     const label = svg
@@ -226,7 +240,7 @@ const CirclePackChart = ({
         const y = (d.y - v[1]) * k;
         // 如果有子節點，將文字移到圓圈頂部
         if (d.children && d.children.length > 0) {
-          const offsetY = -d.r * k * 0.88;
+          const offsetY = -d.r * k * LABEL_CHILDREN_OFFSET_FACTOR;
           return `translate(${x}, ${y + offsetY})`;
         }
         return `translate(${x}, ${y})`;
@@ -240,22 +254,23 @@ const CirclePackChart = ({
       node
         .filter((d) => !d.data.isFrozen)
         .select("circle")
-        .attr("r", (d) => d.r * k);
+        .attr("r", (d) => d.r * k)
+        .attr("stroke-width", BASE_STROKE_WIDTH);
 
       const frozenNodes = node.filter((d) => d.data.isFrozen ?? false);
       // Update outer border (first path)
       frozenNodes
-        .select("path:nth-child(2)")
+        .select<SVGPathElement>(".frozen-border--outer")
         .attr(
           "transform",
-          (d) => `scale(${((d.r * k * 2) / 55) * 1.2}) translate(-26.5, -27.5)`
+          (d) => createFrozenTransform(d.r, FROZEN_OUTER_SCALE, k)
         );
       // Update inner border (second path)
       frozenNodes
-        .select("path:nth-child(3)")
+        .select<SVGPathElement>(".frozen-border--inner")
         .attr(
           "transform",
-          (d) => `scale(${((d.r * k * 2) / 55) * 1.13}) translate(-26.5, -27.5)`
+          (d) => createFrozenTransform(d.r, FROZEN_INNER_SCALE, k)
         );
       frozenNodes.select("circle").attr("r", (d) => d.r * k);
     }
@@ -373,17 +388,14 @@ const CirclePackChart = ({
       // 防止在拖曳後觸發點擊
       if (event.defaultPrevented) return;
 
-      if (onNodeClick) {
-        onNodeClick(d.data);
-      }
+      const callbackResult = onNodeClick?.(d.data);
+      const shouldSkipZoom = callbackResult === true;
 
-      // 如果節點有 id，則導航到詳情頁
-      if (d.data.proposerId && isVisualizationRoute && !d.children) {
-        navigate(`/visualization/legislator/${d.data.proposerId}`);
+      if (shouldSkipZoom) {
         event.stopPropagation();
         return;
       }
-      // 否則執行 zoom 效果
+
       if (focus !== d) {
         zoom(event as unknown as MouseEvent, d);
         event.stopPropagation();
@@ -398,7 +410,19 @@ const CirclePackChart = ({
     return () => {
       svg.remove();
     };
-  }, [root, width, height, color, navigate, isVisualizationRoute, onNodeClick]);
+  }, [
+    root,
+    width,
+    height,
+    color,
+    onNodeClick,
+    createFrozenTransform,
+    BASE_STROKE_WIDTH,
+    HOVER_STROKE_WIDTH,
+    FROZEN_OUTER_SCALE,
+    FROZEN_INNER_SCALE,
+    LABEL_CHILDREN_OFFSET_FACTOR,
+  ]);
 
   return (
     <div className="flex w-full items-center justify-center">
