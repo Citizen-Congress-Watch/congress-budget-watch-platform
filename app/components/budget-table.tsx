@@ -300,7 +300,7 @@ const DesktopTableRow = ({ item }: { item: BudgetTableData }) => {
 const BudgetTable = ({ data, isDesktop, className = "" }: BudgetTableProps) => {
   if (isDesktop)
     return (
-      <div className={`${className} space-y-10`}>
+      <div className={`${className} space-y-10 md:pb-10`}>
         {data.map((item) => (
           <div key={item.id}>
             <DesktopTableHeader />

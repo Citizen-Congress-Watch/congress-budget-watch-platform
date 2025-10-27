@@ -31,7 +31,7 @@ export const transformToCirclePackData = (
 ): NodeDatum => {
   const proposals = data.proposals || [];
   const children = proposals
-    .map((proposal) => {
+    .map<NodeDatum | null>((proposal) => {
       const { id, proposers, freezeAmount, reductionAmount } = proposal;
       const proposer = proposers?.[0]; // Assuming the first proposer is the main one
       const party = proposer?.party?.name ?? "無黨籍";
@@ -47,15 +47,16 @@ export const transformToCirclePackData = (
       }\n${party}\n${originalValue.toLocaleString()}元`;
       const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
 
-      return {
+      const node: NodeDatum = {
         name,
         value: scaledValue,
         color: color,
         isFrozen: !!freezeAmount && freezeAmount > 0,
         id: id,
         proposerId: proposer?.id,
-        children: [],
       };
+
+      return node;
     })
     .filter((p): p is NodeDatum => p !== null);
 

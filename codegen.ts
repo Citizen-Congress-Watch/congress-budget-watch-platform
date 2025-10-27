@@ -1,7 +1,7 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
 import { GQL_ENDPOINTS } from "./app/constants/endpoints";
 
-const config: CodegenConfig = {
+const config = {
   schema: GQL_ENDPOINTS,
   documents: ["app/**/*.{ts,tsx}"],
   ignoreNoDocuments: true,
@@ -21,6 +21,6 @@ const config: CodegenConfig = {
       },
     },
   },
-};
+} satisfies CodegenConfig & { concurrency: number };
 
 export default config;
