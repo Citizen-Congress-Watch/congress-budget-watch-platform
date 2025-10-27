@@ -81,6 +81,9 @@ export const transformToGroupedByLegislatorData = (
       const mainProposer = legislatorProposals[0]?.proposers?.[0];
       const party = mainProposer?.party?.name ?? "無黨籍";
       const proposalCount = legislatorProposals.length;
+      const hasFrozenProposal = legislatorProposals.some(
+        (proposal) => (proposal.freezeAmount ?? 0) > 0,
+      );
 
       return {
         id: `legislator-${proposerId}`,
@@ -89,6 +92,7 @@ export const transformToGroupedByLegislatorData = (
         children: [], // No children in this view
         color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
         proposerId: mainProposer?.id,
+        isFrozen: hasFrozenProposal,
       };
     },
   );
