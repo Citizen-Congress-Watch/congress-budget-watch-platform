@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useRef } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { redirect } from "react-router";
+import { redirect, useSearchParams } from "react-router";
 import Select, { type StylesConfig, type SingleValue } from "react-select";
 import { ERROR_REDIRECT_ROUTE } from "~/constants/endpoints";
 import { execute } from "~/graphql/execute";
@@ -45,6 +45,8 @@ import { find } from "lodash";
 type YearOptionType = { value: number | null; label: string };
 
 export const AllBudgets = () => {
+  const [searchParams] = useSearchParams();
+
   // 分頁狀態
   const { currentPage, pageSize } = usePagination();
   const { setTotalCount, setPage } = usePaginationActions();
@@ -62,6 +64,16 @@ export const AllBudgets = () => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const selectedYear = useSelectedYear();
   const setSelectedYear = useSetSelectedYear();
+
+  useEffect(() => {
+    const yearFromParams = searchParams.get("year");
+    if (yearFromParams) {
+      const yearNumber = parseInt(yearFromParams, 10);
+      if (!isNaN(yearNumber)) {
+        setSelectedYear(yearNumber);
+      }
+    }
+  }, [searchParams, setSelectedYear]);
 
   // 重複資料檢測 Map
   const seenProposalIds = useRef<Map<string, boolean>>(new Map());

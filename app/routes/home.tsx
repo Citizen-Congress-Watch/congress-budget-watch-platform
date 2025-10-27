@@ -18,14 +18,17 @@ type NavigationButton = {
   isExternal?: boolean;
 }
 
-const navigationButtons: NavigationButton[] = [
-  { label: "歷年預算", href: "/all-budgets" },
-  { label: "最新年度預算", href: "#" },
-  { label: "視覺化專區", href: "/visualization" },
-  { label: "協作區", href: "/collaboration" },
-];
-
 export default function Home() {
+  const currentYear = new Date().getFullYear();
+  const republicYear = currentYear - 1911;
+
+  const navigationButtons: NavigationButton[] = [
+    { label: "歷年預算", href: "/all-budgets" },
+    { label: "最新年度預算", href: `/all-budgets?year=${republicYear}` },
+    { label: "視覺化專區", href: "/visualization" },
+    { label: "協作區", href: "/collaboration" },
+  ];
+
   return (
     <div className="bg-background flex h-full flex-col justify-between p-5 md:p-8">
       <div className="mx-auto max-w-4xl">
