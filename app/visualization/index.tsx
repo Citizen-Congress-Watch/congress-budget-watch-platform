@@ -16,11 +16,11 @@ import {
 } from "~/graphql/graphql";
 import { sortOptions } from "~/constants/options";
 import {
-  transformToCirclePackData,
   transformToGroupedByLegislatorData,
+  type VisualizationGroupedData,
   type NodeDatum,
 } from "./helpers";
-import CirclePackChart from "./circle-pack-chart";
+import type { CirclePackPadding } from "./circle-pack-chart";
 import { find, sumBy, filter } from "lodash";
 import BudgetDetailSkeleton from "~/components/skeleton/budget-detail-skeleton";
 import { useMediaQuery } from "usehooks-ts";
@@ -87,7 +87,9 @@ const Visualization = () => {
   const pageSize = 1000;
   const whereFilter = () => {
     const filters: ProposalWhereInput = {
-      year: { equals: parseInt(selectedYear.value) },
+      year: {
+        year: { equals: parseInt(selectedYear.value, 10) },
+      },
     };
 
     return filters;
@@ -159,13 +161,28 @@ const Visualization = () => {
     };
   }, [data]);
 
-  const legislatorCirclePackData = useMemo(() => {
+  const legislatorVisualizationData = useMemo<
+    VisualizationGroupedData | null
+  >(() => {
     if (!data) return null;
-    if (mode === "count") {
-      return transformToGroupedByLegislatorData(data);
-    }
-    return transformToCirclePackData(data);
+    return transformToGroupedByLegislatorData(data, mode);
   }, [data, mode]);
+
+  const legislatorPadding = useMemo<CirclePackPadding | undefined>(() => {
+    if (mode !== "amount") return undefined;
+    return (node) => {
+      if (!node.children?.length) {
+        return 6;
+      }
+      if (node.depth === 0) {
+        return 18;
+      }
+      if (node.depth === 1) {
+        return 32;
+      }
+      return 12;
+    };
+  }, [mode]);
 
   if (isLoading) {
     return <VisualizationSkeleton isDesktop={isDesktop} />;
@@ -276,13 +293,17 @@ const Visualization = () => {
         {isLoading && <BudgetDetailSkeleton isDesktop={isDesktop} />}
         {!isLoading && (
           <div ref={chartContainerRef} className="chart-container">
-            {activeTab === "legislator" && legislatorCirclePackData && (
-              <CirclePackChart
-                data={legislatorCirclePackData}
-                onNodeClick={handleNodeClick}
-                width={chartWidth}
-                height={chartWidth}
-              />
+            {activeTab === "legislator" &&
+              data &&
+              legislatorVisualizationData && (
+                <DepartmentVisualization
+                  data={data}
+                  transformedData={legislatorVisualizationData}
+                  padding={legislatorPadding}
+                  onNodeClick={handleNodeClick}
+                  width={chartWidth}
+                  mode={mode}
+                />
             )}
             {activeTab === "department" && data && (
               <DepartmentVisualization

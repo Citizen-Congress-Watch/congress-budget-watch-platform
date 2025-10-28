@@ -85,9 +85,9 @@ export const AllBudgets = () => {
 
   const yearOptions: YearOptionType[] = useMemo(() => {
     const typedYearsData = yearsData as GetProposalYearsQuery | undefined;
-    if (!typedYearsData?.proposals) return [];
-    const years = typedYearsData.proposals
-      .map((p) => p.year)
+    if (!typedYearsData?.budgetYears) return [];
+    const years = typedYearsData.budgetYears
+      .map((entry) => entry.year)
       .filter((y): y is number => y != null);
     const uniqueYears = [...new Set(years)].sort((a, b) => b - a);
     return [
@@ -221,7 +221,7 @@ export const AllBudgets = () => {
       ];
     }
     if (selectedYear) {
-      filters.year = { equals: selectedYear };
+      filters.year = { year: { equals: selectedYear } };
     }
 
     return filters;

@@ -185,7 +185,8 @@ export const GET_PROPOSAL_BY_ID_QUERY = graphql(`
 
 export const GET_PROPOSAL_YEARS_QUERY = graphql(`
   query GetProposalYears {
-    proposals(orderBy: [{ year: desc }]) {
+    budgetYears(orderBy: [{ year: desc }]) {
+      id
       year
     }
   }
@@ -247,7 +248,10 @@ export const GET_PAGINATED_PROPOSALS_QUERY = graphql(`
     proposals(skip: $skip, take: $take, orderBy: $orderBy, where: $where) {
       id
       description
-      year
+      year {
+        id
+        year
+      }
       reason
       publishStatus
       result
@@ -285,6 +289,7 @@ export const GET_PAGINATED_PROPOSALS_QUERY = graphql(`
         party {
           id
           name
+          color
         }
         committees {
           id

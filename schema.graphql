@@ -110,6 +110,86 @@ input BudgetWhereUniqueInput {
   id: ID
 }
 
+type BudgetYear {
+  budgetProgress: String
+  createdAt: DateTime
+  createdBy: User
+  dataProgress: String
+  id: ID!
+  proposals(cursor: ProposalWhereUniqueInput, orderBy: [ProposalOrderByInput!]! = [], skip: Int! = 0, take: Int, where: ProposalWhereInput! = {}): [Proposal!]
+  proposalsCount(where: ProposalWhereInput! = {}): Int
+  updatedAt: DateTime
+  updatedBy: User
+  year: Int
+}
+
+input BudgetYearCreateInput {
+  budgetProgress: String
+  createdAt: DateTime
+  createdBy: UserRelateToOneForCreateInput
+  dataProgress: String
+  proposals: ProposalRelateToManyForCreateInput
+  updatedAt: DateTime
+  updatedBy: UserRelateToOneForCreateInput
+  year: Int
+}
+
+input BudgetYearOrderByInput {
+  budgetProgress: OrderDirection
+  createdAt: OrderDirection
+  dataProgress: OrderDirection
+  id: OrderDirection
+  updatedAt: OrderDirection
+  year: OrderDirection
+}
+
+input BudgetYearRelateToOneForCreateInput {
+  connect: BudgetYearWhereUniqueInput
+  create: BudgetYearCreateInput
+}
+
+input BudgetYearRelateToOneForUpdateInput {
+  connect: BudgetYearWhereUniqueInput
+  create: BudgetYearCreateInput
+  disconnect: Boolean
+}
+
+input BudgetYearUpdateArgs {
+  data: BudgetYearUpdateInput!
+  where: BudgetYearWhereUniqueInput!
+}
+
+input BudgetYearUpdateInput {
+  budgetProgress: String
+  createdAt: DateTime
+  createdBy: UserRelateToOneForUpdateInput
+  dataProgress: String
+  proposals: ProposalRelateToManyForUpdateInput
+  updatedAt: DateTime
+  updatedBy: UserRelateToOneForUpdateInput
+  year: Int
+}
+
+input BudgetYearWhereInput {
+  AND: [BudgetYearWhereInput!]
+  NOT: [BudgetYearWhereInput!]
+  OR: [BudgetYearWhereInput!]
+  budgetProgress: StringFilter
+  createdAt: DateTimeNullableFilter
+  createdBy: UserWhereInput
+  dataProgress: StringFilter
+  id: IDFilter
+  proposals: ProposalManyRelationFilter
+  updatedAt: DateTimeNullableFilter
+  updatedBy: UserWhereInput
+  year: IntFilter
+}
+
+input BudgetYearWhereUniqueInput {
+  id: ID
+  year: Int
+}
+
 type Committee {
   description: String
   displayName: String
@@ -559,6 +639,8 @@ input MeetingWhereUniqueInput {
 type Mutation {
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createBudget(data: BudgetCreateInput!): Budget
+  createBudgetYear(data: BudgetYearCreateInput!): BudgetYear
+  createBudgetYears(data: [BudgetYearCreateInput!]!): [BudgetYear]
   createBudgets(data: [BudgetCreateInput!]!): [Budget]
   createCommittee(data: CommitteeCreateInput!): Committee
   createCommittees(data: [CommitteeCreateInput!]!): [Committee]
@@ -582,6 +664,8 @@ type Mutation {
   createUser(data: UserCreateInput!): User
   createUsers(data: [UserCreateInput!]!): [User]
   deleteBudget(where: BudgetWhereUniqueInput!): Budget
+  deleteBudgetYear(where: BudgetYearWhereUniqueInput!): BudgetYear
+  deleteBudgetYears(where: [BudgetYearWhereUniqueInput!]!): [BudgetYear]
   deleteBudgets(where: [BudgetWhereUniqueInput!]!): [Budget]
   deleteCommittee(where: CommitteeWhereUniqueInput!): Committee
   deleteCommittees(where: [CommitteeWhereUniqueInput!]!): [Committee]
@@ -605,6 +689,8 @@ type Mutation {
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
   endSession: Boolean!
   updateBudget(data: BudgetUpdateInput!, where: BudgetWhereUniqueInput!): Budget
+  updateBudgetYear(data: BudgetYearUpdateInput!, where: BudgetYearWhereUniqueInput!): BudgetYear
+  updateBudgetYears(data: [BudgetYearUpdateArgs!]!): [BudgetYear]
   updateBudgets(data: [BudgetUpdateArgs!]!): [Budget]
   updateCommittee(data: CommitteeUpdateInput!, where: CommitteeWhereUniqueInput!): Committee
   updateCommittees(data: [CommitteeUpdateArgs!]!): [Committee]
@@ -824,7 +910,7 @@ type Proposal {
   unfreezeHistory(cursor: MeetingWhereUniqueInput, orderBy: [MeetingOrderByInput!]! = [], skip: Int! = 0, take: Int, where: MeetingWhereInput! = {}): [Meeting!]
   unfreezeHistoryCount(where: MeetingWhereInput! = {}): Int
   unfreezeStatus: String
-  year: Int
+  year: BudgetYear
 }
 
 input ProposalCreateInput {
@@ -850,7 +936,7 @@ input ProposalCreateInput {
   result: String
   unfreezeHistory: MeetingRelateToManyForCreateInput
   unfreezeStatus: String
-  year: Int
+  year: BudgetYearRelateToOneForCreateInput
 }
 
 input ProposalManyRelationFilter {
@@ -874,7 +960,6 @@ input ProposalOrderByInput {
   reductionAmount: OrderDirection
   result: OrderDirection
   unfreezeStatus: OrderDirection
-  year: OrderDirection
 }
 
 enum ProposalProposalTypeType {
@@ -923,7 +1008,7 @@ input ProposalUpdateInput {
   result: String
   unfreezeHistory: MeetingRelateToManyForUpdateInput
   unfreezeStatus: String
-  year: Int
+  year: BudgetYearRelateToOneForUpdateInput
 }
 
 input ProposalWhereInput {
@@ -952,7 +1037,7 @@ input ProposalWhereInput {
   result: StringNullableFilter
   unfreezeHistory: MeetingManyRelationFilter
   unfreezeStatus: StringNullableFilter
-  year: IntFilter
+  year: BudgetYearWhereInput
 }
 
 input ProposalWhereUniqueInput {
@@ -962,6 +1047,9 @@ input ProposalWhereUniqueInput {
 type Query {
   authenticatedItem: AuthenticatedItem
   budget(where: BudgetWhereUniqueInput!): Budget
+  budgetYear(where: BudgetYearWhereUniqueInput!): BudgetYear
+  budgetYears(cursor: BudgetYearWhereUniqueInput, orderBy: [BudgetYearOrderByInput!]! = [], skip: Int! = 0, take: Int, where: BudgetYearWhereInput! = {}): [BudgetYear!]
+  budgetYearsCount(where: BudgetYearWhereInput! = {}): Int
   budgets(cursor: BudgetWhereUniqueInput, orderBy: [BudgetOrderByInput!]! = [], skip: Int! = 0, take: Int, where: BudgetWhereInput! = {}): [Budget!]
   budgetsCount(where: BudgetWhereInput! = {}): Int
   committee(where: CommitteeWhereUniqueInput!): Committee
@@ -1324,6 +1412,17 @@ input UserOrderByInput {
   isProtected: OrderDirection
   name: OrderDirection
   role: OrderDirection
+}
+
+input UserRelateToOneForCreateInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateInput
+}
+
+input UserRelateToOneForUpdateInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateInput
+  disconnect: Boolean
 }
 
 input UserUpdateArgs {

@@ -1,13 +1,17 @@
 import { useMemo } from "react";
 import type { GetPaginatedProposalsQuery } from "~/graphql/graphql";
 import { transformToCategorizedData, type NodeDatum } from "../helpers";
-import CirclePackChart from "../circle-pack-chart";
+import CirclePackChart, {
+  type CirclePackPadding,
+} from "../circle-pack-chart";
 
 type DepartmentVisualizationProps = {
   data: GetPaginatedProposalsQuery;
   width?: number;
   onNodeClick: (node: NodeDatum) => void;
   mode: "amount" | "count";
+  transformedData?: Record<string, NodeDatum>;
+  padding?: CirclePackPadding;
 };
 
 export const DepartmentVisualization = ({
@@ -15,10 +19,12 @@ export const DepartmentVisualization = ({
   width = 928,
   onNodeClick,
   mode,
+  transformedData,
+  padding,
 }: DepartmentVisualizationProps) => {
   const categorizedData = useMemo(
-    () => transformToCategorizedData(data, mode),
-    [data, mode],
+    () => transformedData ?? transformToCategorizedData(data, mode),
+    [data, mode, transformedData],
   );
 
   const categories = Object.keys(categorizedData);
@@ -47,6 +53,7 @@ export const DepartmentVisualization = ({
               data={chartData}
               width={width}
               height={width}
+              padding={padding}
               onNodeClick={onNodeClick}
             />
           ) : (

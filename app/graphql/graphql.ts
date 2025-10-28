@@ -127,6 +127,101 @@ export type BudgetWhereUniqueInput = {
   id?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type BudgetYear = {
+  __typename?: 'BudgetYear';
+  budgetProgress?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['DateTime']['output']>;
+  createdBy?: Maybe<User>;
+  dataProgress?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  proposals?: Maybe<Array<Proposal>>;
+  proposalsCount?: Maybe<Scalars['Int']['output']>;
+  updatedAt?: Maybe<Scalars['DateTime']['output']>;
+  updatedBy?: Maybe<User>;
+  year?: Maybe<Scalars['Int']['output']>;
+};
+
+
+export type BudgetYearProposalsArgs = {
+  cursor?: InputMaybe<ProposalWhereUniqueInput>;
+  orderBy?: Array<ProposalOrderByInput>;
+  skip?: Scalars['Int']['input'];
+  take?: InputMaybe<Scalars['Int']['input']>;
+  where?: ProposalWhereInput;
+};
+
+
+export type BudgetYearProposalsCountArgs = {
+  where?: ProposalWhereInput;
+};
+
+export type BudgetYearCreateInput = {
+  budgetProgress?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>;
+  createdBy?: InputMaybe<UserRelateToOneForCreateInput>;
+  dataProgress?: InputMaybe<Scalars['String']['input']>;
+  proposals?: InputMaybe<ProposalRelateToManyForCreateInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  updatedBy?: InputMaybe<UserRelateToOneForCreateInput>;
+  year?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type BudgetYearOrderByInput = {
+  budgetProgress?: InputMaybe<OrderDirection>;
+  createdAt?: InputMaybe<OrderDirection>;
+  dataProgress?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+  updatedAt?: InputMaybe<OrderDirection>;
+  year?: InputMaybe<OrderDirection>;
+};
+
+export type BudgetYearRelateToOneForCreateInput = {
+  connect?: InputMaybe<BudgetYearWhereUniqueInput>;
+  create?: InputMaybe<BudgetYearCreateInput>;
+};
+
+export type BudgetYearRelateToOneForUpdateInput = {
+  connect?: InputMaybe<BudgetYearWhereUniqueInput>;
+  create?: InputMaybe<BudgetYearCreateInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type BudgetYearUpdateArgs = {
+  data: BudgetYearUpdateInput;
+  where: BudgetYearWhereUniqueInput;
+};
+
+export type BudgetYearUpdateInput = {
+  budgetProgress?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>;
+  createdBy?: InputMaybe<UserRelateToOneForUpdateInput>;
+  dataProgress?: InputMaybe<Scalars['String']['input']>;
+  proposals?: InputMaybe<ProposalRelateToManyForUpdateInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
+  updatedBy?: InputMaybe<UserRelateToOneForUpdateInput>;
+  year?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type BudgetYearWhereInput = {
+  AND?: InputMaybe<Array<BudgetYearWhereInput>>;
+  NOT?: InputMaybe<Array<BudgetYearWhereInput>>;
+  OR?: InputMaybe<Array<BudgetYearWhereInput>>;
+  budgetProgress?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<DateTimeNullableFilter>;
+  createdBy?: InputMaybe<UserWhereInput>;
+  dataProgress?: InputMaybe<StringFilter>;
+  id?: InputMaybe<IdFilter>;
+  proposals?: InputMaybe<ProposalManyRelationFilter>;
+  updatedAt?: InputMaybe<DateTimeNullableFilter>;
+  updatedBy?: InputMaybe<UserWhereInput>;
+  year?: InputMaybe<IntFilter>;
+};
+
+export type BudgetYearWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  year?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type Committee = {
   __typename?: 'Committee';
   description?: Maybe<Scalars['String']['output']>;
@@ -634,6 +729,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   authenticateUserWithPassword?: Maybe<UserAuthenticationWithPasswordResult>;
   createBudget?: Maybe<Budget>;
+  createBudgetYear?: Maybe<BudgetYear>;
+  createBudgetYears?: Maybe<Array<Maybe<BudgetYear>>>;
   createBudgets?: Maybe<Array<Maybe<Budget>>>;
   createCommittee?: Maybe<Committee>;
   createCommittees?: Maybe<Array<Maybe<Committee>>>;
@@ -657,6 +754,8 @@ export type Mutation = {
   createUser?: Maybe<User>;
   createUsers?: Maybe<Array<Maybe<User>>>;
   deleteBudget?: Maybe<Budget>;
+  deleteBudgetYear?: Maybe<BudgetYear>;
+  deleteBudgetYears?: Maybe<Array<Maybe<BudgetYear>>>;
   deleteBudgets?: Maybe<Array<Maybe<Budget>>>;
   deleteCommittee?: Maybe<Committee>;
   deleteCommittees?: Maybe<Array<Maybe<Committee>>>;
@@ -680,6 +779,8 @@ export type Mutation = {
   deleteUsers?: Maybe<Array<Maybe<User>>>;
   endSession: Scalars['Boolean']['output'];
   updateBudget?: Maybe<Budget>;
+  updateBudgetYear?: Maybe<BudgetYear>;
+  updateBudgetYears?: Maybe<Array<Maybe<BudgetYear>>>;
   updateBudgets?: Maybe<Array<Maybe<Budget>>>;
   updateCommittee?: Maybe<Committee>;
   updateCommittees?: Maybe<Array<Maybe<Committee>>>;
@@ -712,6 +813,16 @@ export type MutationAuthenticateUserWithPasswordArgs = {
 
 export type MutationCreateBudgetArgs = {
   data: BudgetCreateInput;
+};
+
+
+export type MutationCreateBudgetYearArgs = {
+  data: BudgetYearCreateInput;
+};
+
+
+export type MutationCreateBudgetYearsArgs = {
+  data: Array<BudgetYearCreateInput>;
 };
 
 
@@ -830,6 +941,16 @@ export type MutationDeleteBudgetArgs = {
 };
 
 
+export type MutationDeleteBudgetYearArgs = {
+  where: BudgetYearWhereUniqueInput;
+};
+
+
+export type MutationDeleteBudgetYearsArgs = {
+  where: Array<BudgetYearWhereUniqueInput>;
+};
+
+
 export type MutationDeleteBudgetsArgs = {
   where: Array<BudgetWhereUniqueInput>;
 };
@@ -938,6 +1059,17 @@ export type MutationDeleteUsersArgs = {
 export type MutationUpdateBudgetArgs = {
   data: BudgetUpdateInput;
   where: BudgetWhereUniqueInput;
+};
+
+
+export type MutationUpdateBudgetYearArgs = {
+  data: BudgetYearUpdateInput;
+  where: BudgetYearWhereUniqueInput;
+};
+
+
+export type MutationUpdateBudgetYearsArgs = {
+  data: Array<BudgetYearUpdateArgs>;
 };
 
 
@@ -1283,7 +1415,7 @@ export type Proposal = {
   unfreezeHistory?: Maybe<Array<Meeting>>;
   unfreezeHistoryCount?: Maybe<Scalars['Int']['output']>;
   unfreezeStatus?: Maybe<Scalars['String']['output']>;
-  year?: Maybe<Scalars['Int']['output']>;
+  year?: Maybe<BudgetYear>;
 };
 
 
@@ -1393,7 +1525,7 @@ export type ProposalCreateInput = {
   result?: InputMaybe<Scalars['String']['input']>;
   unfreezeHistory?: InputMaybe<MeetingRelateToManyForCreateInput>;
   unfreezeStatus?: InputMaybe<Scalars['String']['input']>;
-  year?: InputMaybe<Scalars['Int']['input']>;
+  year?: InputMaybe<BudgetYearRelateToOneForCreateInput>;
 };
 
 export type ProposalManyRelationFilter = {
@@ -1417,7 +1549,6 @@ export type ProposalOrderByInput = {
   reductionAmount?: InputMaybe<OrderDirection>;
   result?: InputMaybe<OrderDirection>;
   unfreezeStatus?: InputMaybe<OrderDirection>;
-  year?: InputMaybe<OrderDirection>;
 };
 
 export enum ProposalProposalTypeType {
@@ -1466,7 +1597,7 @@ export type ProposalUpdateInput = {
   result?: InputMaybe<Scalars['String']['input']>;
   unfreezeHistory?: InputMaybe<MeetingRelateToManyForUpdateInput>;
   unfreezeStatus?: InputMaybe<Scalars['String']['input']>;
-  year?: InputMaybe<Scalars['Int']['input']>;
+  year?: InputMaybe<BudgetYearRelateToOneForUpdateInput>;
 };
 
 export type ProposalWhereInput = {
@@ -1495,7 +1626,7 @@ export type ProposalWhereInput = {
   result?: InputMaybe<StringNullableFilter>;
   unfreezeHistory?: InputMaybe<MeetingManyRelationFilter>;
   unfreezeStatus?: InputMaybe<StringNullableFilter>;
-  year?: InputMaybe<IntFilter>;
+  year?: InputMaybe<BudgetYearWhereInput>;
 };
 
 export type ProposalWhereUniqueInput = {
@@ -1506,6 +1637,9 @@ export type Query = {
   __typename?: 'Query';
   authenticatedItem?: Maybe<AuthenticatedItem>;
   budget?: Maybe<Budget>;
+  budgetYear?: Maybe<BudgetYear>;
+  budgetYears?: Maybe<Array<BudgetYear>>;
+  budgetYearsCount?: Maybe<Scalars['Int']['output']>;
   budgets?: Maybe<Array<Budget>>;
   budgetsCount?: Maybe<Scalars['Int']['output']>;
   committee?: Maybe<Committee>;
@@ -1544,6 +1678,25 @@ export type Query = {
 
 export type QueryBudgetArgs = {
   where: BudgetWhereUniqueInput;
+};
+
+
+export type QueryBudgetYearArgs = {
+  where: BudgetYearWhereUniqueInput;
+};
+
+
+export type QueryBudgetYearsArgs = {
+  cursor?: InputMaybe<BudgetYearWhereUniqueInput>;
+  orderBy?: Array<BudgetYearOrderByInput>;
+  skip?: Scalars['Int']['input'];
+  take?: InputMaybe<Scalars['Int']['input']>;
+  where?: BudgetYearWhereInput;
+};
+
+
+export type QueryBudgetYearsCountArgs = {
+  where?: BudgetYearWhereInput;
 };
 
 
@@ -2113,6 +2266,17 @@ export type UserOrderByInput = {
   role?: InputMaybe<OrderDirection>;
 };
 
+export type UserRelateToOneForCreateInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  create?: InputMaybe<UserCreateInput>;
+};
+
+export type UserRelateToOneForUpdateInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  create?: InputMaybe<UserCreateInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type UserUpdateArgs = {
   data: UserUpdateInput;
   where: UserWhereUniqueInput;
@@ -2184,7 +2348,7 @@ export type GetProposalByIdQuery = { __typename?: 'Query', proposal?: { __typena
 export type GetProposalYearsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProposalYearsQuery = { __typename?: 'Query', proposals?: Array<{ __typename?: 'Proposal', year?: number | null }> | null };
+export type GetProposalYearsQuery = { __typename?: 'Query', budgetYears?: Array<{ __typename?: 'BudgetYear', id: string, year?: number | null }> | null };
 
 export type GetPaginatedProposalsQueryVariables = Exact<{
   skip: Scalars['Int']['input'];
@@ -2194,7 +2358,7 @@ export type GetPaginatedProposalsQueryVariables = Exact<{
 }>;
 
 
-export type GetPaginatedProposalsQuery = { __typename?: 'Query', proposalsCount?: number | null, proposals?: Array<{ __typename?: 'Proposal', id: string, description?: string | null, year?: number | null, reason?: string | null, publishStatus?: string | null, result?: string | null, freezeAmount?: number | null, reductionAmount?: number | null, budgetImageUrl?: string | null, proposalTypes?: Array<ProposalProposalTypeType> | null, recognitionAnswer?: string | null, unfreezeStatus?: string | null, react_angry?: number | null, react_disappoint?: number | null, react_good?: number | null, react_whatever?: number | null, government?: { __typename?: 'Government', id: string, name?: string | null, category?: string | null, description?: string | null } | null, budget?: { __typename?: 'Budget', id: string, projectName?: string | null, budgetAmount?: number | null, year?: number | null, type?: string | null, majorCategory?: string | null, mediumCategory?: string | null, minorCategory?: string | null } | null, proposers?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null, description?: string | null, party?: { __typename?: 'Party', id: string, name?: string | null } | null, committees?: Array<{ __typename?: 'Committee', id: string, name?: string | null }> | null }> | null, coSigners?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null }> | null }> | null };
+export type GetPaginatedProposalsQuery = { __typename?: 'Query', proposalsCount?: number | null, proposals?: Array<{ __typename?: 'Proposal', id: string, description?: string | null, reason?: string | null, publishStatus?: string | null, result?: string | null, freezeAmount?: number | null, reductionAmount?: number | null, budgetImageUrl?: string | null, proposalTypes?: Array<ProposalProposalTypeType> | null, recognitionAnswer?: string | null, unfreezeStatus?: string | null, react_angry?: number | null, react_disappoint?: number | null, react_good?: number | null, react_whatever?: number | null, year?: { __typename?: 'BudgetYear', id: string, year?: number | null } | null, government?: { __typename?: 'Government', id: string, name?: string | null, category?: string | null, description?: string | null } | null, budget?: { __typename?: 'Budget', id: string, projectName?: string | null, budgetAmount?: number | null, year?: number | null, type?: string | null, majorCategory?: string | null, mediumCategory?: string | null, minorCategory?: string | null } | null, proposers?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null, description?: string | null, party?: { __typename?: 'Party', id: string, name?: string | null, color?: string | null } | null, committees?: Array<{ __typename?: 'Committee', id: string, name?: string | null }> | null }> | null, coSigners?: Array<{ __typename?: 'People', id: string, name?: string | null, type?: string | null }> | null }> | null };
 
 export type Update_Proposal_ReactsMutationVariables = Exact<{
   where: ProposalWhereUniqueInput;
@@ -2426,7 +2590,8 @@ export const GetProposalByIdDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<GetProposalByIdQuery, GetProposalByIdQueryVariables>;
 export const GetProposalYearsDocument = new TypedDocumentString(`
     query GetProposalYears {
-  proposals(orderBy: [{year: desc}]) {
+  budgetYears(orderBy: [{year: desc}]) {
+    id
     year
   }
 }
@@ -2436,7 +2601,10 @@ export const GetPaginatedProposalsDocument = new TypedDocumentString(`
   proposals(skip: $skip, take: $take, orderBy: $orderBy, where: $where) {
     id
     description
-    year
+    year {
+      id
+      year
+    }
     reason
     publishStatus
     result
@@ -2474,6 +2642,7 @@ export const GetPaginatedProposalsDocument = new TypedDocumentString(`
       party {
         id
         name
+        color
       }
       committees {
         id

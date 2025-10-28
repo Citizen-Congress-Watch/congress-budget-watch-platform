@@ -3,11 +3,15 @@ import { useEffect, useMemo, useRef, useCallback } from "react";
 import { FROZEN_PATH_D } from "~/constants/svg-paths";
 import type { NodeDatum } from "./helpers";
 
+export type CirclePackPadding =
+  | number
+  | ((node: d3.HierarchyNode<NodeDatum>) => number);
+
 type CirclePackChartProps = {
   data: NodeDatum;
   width?: number;
   height?: number;
-  padding?: number;
+  padding?: CirclePackPadding;
   onNodeClick?: (node: NodeDatum) => void | boolean;
 };
 
@@ -45,13 +49,19 @@ const CirclePackChart = ({
       .range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
       .interpolate(d3.interpolateHcl);
 
+    const paddingAccessor =
+      typeof padding === "function" ? padding : () => padding;
+
     const pack = (data: NodeDatum) =>
-      d3.pack<NodeDatum>().size([width, height]).padding(padding)(
-        d3
-          .hierarchy<NodeDatum>(data)
-          .sum((d) => (typeof d.value === "number" ? d.value : 0))
-          .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
-      );
+      d3
+        .pack<NodeDatum>()
+        .size([width, height])
+        .padding((node) => paddingAccessor(node))(
+          d3
+            .hierarchy<NodeDatum>(data)
+            .sum((d) => (typeof d.value === "number" ? d.value : 0))
+            .sort((a, b) => (b.value ?? 0) - (a.value ?? 0))
+        );
 
     const root = pack(data);
     return { root, width, height, color };
