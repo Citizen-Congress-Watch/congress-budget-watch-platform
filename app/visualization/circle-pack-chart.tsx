@@ -264,7 +264,7 @@ const CirclePackChart = ({
       .join("text")
       .style("fill-opacity", (d) => (d.parent === root ? "1" : "0"))
       .style("display", (d) => (d.parent === root ? "inline" : "none"))
-      .style("font-size", (d) => `${Math.max(10, Math.min(32, d.r / 5))}px`)
+      .style("font-size", (d) => `${Math.max(10, Math.min(40, d.r / 5))}px`)
       .style("font-family", "sans-serif")
       .each(function (this: SVGTextElement, d) {
         const textSel = d3.select<

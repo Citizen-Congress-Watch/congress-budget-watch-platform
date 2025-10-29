@@ -3,6 +3,7 @@ import {
   type GetPaginatedProposalsQuery,
 } from "~/graphql/graphql";
 import { groupBy, mapValues, sumBy } from "lodash";
+import { formatNumber } from "~/budget-detail/helpers";
 
 export type NodeDatum = {
   name: string;
@@ -29,6 +30,12 @@ export const PARTY_COLORS = new Map<string, string>([
 ]);
 export const DEFAULT_COLOR = "#D5D5D5"; // 無黨籍
 
+export const formatAmountWithUnit = (value: number): string => {
+  const formatted = formatNumber(value);
+  if (formatted === "無預算金額") return formatted;
+  return `${formatted.trim()}元`;
+};
+
 export const transformToCirclePackData = (
   data: GetPaginatedProposalsQuery,
 ): NodeDatum => {
@@ -45,9 +52,9 @@ export const transformToCirclePackData = (
       }
 
       const scaledValue = Math.pow(originalValue, 0.45);
-      const name = `${
-        proposer?.name
-      }\n${party}\n${originalValue.toLocaleString()}元`;
+      const name = `${proposer?.name}\n${party}\n${formatAmountWithUnit(
+        originalValue,
+      )}`;
       const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
 
       const node: NodeDatum = {
@@ -169,7 +176,7 @@ export const transformToGroupedByLegislatorData = (
 
           const displayValue =
             mode === "amount" && key !== "other"
-              ? `${totalAmount.toLocaleString()}元`
+              ? formatAmountWithUnit(totalAmount)
               : `${totalCount}案`;
 
           return {
@@ -260,7 +267,7 @@ export const transformToGroupedSessionData = (
             const party = proposer?.party?.name ?? "無黨籍";
             const originalValue = (freezeAmount ?? 0) + (reductionAmount ?? 0);
             const scaledValue = Math.pow(originalValue, 0.45);
-            const displayValue = `${originalValue.toLocaleString()}元`;
+            const displayValue = formatAmountWithUnit(originalValue);
             const name = `${id}\n${
               government?.name ?? "未知部會"
             }\n${displayValue}`;
@@ -402,7 +409,7 @@ export const transformToCategorizedData = (
 
           return {
             id: `proposer-${categoryName}-${proposerId}`,
-            name: `${mainProposer?.name ?? "未知"}\n${party}\n${totalAmount.toLocaleString()}元`,
+            name: `${mainProposer?.name ?? "未知"}\n${party}\n${formatAmountWithUnit(totalAmount)}`,
             value: scaledValue,
             color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
             proposerId: mainProposer?.id,

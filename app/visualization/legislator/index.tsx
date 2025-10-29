@@ -11,7 +11,7 @@ import {
 } from "~/queries/proposal.queries";
 import { execute } from "~/graphql/execute";
 import { OrderDirection, type ProposalWhereInput } from "~/graphql/graphql";
-import { transformToGroupedSessionData } from "../helpers";
+import { transformToGroupedSessionData, formatAmountWithUnit } from "../helpers";
 import {
   GET_PERSON_BY_ID_QUERY,
   peopleQueryKeys,
@@ -143,6 +143,8 @@ const VisualizationLegislator = () => {
   const proposals = proposalsData?.proposals || [];
   const totalReductionAmount = sumBy(proposals, (p) => p.reductionAmount || 0);
   const totalFreezeAmount = sumBy(proposals, (p) => p.freezeAmount || 0);
+  const formattedReductionAmount = formatAmountWithUnit(totalReductionAmount);
+  const formattedFreezeAmount = formatAmountWithUnit(totalFreezeAmount);
   const reductionProposalsCount = filter(
     proposals,
     (p) => p.reductionAmount
@@ -213,20 +215,16 @@ const VisualizationLegislator = () => {
         {/* statistics */}
         <div className="mt-4 flex flex-col items-center justify-center rounded-lg border-2 p-2.5">
           <p>
-            總共刪減
-            <span className="text-[#E9808E]">
-              {totalReductionAmount.toLocaleString()}
-            </span>
-            元（
+            總共刪減{" "}
+            <span className="text-[#E9808E]">{formattedReductionAmount}</span>
+            （
             <span className="text-[#E9808E]">{reductionProposalsCount}</span>
             個提案）
           </p>
           <p>
-            凍結
-            <span className="text-[#E9808E]">
-              {totalFreezeAmount.toLocaleString()}
-            </span>
-            元（
+            凍結{" "}
+            <span className="text-[#E9808E]">{formattedFreezeAmount}</span>
+            （
             <span className="text-[#E9808E]">{freezeProposalsCount}</span>
             個提案）
           </p>

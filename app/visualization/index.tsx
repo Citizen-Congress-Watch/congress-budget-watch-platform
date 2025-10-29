@@ -17,6 +17,7 @@ import {
 import { sortOptions } from "~/constants/options";
 import {
   transformToGroupedByLegislatorData,
+  formatAmountWithUnit,
   type VisualizationGroupedData,
   type NodeDatum,
 } from "./helpers";
@@ -161,6 +162,13 @@ const Visualization = () => {
     };
   }, [data]);
 
+  const formattedReductionAmount = formatAmountWithUnit(
+    summaryStats.totalReductionAmount,
+  );
+  const formattedFreezeAmount = formatAmountWithUnit(
+    summaryStats.totalFreezeAmount,
+  );
+
   const legislatorVisualizationData = useMemo<
     VisualizationGroupedData | null
   >(() => {
@@ -263,20 +271,20 @@ const Visualization = () => {
             <p>
               總共刪減{" "}
               <span className="text-[#E9808E]">
-                {summaryStats.totalReductionAmount.toLocaleString()}
+                {formattedReductionAmount}
               </span>
-              元（
+              （
               <span className="text-[#E9808E]">
                 {summaryStats.reductionCount}
               </span>
               個提案）
             </p>
             <p>
-              凍結
+              凍結{" "}
               <span className="text-[#E9808E]">
-                {summaryStats.totalFreezeAmount.toLocaleString()}
+                {formattedFreezeAmount}
               </span>
-              元（
+              （
               <span className="text-[#E9808E]">{summaryStats.freezeCount}</span>
               個提案）
             </p>
