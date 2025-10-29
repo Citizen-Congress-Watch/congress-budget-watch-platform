@@ -2,9 +2,12 @@ import {
   DATA_PROGRESS_LABELS,
   PROGRESS_STAGE_LABELS,
   PROGRESS_STAGE_ORDER,
-  type BudgetProgressStage,
-  type DataProgress,
 } from "~/constants/progress-stages";
+import type {
+  BudgetProgressStage,
+  DataProgress,
+  ProgressMeta,
+} from "~/types/progress";
 
 const isKnownStage = (
   stage: BudgetProgressStage | null | undefined
@@ -16,37 +19,72 @@ const isKnownDataProgress = (
 ): value is DataProgress =>
   !!value && Object.hasOwn(DATA_PROGRESS_LABELS, value);
 
-export function calculateProgressPercentage(
-  currentStage: BudgetProgressStage | null | undefined
-): number {
-  if (!isKnownStage(currentStage)) return 0;
+export const getStageMeta = (
+  stage: BudgetProgressStage | null | undefined,
+): ProgressMeta => {
+  if (!isKnownStage(stage)) {
+    return {
+      stage,
+      index: -1,
+      percentage: 0,
+      label: "未知階段",
+      isValid: false,
+    };
+  }
 
-  const currentIndex = PROGRESS_STAGE_ORDER.indexOf(currentStage);
+  const index = PROGRESS_STAGE_ORDER.indexOf(stage);
   const totalStages = PROGRESS_STAGE_ORDER.length;
+  const percentage = totalStages
+    ? Math.round(((index + 1) / totalStages) * 100)
+    : 0;
 
-  if (currentIndex === -1 || totalStages === 0) return 0;
+  return {
+    stage,
+    index,
+    percentage,
+    label: PROGRESS_STAGE_LABELS[stage],
+    isValid: true,
+  };
+};
 
-  const percentage = ((currentIndex + 1) / totalStages) * 100;
-  return Math.round(percentage);
-}
-
-export function formatProgressText(
+export const buildProgressDisplay = (
   year: number | null | undefined,
-  dataProgress: string | null | undefined
-): string {
-  if (!year) return "載入中...";
+  stage: BudgetProgressStage | null | undefined,
+  dataProgress: string | null | undefined,
+) => {
+  const meta = getStageMeta(stage);
 
   const progressLabel = isKnownDataProgress(dataProgress)
     ? DATA_PROGRESS_LABELS[dataProgress]
     : "進行中";
 
-  return `${year} 年度中央政府總預算${progressLabel}`;
+  const text = year
+    ? `${year} 年度中央政府總預算${progressLabel}`
+    : "載入中...";
+
+  return {
+    text,
+    percentage: meta.percentage,
+    stageLabel: meta.label,
+    stageMeta: meta,
+  };
+};
+
+export function calculateProgressPercentage(
+  currentStage: BudgetProgressStage | null | undefined,
+): number {
+  return getStageMeta(currentStage).percentage;
+}
+
+export function formatProgressText(
+  year: number | null | undefined,
+  dataProgress: string | null | undefined,
+): string {
+  return buildProgressDisplay(year, null, dataProgress).text;
 }
 
 export function getProgressStageLabel(
-  stage: BudgetProgressStage | null | undefined
+  stage: BudgetProgressStage | null | undefined,
 ): string {
-  if (!isKnownStage(stage)) return "未知階段";
-
-  return PROGRESS_STAGE_LABELS[stage];
+  return getStageMeta(stage).label;
 }

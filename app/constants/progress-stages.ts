@@ -1,3 +1,7 @@
+import type { BudgetProgressStage, DataProgress } from "~/types/progress";
+
+export type { BudgetProgressStage, DataProgress };
+
 export const BUDGET_PROGRESS_STAGES = {
   GOVERNMENT_PROPOSED: "government-proposed",
   COMMITTEE_REVIEW: "committee-review",
@@ -5,10 +9,7 @@ export const BUDGET_PROGRESS_STAGES = {
   PLENARY_DECISION: "plenary-decision",
   FINAL_REVIEWED: "final-reviewed",
   PRESIDENTIAL_PROMULGATION: "presidential-promulgation",
-} as const;
-
-export type BudgetProgressStage =
-  (typeof BUDGET_PROGRESS_STAGES)[keyof typeof BUDGET_PROGRESS_STAGES];
+} as const satisfies Record<string, BudgetProgressStage>;
 
 export const PROGRESS_STAGE_LABELS: Record<BudgetProgressStage, string> = {
   [BUDGET_PROGRESS_STAGES.GOVERNMENT_PROPOSED]: "中央政府提出預算",
@@ -28,9 +29,7 @@ export const PROGRESS_STAGE_ORDER: BudgetProgressStage[] = [
   BUDGET_PROGRESS_STAGES.PRESIDENTIAL_PROMULGATION,
 ];
 
-export const DATA_PROGRESS_LABELS = {
+export const DATA_PROGRESS_LABELS: Record<DataProgress, string> = {
   completed: "完成",
   "in-progress": "審議中",
-} as const;
-
-export type DataProgress = keyof typeof DATA_PROGRESS_LABELS;
+};
