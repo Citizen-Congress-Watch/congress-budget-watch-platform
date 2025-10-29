@@ -172,15 +172,15 @@ const Visualization = () => {
     if (mode !== "amount") return undefined;
     return (node) => {
       if (!node.children?.length) {
-        return 6;
+        return 10;
       }
       if (node.depth === 0) {
-        return 18;
+        return 20;
       }
       if (node.depth === 1) {
-        return 32;
+        return 36;
       }
-      return 12;
+      return 18;
     };
   }, [mode]);
 

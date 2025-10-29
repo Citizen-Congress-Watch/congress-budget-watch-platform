@@ -1,6 +1,5 @@
 import * as d3 from "d3";
-import { useEffect, useMemo, useRef, useCallback } from "react";
-import { FROZEN_PATH_D } from "~/constants/svg-paths";
+import { useEffect, useMemo, useRef } from "react";
 import type { NodeDatum } from "./helpers";
 
 const ANIMATION_CONFIG = {
@@ -59,6 +58,40 @@ const findLargestChild = (
   }, node.children[0]);
 };
 
+const WAVE_STROKE_WIDTH = 6;
+const WAVE_SAMPLES_MULTIPLIER = 6;
+
+const getWaveCountForRadius = (radius: number) => {
+  if (radius < 60) return 8;
+  if (radius < 120) return 14;
+  return 20;
+};
+
+const getAmplitudeForRadius = (radius: number) => {
+  if (radius < 60) return 0.06;
+  if (radius < 120) return 0.04;
+  return 0.025;
+};
+
+const createScallopedPath = (radius: number) => {
+  const waveCount = getWaveCountForRadius(radius);
+  const amplitudeRatio = getAmplitudeForRadius(radius);
+  const amplitude = radius * amplitudeRatio;
+  const samples = Math.max(32, Math.round(waveCount * WAVE_SAMPLES_MULTIPLIER));
+  let path = "";
+
+  for (let i = 0; i <= samples; i++) {
+    const t = (i / samples) * Math.PI * 2;
+    const offset = Math.sin(t * waveCount) * amplitude;
+    const r = radius + offset;
+    const x = r * Math.cos(t);
+    const y = r * Math.sin(t);
+    path += i === 0 ? `M ${x.toFixed(3)} ${y.toFixed(3)}` : ` L ${x.toFixed(3)} ${y.toFixed(3)}`;
+  }
+
+  return `${path} Z`;
+};
+
 const CirclePackChart = ({
   data,
   width: customWidth = 720,
@@ -68,20 +101,9 @@ const CirclePackChart = ({
 }: CirclePackChartProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const DEFAULT_CHART_WIDTH = 720;
-  const FROZEN_PATH_BASE = 55;
-  const FROZEN_OUTER_SCALE = 1.2;
-  const FROZEN_INNER_SCALE = 1.13;
-  const FROZEN_TRANSLATE_X = -26.5;
-  const FROZEN_TRANSLATE_Y = -27.5;
   const LABEL_CHILDREN_OFFSET_FACTOR = 0.88;
   const HOVER_STROKE_WIDTH = 2;
   const BASE_STROKE_WIDTH = 1;
-
-  const createFrozenTransform = useCallback(
-    (radius: number, scale: number, zoomFactor = 1) =>
-      `scale(${((radius * zoomFactor * 2) / FROZEN_PATH_BASE) * scale}) translate(${FROZEN_TRANSLATE_X}, ${FROZEN_TRANSLATE_Y})`,
-    [FROZEN_PATH_BASE, FROZEN_TRANSLATE_X, FROZEN_TRANSLATE_Y]
-  );
 
   const {
     root,
@@ -159,6 +181,7 @@ const CirclePackChart = ({
         `max-width: 100%; height: auto; display: block; cursor: default;`
       );
 
+
     const nodesData: d3.HierarchyCircularNode<NodeDatum>[] = root
       .descendants()
       .slice(1) as d3.HierarchyCircularNode<NodeDatum>[];
@@ -174,59 +197,61 @@ const CirclePackChart = ({
       .style("cursor", (d) =>
         d.data.id ? "pointer" : d.children ? "pointer" : "default"
       )
-      .on("mouseover", function () {
-        d3
-          .select(this)
-          .select("circle")
-          .attr("stroke-width", HOVER_STROKE_WIDTH);
+      .on("mouseover", function (_, d) {
+        const selection = d3.select(this);
+        if (d.data.isFrozen) {
+          selection
+            .selectAll<SVGPathElement, d3.HierarchyCircularNode<NodeDatum>>(
+              ".frozen-wave"
+            )
+            .attr("stroke-width", WAVE_STROKE_WIDTH + 1.5);
+        } else {
+          selection
+            .selectAll<SVGCircleElement, d3.HierarchyCircularNode<NodeDatum>>(
+              ".node-base-circle"
+            )
+            .attr("stroke-width", HOVER_STROKE_WIDTH);
+        }
       })
-      .on("mouseout", function () {
-        d3
-          .select(this)
-          .select("circle")
-          .attr("stroke-width", BASE_STROKE_WIDTH);
+      .on("mouseout", function (_, d) {
+        const selection = d3.select(this);
+        if (d.data.isFrozen) {
+          selection
+            .selectAll<SVGPathElement, d3.HierarchyCircularNode<NodeDatum>>(
+              ".frozen-wave"
+            )
+            .attr("stroke-width", WAVE_STROKE_WIDTH);
+        } else {
+          selection
+            .selectAll<SVGCircleElement, d3.HierarchyCircularNode<NodeDatum>>(
+              ".node-base-circle"
+            )
+            .attr("stroke-width", BASE_STROKE_WIDTH);
+        }
       });
 
     node
-      .filter((d) => !d.data.isFrozen)
       .append("circle")
+      .attr("class", "node-base-circle")
       .attr("r", (d) => d.r)
       .attr(
         "fill",
         (d) => d.data.color ?? (d.children ? color(d.depth) : "white")
       )
-      .attr("stroke", "#000")
+      .attr("stroke", (d) => (d.data.isFrozen ? "none" : "#000"))
       .attr("stroke-width", BASE_STROKE_WIDTH);
 
     const frozenNodes = node.filter((d) => d.data.isFrozen ?? false);
 
-    // Render an inner circle for the original fill color first
-    frozenNodes
-      .append("circle")
-      .attr("r", (d) => d.r)
-      .attr(
-        "fill",
-        (d) => d.data.color ?? (d.children ? color(d.depth) : "white")
-      );
-
     frozenNodes
       .append("path")
-      .attr("class", "frozen-border frozen-border--outer")
-      .attr("d", FROZEN_PATH_D)
-      .attr("fill", "#FF43D3")
-      .attr("transform", (d) =>
-        createFrozenTransform(d.r, FROZEN_OUTER_SCALE)
-      );
-
-    // Layer 2: Inner border (same color as circle) - creates the thin border effect
-    frozenNodes
-      .append("path")
-      .attr("class", "frozen-border frozen-border--inner")
-      .attr("d", FROZEN_PATH_D)
-      .attr("fill", (d) => d.data.color ?? "#6B7FFF")
-      .attr("transform", (d) =>
-        createFrozenTransform(d.r, FROZEN_INNER_SCALE)
-      );
+      .attr("class", "frozen-wave")
+      .attr("fill", "none")
+      .attr("stroke", "#ff40c8")
+      .attr("stroke-width", WAVE_STROKE_WIDTH)
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-linecap", "round")
+      .attr("d", (d) => createScallopedPath(d.r));
 
     const label = svg
       .append("g")
@@ -239,7 +264,7 @@ const CirclePackChart = ({
       .join("text")
       .style("fill-opacity", (d) => (d.parent === root ? "1" : "0"))
       .style("display", (d) => (d.parent === root ? "inline" : "none"))
-      .style("font-size", (d) => `${Math.max(10, Math.min(16, d.r / 5))}px`)
+      .style("font-size", (d) => `${Math.max(10, Math.min(32, d.r / 5))}px`)
       .style("font-family", "sans-serif")
       .each(function (this: SVGTextElement, d) {
         const textSel = d3.select<
@@ -354,24 +379,22 @@ const CirclePackChart = ({
         (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`
       );
 
-      node
-        .filter((d) => !d.data.isFrozen)
-        .select("circle")
+     node
+       .selectAll<SVGCircleElement, d3.HierarchyCircularNode<NodeDatum>>(
+         ".node-base-circle"
+       )
         .attr("r", (d) => d.r * k)
-        .attr("stroke-width", BASE_STROKE_WIDTH);
+        .attr("stroke-width", (d) =>
+          d.data.isFrozen ? 0 : BASE_STROKE_WIDTH
+        )
+        .attr("stroke", (d) => (d.data.isFrozen ? "none" : "#000"));
 
-      const frozenNodes = node.filter((d) => d.data.isFrozen ?? false);
-      frozenNodes
-        .select<SVGPathElement>(".frozen-border--outer")
-        .attr("transform", (d) =>
-          createFrozenTransform(d.r, FROZEN_OUTER_SCALE, k)
-        );
-      frozenNodes
-        .select<SVGPathElement>(".frozen-border--inner")
-        .attr("transform", (d) =>
-          createFrozenTransform(d.r, FROZEN_INNER_SCALE, k)
-        );
-      frozenNodes.select("circle").attr("r", (d) => d.r * k);
+      node
+        .selectAll<SVGPathElement, d3.HierarchyCircularNode<NodeDatum>>(
+          ".frozen-wave"
+        )
+        .attr("d", (d) => createScallopedPath(d.r * k))
+        .attr("stroke-width", WAVE_STROKE_WIDTH);
     };
 
     const applyZoomTransform = (transform: d3.ZoomTransform) => {
@@ -425,6 +448,14 @@ const CirclePackChart = ({
     ) => {
       const shouldAnimate =
         animationsEnabled && duration !== undefined && duration > 0;
+      const resolveVisibility = (
+        node: d3.HierarchyCircularNode<NodeDatum>,
+      ): boolean => {
+        if (targetFocus == null) {
+          return node.parent === root;
+        }
+        return node.parent === targetFocus || node === targetFocus;
+      };
 
       if (shouldAnimate) {
         label
@@ -433,17 +464,13 @@ const CirclePackChart = ({
           .duration(duration)
           .ease(d3.easeCubicOut)
           .style("fill-opacity", (dd) => {
-            if (!targetFocus) return "0";
-            return dd.parent === targetFocus || dd === targetFocus ? "1" : "0";
+            return resolveVisibility(dd) ? "1" : "0";
           })
           .on("start", function () {
             const currentDatum = d3.select(
               this as SVGTextElement
             ).datum() as d3.HierarchyCircularNode<NodeDatum>;
-            const shouldShow =
-              targetFocus != null &&
-              (currentDatum.parent === targetFocus ||
-                currentDatum === targetFocus);
+            const shouldShow = resolveVisibility(currentDatum);
             if (shouldShow) {
               (this as SVGTextElement).style.display = "inline";
             }
@@ -452,10 +479,7 @@ const CirclePackChart = ({
             const currentDatum = d3.select(
               this as SVGTextElement
             ).datum() as d3.HierarchyCircularNode<NodeDatum>;
-            const shouldShow =
-              targetFocus != null &&
-              (currentDatum.parent === targetFocus ||
-                currentDatum === targetFocus);
+            const shouldShow = resolveVisibility(currentDatum);
             if (!shouldShow) {
               (this as SVGTextElement).style.display = "none";
             }
@@ -464,13 +488,10 @@ const CirclePackChart = ({
         label
           .interrupt()
           .style("fill-opacity", (dd) => {
-            if (!targetFocus) return "0";
-            return dd.parent === targetFocus || dd === targetFocus ? "1" : "0";
+            return resolveVisibility(dd) ? "1" : "0";
           })
           .style("display", (dd) => {
-            const shouldShow =
-              targetFocus != null &&
-              (dd.parent === targetFocus || dd === targetFocus);
+            const shouldShow = resolveVisibility(dd);
             return shouldShow ? "inline" : "none";
           });
       }
@@ -654,11 +675,8 @@ const CirclePackChart = ({
     height,
     color,
     onNodeClick,
-    createFrozenTransform,
     BASE_STROKE_WIDTH,
     HOVER_STROKE_WIDTH,
-    FROZEN_OUTER_SCALE,
-    FROZEN_INNER_SCALE,
     LABEL_CHILDREN_OFFSET_FACTOR,
     initialFocus,
     animations.focus,

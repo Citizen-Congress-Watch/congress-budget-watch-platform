@@ -14,6 +14,16 @@ type DepartmentVisualizationProps = {
   padding?: CirclePackPadding;
 };
 
+const DEFAULT_PADDING: CirclePackPadding = (node) => {
+  if (!node.children?.length) {
+    return 18;
+  }
+  if (node.depth === 0) {
+    return 26;
+  }
+  return 22;
+};
+
 export const DepartmentVisualization = ({
   data,
   width = 928,
@@ -25,6 +35,11 @@ export const DepartmentVisualization = ({
   const categorizedData = useMemo(
     () => transformedData ?? transformToCategorizedData(data, mode),
     [data, mode, transformedData],
+  );
+
+  const paddingValue = useMemo(
+    () => padding ?? DEFAULT_PADDING,
+    [padding],
   );
 
   const categories = Object.keys(categorizedData);
@@ -53,7 +68,7 @@ export const DepartmentVisualization = ({
               data={chartData}
               width={width}
               height={width}
-              padding={padding}
+              padding={paddingValue}
               onNodeClick={onNodeClick}
             />
           ) : (
