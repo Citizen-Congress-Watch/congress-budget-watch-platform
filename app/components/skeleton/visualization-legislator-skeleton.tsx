@@ -4,7 +4,7 @@ type VisualizationLegislatorSkeletonProps = {
 
 const DesktopSkeleton = () => (
   <div className="animate-pulse">
-    <div className="flex flex-col items-center gap-y-6 px-3 md:mx-auto md:max-w-[800px]">
+    <div className="flex flex-col items-center gap-y-6 px-3 md:mx-auto md:max-w-visualization-body">
       <div className="self-start h-4 w-24 rounded bg-gray-200" />
       <div className="flex flex-col items-center gap-y-2">
         <div className="h-6 w-32 rounded bg-gray-200" />

@@ -2,6 +2,7 @@ import Select, { type SingleValue } from "react-select";
 import { useMemo } from "react";
 import { DropdownIndicator } from "~/components/budgets-selector";
 import { sortOptions } from "~/constants/options";
+import { BRAND_PRIMARY } from "~/constants/colors";
 
 type SortToolbarProps = {
   selectedValue: string;
@@ -49,11 +50,11 @@ const SortToolbar: React.FC<SortToolbarProps> = ({
           indicatorSeparator: () => ({ display: "none" }),
           singleValue: (base) => ({
             ...base,
-            color: "#3E51FF",
+            color: BRAND_PRIMARY,
           }),
           option: (base, state) => ({
             ...base,
-            color: state.isSelected ? "#3E51FF" : base.color,
+            color: state.isSelected ? BRAND_PRIMARY : base.color,
           }),
         }}
       />

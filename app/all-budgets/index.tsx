@@ -41,6 +41,11 @@ import useDebounce from "~/hooks/useDebounce";
 import { SEARCH_DEBOUNCE_DELAY } from "~/constants/config";
 import { sortOptions } from "~/constants/options";
 import { find } from "lodash";
+import {
+  BRAND_ACCENT,
+  SURFACE_BASE,
+  SURFACE_ROSE_SOFT,
+} from "~/constants/colors";
 
 type YearOptionType = { value: number | null; label: string };
 
@@ -105,7 +110,7 @@ export const AllBudgets = () => {
     () => ({
       control: (provided) => ({
         ...provided,
-        backgroundColor: "#E9808E",
+        backgroundColor: BRAND_ACCENT,
         border: "2px solid black",
         borderBottom: "0",
         borderRadius: "0.375rem 0.375rem 0 0", // rounded-t-md
@@ -131,21 +136,21 @@ export const AllBudgets = () => {
       }),
       dropdownIndicator: (provided) => ({
         ...provided,
-        color: "#f6f6f6",
+        color: SURFACE_BASE,
         padding: "8px",
         "&:hover": {
-          color: "#f6f6f6",
+          color: SURFACE_BASE,
         },
       }),
       singleValue: (provided) => ({
         ...provided,
-        color: "#f6f6f6",
+        color: SURFACE_BASE,
         fontWeight: "bold",
         fontSize: "16px",
       }),
       placeholder: (provided) => ({
         ...provided,
-        color: "#f6f6f6",
+        color: SURFACE_BASE,
         fontWeight: "bold",
         fontSize: "16px",
       }),
@@ -159,9 +164,9 @@ export const AllBudgets = () => {
       option: (provided, state) => ({
         ...provided,
         backgroundColor: state.isSelected
-          ? "#E9808E"
+          ? BRAND_ACCENT
           : state.isFocused
-            ? "#fde2e5"
+            ? SURFACE_ROSE_SOFT
             : "white",
         color: state.isSelected ? "white" : "black",
         fontWeight: "bold",
@@ -344,7 +349,7 @@ export const AllBudgets = () => {
             alt="magnifier eye logo"
             className="bg-red absolute -top-[31.5px] z-10 h-[63px] w-[55px]"
           />
-          <div className="absolute -top-[31.5px] h-[63px] w-[55px] bg-[#F6F6F6]" />
+          <div className="absolute -top-[31.5px] h-[63px] w-[55px] bg-surface-base" />
         </div>
         {/* title end */}
 
@@ -360,7 +365,7 @@ export const AllBudgets = () => {
             placeholder="選擇年份"
           />
         </div>
-        <section className="mb-2 flex w-full justify-center text-lg font-bold text-[#3E51FF] md:hidden">
+        <section className="mb-2 flex w-full justify-center text-lg font-bold text-brand-primary md:hidden">
           <p>最新進度</p>
         </section>
         <div className="mb-5 flex h-fit w-full items-center justify-center md:hidden">

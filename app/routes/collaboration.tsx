@@ -39,17 +39,17 @@ export default function Collaboration() {
         </h1>
         <div className="text-center text-sm leading-none font-bold">
           <span>
-            <span className="text-[#E9808E]">{stats.recognized} 已辨識</span> /{" "}
+            <span className="text-brand-accent">{stats.recognized} 已辨識</span> /{" "}
             {stats.unrecognized} 未辨識
           </span>
         </div>
         <div className="flex w-full items-center justify-between gap-4 md:max-w-sm">
           <img src={QRCode} alt="LINE QR Code" className="size-32" />
           <div className="flex h-24 flex-col justify-between text-sm font-bold">
-            <p className="text-left leading-tight text-[#2E982E]">
+            <p className="text-left leading-tight text-success">
               掃描 QR Code 成為 LINE 好友，就可以讓機器人替你協作辨識文件上傳！
             </p>
-            <p className="rounded-md border border-[#2E982E] bg-transparent p-2 text-center leading-none text-[#2E982E]">
+            <p className="rounded-md border border-success bg-transparent p-2 text-center leading-none text-success">
               教學步驟
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function Collaboration() {
         <div className="flex w-full justify-center gap-4">
           <button
             onClick={() => setActiveTab("steps")}
-            className={`rounded-sm border border-black bg-[#2E982E] p-2.5 text-base leading-none font-bold text-white`}
+            className={`rounded-sm border border-black bg-success p-2.5 text-base leading-none font-bold text-white`}
           >
             教學步驟
           </button>

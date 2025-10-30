@@ -2,7 +2,7 @@ const Footer = () => {
   return (
     <footer className="bg-footer flex h-[176px] w-full flex-col justify-center gap-3 p-10 md:mx-auto md:h-32 md:gap-4">
       {/* Attribution Text */}
-      <p className="text-center text-xs text-[#959595] md:text-sm">
+      <p className="text-center text-xs text-neutral-200 md:text-sm">
         此計畫由
         <a
           href="https://www.freiheit.org/"
@@ -34,16 +34,16 @@ const Footer = () => {
       </p>
 
       {/* Links */}
-      <div className="flex items-center justify-center gap-2 text-xs text-[#37C6FF] md:text-sm">
+      <div className="text-info-accent flex items-center justify-center gap-2 text-xs md:text-sm">
         <a
           href="https://data.gov.tw"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:underline"
+          className="text-info-accenthover:underline"
         >
           開放資料
         </a>
-        <span className="text-[#959595]">|</span>
+        <span className="text-neutral-200">|</span>
         <a
           href="https://github.com/readr-media/congress-budget"
           target="_blank"

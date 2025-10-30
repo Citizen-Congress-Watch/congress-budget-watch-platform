@@ -80,16 +80,16 @@ export default function Home() {
               className="h-auto w-full max-w-xl"
             />
             {isLoading ? (
-              <div className="-mt-1 flex w-full max-w-[600px] items-center justify-center rounded-lg bg-gray-300 p-2 text-gray-600">
+              <div className="-mt-1 flex w-full max-w-banner items-center justify-center rounded-lg bg-gray-300 p-2 text-gray-600">
                 載入審議進度中...
               </div>
             ) : isError ? (
-              <div className="-mt-1 flex w-full max-w-[600px] items-center justify-center rounded-lg bg-red-100 p-2 text-red-600">
+              <div className="-mt-1 flex w-full max-w-banner items-center justify-center rounded-lg bg-red-100 p-2 text-red-600">
                 審議進度載入失敗，請稍後再試
               </div>
             ) : latestBudgetYear ? (
-              <div className="-mt-1 flex w-full max-w-[600px] items-center justify-start rounded-lg bg-[#3E51FF] pl-1 text-white">
-                <p className="mr-2 hidden w-[160px] rounded-lg bg-white px-3.5 text-[#3E51FF] md:flex">
+              <div className="-mt-1 flex w-full max-w-banner items-center justify-start rounded-lg bg-brand-primary pl-1 text-white">
+                <p className="mr-2 hidden w-[160px] rounded-lg bg-white px-3.5 text-brand-primary md:flex">
                   最新審議進度
                 </p>
                 <div className="flex w-full items-center justify-between">
@@ -100,7 +100,7 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              <div className="-mt-1 flex w-full max-w-[600px] items-center justify-center rounded-lg bg-gray-300 p-2 text-gray-600">
+              <div className="-mt-1 flex w-full max-w-banner items-center justify-center rounded-lg bg-gray-300 p-2 text-gray-600">
                 暫無審議進度資料
               </div>
             )}
@@ -122,13 +122,13 @@ export default function Home() {
               key={button.label}
               to={button.href}
               className={({ isActive }) =>
-                `rounded-lg border-[3px] border-[#E9808E] px-6 py-4 text-center text-lg font-medium transition-colors ${
+                `rounded-lg border-3 border-brand-accent px-6 py-4 text-center text-lg font-medium transition-colors ${
                   index > 0 ? "-mt-[10px] md:mt-0" : ""
                 } ${
                   isActive
-                    ? "bg-[#E9808E] text-white"
-                    : "bg-white text-[#E9808E] hover:bg-[#E9808E] hover:text-white"
-                } focus:ring-2 focus:ring-[#E9808E] focus:ring-offset-2 focus:outline-none`
+                    ? "bg-brand-accent text-white"
+                    : "bg-white text-brand-accent hover:bg-brand-accent hover:text-white"
+                } focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:outline-none`
               }
             >
               {button.label}

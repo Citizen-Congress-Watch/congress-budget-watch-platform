@@ -75,7 +75,7 @@ const TableRow = ({
   children: React.ReactNode;
 }) => (
   <div className="flex flex-col md:w-20 md:max-w-[138px]">
-    <p className="flex w-full items-center justify-center border-y-2 bg-white font-bold md:h-[76px] md:border-y-2 md:bg-[#C7C7C7]">
+    <p className="flex w-full items-center justify-center border-y-2 bg-white font-bold md:h-[76px] md:border-y-2 md:bg-neutral-400">
       {label}
     </p>
     <div className="flex w-full items-center justify-start border-b-2 py-3 md:border-b-0">
@@ -106,7 +106,7 @@ const ProposalContent = ({ content }: { content: string; itemId: string }) => (
               </div>
               <div className="mt-4 flex justify-center">
                 <Dialog.Close asChild>
-                  <button className="rounded bg-[#3E51FF] px-3 py-1 text-white">
+                  <button className="rounded bg-brand-primary px-3 py-1 text-white">
                     關閉
                   </button>
                 </Dialog.Close>
@@ -122,16 +122,16 @@ const ProposalContent = ({ content }: { content: string; itemId: string }) => (
 const BudgetTableRow = ({ item }: { item: BudgetTableData }) => {
   return (
     <div className="flex flex-col md:w-full md:flex-row">
-      <div className="flex items-center justify-start gap-x-2 border-y-2 bg-[#C7C7C7] py-2 md:min-w-16 md:flex-col md:border-y-0 md:bg-[#F5F5F5] md:py-0">
-        <span className="flex items-center font-bold md:flex md:h-[76px] md:border-y-2 md:bg-[#C7C7C7] md:px-4 md:py-5">
+      <div className="flex items-center justify-start gap-x-2 border-y-2 bg-neutral-400 py-2 md:min-w-16 md:flex-col md:border-y-0 md:bg-surface-subtle md:py-0">
+        <span className="flex items-center font-bold md:flex md:h-[76px] md:border-y-2 md:bg-neutral-400 md:px-4 md:py-5">
           編號
         </span>
-        <span className="md:text-md font-bold text-[#D18081] md:mt-4 md:bg-[#F5F5F5]">
+        <span className="md:text-md font-bold text-warning md:mt-4 md:bg-surface-subtle">
           {item.id}
         </span>
         <NavLink
           to={`/budget/${item.id}`}
-          className="ml-2 text-xs text-[#3E51FF] md:ml-0 md:bg-[#F5F5F5]"
+          className="ml-2 text-xs text-brand-primary md:ml-0 md:bg-surface-subtle"
         >
           [查看單頁]
         </NavLink>
@@ -148,16 +148,16 @@ const BudgetTableRow = ({ item }: { item: BudgetTableData }) => {
       </TableRow>
 
       <div className="grid grid-cols-[1fr_1fr_2fr_2fr] grid-rows-[76px] justify-items-center text-center">
-        <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:border-y-2 md:bg-[#C7C7C7] md:p-0">
+        <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:border-y-2 md:bg-neutral-400 md:p-0">
           提案
         </p>
-        <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:w-[120px] md:border-y-2 md:bg-[#C7C7C7] md:p-0">
+        <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:w-[120px] md:border-y-2 md:bg-neutral-400 md:p-0">
           審議結果
         </p>
-        <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:border-y-2 md:bg-[#C7C7C7] md:p-0">
+        <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:border-y-2 md:bg-neutral-400 md:p-0">
           預算金額
         </p>
-        <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:border-y-2 md:bg-[#C7C7C7] md:p-0">
+        <p className="flex size-full items-center justify-center border-b-2 bg-white px-2 py-3.5 font-bold md:border-y-2 md:bg-neutral-400 md:p-0">
           減列/凍結金額
         </p>
         <p className="w-full py-2">{item.proposalType}</p>
@@ -216,11 +216,11 @@ const DesktopTableRow = ({ item }: { item: BudgetTableData }) => {
       <div className="flex flex-col items-start justify-start pt-3 text-sm">
         <NavLink
           to={`/budget/${item.id}`}
-          className="text-[#D18081] hover:underline"
+          className="text-warning hover:underline"
         >
           {item.id}
         </NavLink>
-        <NavLink to={`/budget/${item.id}`} className="text-xs text-[#3E51FF]">
+        <NavLink to={`/budget/${item.id}`} className="text-xs text-brand-primary">
           [查看單頁]
         </NavLink>
       </div>
@@ -262,7 +262,7 @@ const DesktopTableRow = ({ item }: { item: BudgetTableData }) => {
                 </div>
                 <div className="mt-4 flex justify-center">
                   <Dialog.Close asChild>
-                    <button className="rounded bg-[#3E51FF] px-3 py-1 text-white">
+                    <button className="rounded bg-brand-primary px-3 py-1 text-white">
                       關閉
                     </button>
                   </Dialog.Close>

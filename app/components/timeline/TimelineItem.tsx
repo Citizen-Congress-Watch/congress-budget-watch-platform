@@ -29,7 +29,7 @@ export const TimelineItem = ({ date, title, isFirst }: TimelineItemProps) => {
               <span className="align-middle">{title}</span>
             </div>
           </div>
-          <button className="ml-4 shrink-0 rounded-lg border border-black bg-white p-1 text-sm font-medium text-[#868686] md:max-w-[44px] md:px-0 md:text-xs">
+          <button className="ml-4 shrink-0 rounded-lg border border-black bg-white p-1 text-sm font-medium text-neutral-500 md:max-w-[44px] md:px-0 md:text-xs">
             看版本變更
           </button>
         </div>

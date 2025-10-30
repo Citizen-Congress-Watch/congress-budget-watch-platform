@@ -161,7 +161,7 @@ const VisualizationLegislator = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-center justify-center px-3 md:mx-auto md:max-w-[800px]">
+      <div className="flex flex-col items-center justify-center px-3 md:mx-auto md:max-w-visualization-body">
         <Link to="/visualization">{"<"} 回到視覺化主頁</Link>
         <div className="mt-4 flex flex-col items-center justify-center gap-y-2">
           <p>{person?.name}</p>
@@ -172,7 +172,7 @@ const VisualizationLegislator = () => {
         <div className="mt-6 flex items-center gap-x-4">
           <button
             className={`rounded border-2 border-black px-2.5 ${
-              selectedType === "proposal" ? "bg-[#3E51FF] text-white" : ""
+              selectedType === "proposal" ? "bg-brand-primary text-white" : ""
             }`}
             onClick={() => setSelectedType("proposal")}
           >
@@ -181,7 +181,7 @@ const VisualizationLegislator = () => {
           <button
             className={`rounded border-2 border-black px-2.5 ${
               selectedType === "proposal-cosign"
-                ? "bg-[#3E51FF] text-white"
+                ? "bg-brand-primary text-white"
                 : ""
             }`}
             onClick={() => setSelectedType("proposal-cosign")}
@@ -199,7 +199,7 @@ const VisualizationLegislator = () => {
                 value="amount"
                 checked={mode === "amount"}
                 onChange={() => setMode("amount")}
-                className="h-4 w-4 accent-[#3E51FF]"
+                className="h-4 w-4 accent-brand-primary"
               />
               <span>依金額（刪減/凍結）</span>
             </label>
@@ -210,7 +210,7 @@ const VisualizationLegislator = () => {
                 value="count"
                 checked={mode === "count"}
                 onChange={() => setMode("count")}
-                className="h-4 w-4 accent-[#3E51FF]"
+                className="h-4 w-4 accent-brand-primary"
               />
               <span>依數量（凍結案/刪減案/建議案）</span>
             </label>
@@ -220,21 +220,21 @@ const VisualizationLegislator = () => {
         <div className="mt-4 flex flex-col items-center justify-center rounded-lg border-2 p-2.5">
           <p>
             總共刪減{" "}
-            <span className="text-[#E9808E]">{formattedReductionAmount}</span>
+            <span className="text-brand-accent">{formattedReductionAmount}</span>
             （
-            <span className="text-[#E9808E]">{reductionProposalsCount}</span>
+            <span className="text-brand-accent">{reductionProposalsCount}</span>
             個提案）
           </p>
           <p>
             凍結{" "}
-            <span className="text-[#E9808E]">{formattedFreezeAmount}</span>
+            <span className="text-brand-accent">{formattedFreezeAmount}</span>
             （
-            <span className="text-[#E9808E]">{freezeProposalsCount}</span>
+            <span className="text-brand-accent">{freezeProposalsCount}</span>
             個提案）
           </p>
           <p>
             主決議提案數：
-            <span className="text-[#E9808E]">{mainResolutionCount}</span>個
+            <span className="text-brand-accent">{mainResolutionCount}</span>個
           </p>
         </div>
         <div className="mt-6">

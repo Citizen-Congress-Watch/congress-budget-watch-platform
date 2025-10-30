@@ -4,7 +4,7 @@ import Image from "./image";
 
 const BudgetHeader = () => {
   return (
-    <div className="sticky flex items-center justify-between border-t-[12px] border-t-[#3E51FF] px-3 pt-2">
+    <div className="sticky flex items-center justify-between border-t-12 border-t-brand-primary px-3 pt-2">
       <NavLink to="/">
         <Image
           src="/image/readr-header.svg"

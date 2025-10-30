@@ -119,7 +119,7 @@ const Pagination: React.FC<PaginationProps> = ({ className = "" }) => {
               disabled={isActive}
               className={`min-w-[36px] rounded-full border-2 px-2 py-1 text-sm font-bold transition-colors ${
                 isActive
-                  ? "cursor-default border-black bg-[#3E51FF] text-white"
+                  ? "cursor-default border-black bg-brand-primary text-white"
                   : "border-black bg-transparent hover:bg-gray-100 active:bg-gray-200"
               }`}
               aria-label={`第 ${page} 頁`}
