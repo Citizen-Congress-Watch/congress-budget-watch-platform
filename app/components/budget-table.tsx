@@ -129,7 +129,7 @@ const BudgetTableRow = ({ item }: { item: BudgetTableData }) => {
         <span className="flex items-center font-bold md:flex md:h-[76px] md:border-y-2 md:bg-neutral-400 md:px-4 md:py-5">
           編號
         </span>
-        <span className="md:text-md font-bold text-warning md:mt-4 md:bg-surface-subtle">
+        <span className="md:text-md font-bold text-budget-warning md:mt-4 md:bg-surface-subtle">
           {item.id}
         </span>
         <NavLink
@@ -219,7 +219,7 @@ const DesktopTableRow = ({ item }: { item: BudgetTableData }) => {
       <div className="flex flex-col items-start justify-start pt-3 text-sm">
         <NavLink
           to={`/budget/${item.id}`}
-          className="text-warning hover:underline"
+          className="text-budget-warning hover:underline"
         >
           {item.id}
         </NavLink>

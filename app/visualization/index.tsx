@@ -181,27 +181,27 @@ const Visualization = () => {
           <div>
             <p>
               總共刪減{" "}
-              <span className="text-brand-accent">
+              <span className="text-budget-accent">
                 {formattedReductionAmount}
               </span>
               （
-              <span className="text-brand-accent">
+              <span className="text-budget-accent">
                 {summaryStats.reductionCount}
               </span>
               個提案）
             </p>
             <p>
               凍結{" "}
-              <span className="text-brand-accent">
+              <span className="text-budget-accent">
                 {formattedFreezeAmount}
               </span>
               （
-              <span className="text-brand-accent">{summaryStats.freezeCount}</span>
+              <span className="text-budget-accent">{summaryStats.freezeCount}</span>
               個提案）
             </p>
             <p>
               主決議提案數：
-              <span className="text-brand-accent">
+              <span className="text-budget-accent">
                 {summaryStats.mainResolutionCount}
               </span>
               個

@@ -140,7 +140,7 @@ export default function Home() {
                 `flex min-h-[72px] w-full items-center justify-center rounded-lg border-3 border-brand-accent px-6 py-4 text-center text-lg font-medium transition-colors ${
                   isActive
                     ? "bg-brand-accent text-white"
-                    : "bg-white text-brand-accent hover:bg-brand-accent hover:text-white"
+                    : "bg-white text-budget-accent hover:bg-brand-accent hover:text-white"
                 } focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:outline-none`
               }
             >

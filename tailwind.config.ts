@@ -13,7 +13,7 @@ export default {
           DEFAULT: "#2E982E",
         },
         warning: {
-          DEFAULT: "#D18081",
+          DEFAULT: "#E9808E",
         },
         surface: {
           base: "#F6F6F6",

@@ -74,7 +74,7 @@ const BudgetDetail = () => {
             <div className="relative flex flex-col rounded-lg border-2 bg-surface-base p-5 pb-30">
               <div className="mb-4 flex gap-5 border-b-2 p-3 text-xl font-bold">
                 <p>編號</p>
-                <p className="text-warning">{proposal.id}</p>
+                <p className="text-budget-warning">{proposal.id}</p>
               </div>
               <div className="flex flex-col gap-y-10">
                 {/* row 1 */}
@@ -177,7 +177,7 @@ const BudgetDetail = () => {
                       <p className="w-fit rounded-t-lg border-2 border-black bg-brand-accent px-2.5 py-1 text-white">
                         預算金額
                       </p>
-                      <p className="flex w-fit border-t border-black pt-4 pr-32 font-bold text-brand-accent">
+                      <p className="flex w-fit border-t border-black pt-4 pr-32 font-bold text-budget-accent">
                         {formatNumber(proposal.budget?.budgetAmount)}
                       </p>
                     </div>
@@ -185,7 +185,7 @@ const BudgetDetail = () => {
                       <p className="w-fit rounded-t-lg border-2 border-black bg-brand-accent px-2.5 py-1 text-white">
                         減列金額
                       </p>
-                      <p className="flex w-fit border-t border-black pt-4 pr-[136px] font-bold text-brand-accent">
+                      <p className="flex w-fit border-t border-black pt-4 pr-[136px] font-bold text-budget-accent">
                         {formatNumber(proposal.reductionAmount)}
                       </p>
                     </div>
@@ -193,7 +193,7 @@ const BudgetDetail = () => {
                       <p className="w-fit rounded-t-lg border-2 border-black bg-brand-accent px-2.5 py-1 text-white">
                         凍結金額
                       </p>
-                      <p className="flex border-t border-black pt-4 font-bold text-brand-accent">
+                      <p className="flex border-t border-black pt-4 font-bold text-budget-accent">
                         {formatNumber(proposal.freezeAmount)}
                       </p>
                     </div>
@@ -208,7 +208,7 @@ const BudgetDetail = () => {
                           <p className="w-fit rounded-t-lg border-2 border-black bg-brand-accent px-2.5 py-1 text-white">
                             預算金額
                           </p>
-                          <p className="flex w-fit border-t border-black pt-4 font-bold text-brand-accent md:pr-8 lg:pr-16 xl:pr-32">
+                          <p className="flex w-fit border-t border-black pt-4 font-bold text-budget-accent md:pr-8 lg:pr-16 xl:pr-32">
                             {formatNumber(proposal.budget?.budgetAmount)}
                           </p>
                         </div>
@@ -216,7 +216,7 @@ const BudgetDetail = () => {
                           <p className="w-fit rounded-t-lg border-2 border-black bg-brand-accent px-2.5 py-1 text-white">
                             減列金額
                           </p>
-                          <p className="flex w-fit border-t border-black pt-4 font-bold text-brand-accent md:pr-8 lg:pr-16 xl:pr-32">
+                          <p className="flex w-fit border-t border-black pt-4 font-bold text-budget-accent md:pr-8 lg:pr-16 xl:pr-32">
                             {formatNumber(proposal.reductionAmount)}
                           </p>
                         </div>
@@ -224,7 +224,7 @@ const BudgetDetail = () => {
                           <p className="w-fit rounded-t-lg border-2 border-black bg-brand-accent px-2.5 py-1 text-white">
                             凍結金額
                           </p>
-                          <p className="flex border-t border-black pt-4 pr-[93px] font-bold text-brand-accent">
+                          <p className="flex border-t border-black pt-4 pr-[93px] font-bold text-budget-accent">
                             {formatNumber(proposal.freezeAmount)}
                           </p>
                         </div>
@@ -334,7 +334,7 @@ const BudgetDetail = () => {
         <div className="mt-2 border-2 px-2 py-3">
           <section className="flex gap-6">
             <p>編號</p>
-            <p className="text-warning">{proposal.id}</p>
+              <p className="text-budget-warning">{proposal.id}</p>
           </section>
           <section className="flex gap-10">
             <div className="flex flex-col gap-y-4 font-bold">
@@ -413,13 +413,13 @@ const BudgetDetail = () => {
           <div className="flex gap-x-10">
             <section className="flex flex-col gap-y-4">
               <p className="font-bold">預算金額</p>
-              <p className="text-warning">
+              <p className="text-budget-warning">
                 {formatNumber(proposal.budget?.budgetAmount)}
               </p>
             </section>
             <section className="flex flex-col gap-y-4">
               <p className="font-bold">減列金額</p>
-              <p className="text-warning">
+              <p className="text-budget-warning">
                 {formatNumber(proposal.reductionAmount)}
               </p>
             </section>
@@ -428,7 +428,7 @@ const BudgetDetail = () => {
           <div className="flex gap-x-10">
             <section className="flex flex-col gap-y-4">
               <p className="font-bold">凍結金額</p>
-              <p className="text-warning">
+              <p className="text-budget-warning">
                 {formatNumber(proposal.freezeAmount)}
               </p>
             </section>

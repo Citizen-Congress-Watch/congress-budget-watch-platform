@@ -39,7 +39,7 @@ export default function Collaboration() {
         </h1>
         <div className="text-center text-sm leading-none font-bold">
           <span>
-            <span className="text-brand-accent">{stats.recognized} 已辨識</span> /{" "}
+            <span className="text-budget-accent">{stats.recognized} 已辨識</span> /{" "}
             {stats.unrecognized} 未辨識
           </span>
         </div>

@@ -51,7 +51,7 @@ export const DataProgressMarquee = () => {
 
   return (
     <div className="marquee-container bg-surface-banner py-2">
-      <p className="animate-marquee px-4 text-sm font-medium text-brand-accent md:text-base">
+      <p className="animate-marquee px-4 text-sm font-medium text-budget-accent md:text-base">
         {IN_PROGRESS_MESSAGE}
       </p>
     </div>
