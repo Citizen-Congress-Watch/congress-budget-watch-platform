@@ -4,6 +4,7 @@ import type {
   ProposalProposalTypeType,
 } from "~/graphql/graphql";
 import { ProposalProposalTypeType as ProposalProposalTypeTypeEnum } from "~/graphql/graphql";
+import { mapStageLabel } from "~/utils/stage";
 
 /**
  * Timeline 元件所需的資料格式
@@ -97,9 +98,23 @@ export function formatReducedAndFrozenAmount(
  * 如果沒有 meetings 資料，返回空陣列
  */
 export function meetingsToTimeline(
-  meetings?: Meeting[] | null
+  meetings?: Meeting[] | null,
+  historicalProposals?: Proposal["historicalProposals"]
 ): TimelineItem[] {
   if (!meetings || meetings.length === 0) return [];
+
+  const meetingToHistoricalProposal = new Map<string, string>();
+  (historicalProposals ?? []).forEach((historicalProposal) => {
+    if (!historicalProposal?.id) return;
+    (historicalProposal.meetings ?? []).forEach((historicalMeeting) => {
+      if (historicalMeeting?.id) {
+        meetingToHistoricalProposal.set(
+          historicalMeeting.id,
+          historicalProposal.id
+        );
+      }
+    });
+  });
 
   return meetings.map((meeting, index) => ({
     id: meeting.id || index,
@@ -110,7 +125,10 @@ export function meetingsToTimeline(
           day: "numeric",
         })
       : "日期未定",
-    title: meeting.displayName || meeting.type || "會議",
+    title: mapStageLabel(meeting.type, "會議"),
+    historicalProposalId: meeting.id
+      ? meetingToHistoricalProposal.get(meeting.id)
+      : undefined,
     description: meeting.description || meeting.location || "",
   }));
 }

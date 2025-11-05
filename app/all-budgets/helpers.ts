@@ -4,6 +4,7 @@ import {
   type Proposal,
   type GetPaginatedProposalsQuery,
 } from "~/graphql/graphql";
+import { mapStageLabel } from "~/utils/stage";
 
 import { flow, pick, values, sum, defaultTo, prop, get } from "lodash/fp";
 import {
@@ -40,11 +41,6 @@ const formatProposers = (proposers?: (People | null)[] | null): string =>
     ? proposers.map(formatLegislator).join(" ")
     : "未知提案人";
 
-const stageLabelMap: Record<string, string> = {
-  budget_review: "預算審議",
-  budget_unfreeze: "預算解凍",
-};
-
 type StageCommittee = {
   endDate?: string | Date | null;
 };
@@ -59,11 +55,6 @@ type PaginatedProposal = NonNullable<
 >[number];
 
 type ProposalInput = Proposal | PaginatedProposal;
-
-function toStageLabel(type?: string | null, fallbackStage = "階段"): string {
-  if (!type) return fallbackStage;
-  return stageLabelMap[type] ?? fallbackStage;
-}
 
 function toDate(value: string | Date | null | undefined): Date | null {
   if (!value) return null;
@@ -101,7 +92,7 @@ function meetingsToStage(
 
   if (validMeetings.length === 0) return fallbackStage;
   if (validMeetings.length === 1) {
-    return toStageLabel(validMeetings[0].type, fallbackStage);
+    return mapStageLabel(validMeetings[0].type, fallbackStage);
   }
 
   const meetingWithOpenCommittee = validMeetings.find((meeting) =>
@@ -109,7 +100,7 @@ function meetingsToStage(
   );
 
   if (meetingWithOpenCommittee) {
-    return toStageLabel(meetingWithOpenCommittee.type, fallbackStage);
+    return mapStageLabel(meetingWithOpenCommittee.type, fallbackStage);
   }
 
   const meetingWithLatestEndDate = validMeetings
@@ -136,7 +127,7 @@ function meetingsToStage(
     }, null);
 
   if (meetingWithLatestEndDate) {
-    return toStageLabel(meetingWithLatestEndDate.meeting.type, fallbackStage);
+    return mapStageLabel(meetingWithLatestEndDate.meeting.type, fallbackStage);
   }
 
   return fallbackStage;
