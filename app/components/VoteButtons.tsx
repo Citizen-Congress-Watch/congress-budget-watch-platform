@@ -40,6 +40,13 @@ const VOTE_OPTIONS: { type: ReactionType; label: string }[] = [
   { type: "react_whatever", label: "我不在意" },
 ];
 
+const FEELING_TEXT: Record<ReactionType, string> = {
+  react_good: "讚",
+  react_angry: "生氣",
+  react_disappoint: "失望",
+  react_whatever: "無感",
+};
+
 export function VoteButtons({
   proposal,
   displayMode = "inline",
@@ -177,26 +184,34 @@ export function VoteButtons({
   }
 
   return (
-    <div className="flex justify-center space-x-2">
+    <div className="flex flex-wrap justify-center gap-4">
       {VOTE_OPTIONS.map(({ type, label }) => (
-        <button
+        <div
           key={type}
-          onClick={() => handleVote(type)}
+          className="flex w-[120px] flex-col items-center text-center"
           onMouseEnter={() => setHoveredReaction(type)}
           onMouseLeave={() =>
             setHoveredReaction((current) => (current === type ? null : current))
           }
-          className="flex h-20 w-20 flex-col items-center justify-center rounded-lg p-2 transition-all duration-200 sm:h-24 sm:w-24"
         >
-          <Image
-            src={getReactionIcon(type)}
-            alt={label}
-            className="mb-1 h-8 w-8 sm:h-10 sm:w-10"
-          />
-          <span className="text-xs font-medium sm:text-sm">
+          <p className="text-sm font-medium">我覺得很{FEELING_TEXT[type]}</p>
+          <p className="text-base font-base">
             {formatNumber(voteCounts[type])}
-          </span>
-        </button>
+          </p>
+          <button
+            type="button"
+            onClick={() => handleVote(type)}
+            className={`mt-3 flex w-full items-center justify-center rounded-lg bg-transparent transition-opacity ${
+              selectedReaction === type ? "opacity-100" : "opacity-80"
+            }`}
+          >
+            <Image
+              src={getReactionIcon(type)}
+              alt={label}
+              className="w-[120px] max-w-full"
+            />
+          </button>
+        </div>
       ))}
     </div>
   );

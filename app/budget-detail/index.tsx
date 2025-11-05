@@ -49,6 +49,7 @@ const BudgetDetail = () => {
   const hasImage = !!proposal.budgetImageUrl;
 
   // Prepare display values
+  const budget = proposal.budget;
   const proposerName = proposal.proposers
     ?.map((proposer) => proposer.name)
     .join("、");
@@ -63,6 +64,48 @@ const BudgetDetail = () => {
     proposal.budget?.mediumCategory,
     proposal.budget?.minorCategory
   );
+  const hasBudgetCategory =
+    Boolean(budget?.majorCategory) ||
+    Boolean(budget?.mediumCategory) ||
+    Boolean(budget?.minorCategory);
+  const projectDescription = budget?.projectDescription ?? "";
+  const hasProjectDescription = projectDescription.trim().length > 0;
+  type BudgetWithHistorical = typeof budget & {
+    lastYearLegalBudget?: number | null;
+    lastYearComparison?: number | null;
+  };
+  const budgetWithHistorical = budget as BudgetWithHistorical | null;
+  const lastYearSettlementValue = budget?.lastYearSettlement;
+  const hasLastYearSettlement =
+    lastYearSettlementValue !== null && lastYearSettlementValue !== undefined;
+  const lastYearLegalBudgetValue =
+    budgetWithHistorical?.lastYearLegalBudget ?? null;
+  const hasLastYearLegalBudget =
+    lastYearLegalBudgetValue !== null && lastYearLegalBudgetValue !== undefined;
+  const lastYearComparisonValue =
+    budgetWithHistorical?.lastYearComparison ?? null;
+  const hasLastYearComparison =
+    lastYearComparisonValue !== null && lastYearComparisonValue !== undefined;
+  const shouldShowBudgetInfo =
+    hasBudgetCategory ||
+    hasProjectDescription ||
+    hasLastYearSettlement ||
+    hasLastYearLegalBudget ||
+    hasLastYearComparison;
+  const budgetCategoryDisplay = hasBudgetCategory ? budgetCategory : "N/A";
+  const projectDescriptionDisplay = hasProjectDescription
+    ? projectDescription
+    : "N/A";
+  const lastYearSettlementDisplay = hasLastYearSettlement
+    ? formatNumber(lastYearSettlementValue)
+    : "N/A";
+  const lastYearLegalBudgetDisplay = hasLastYearLegalBudget
+    ? formatNumber(lastYearLegalBudgetValue)
+    : "N/A";
+  const lastYearComparisonDisplay = hasLastYearComparison
+    ? formatNumber(lastYearComparisonValue)
+    : "N/A";
+  const showLastYearSection = ShowLastYearData && shouldShowBudgetInfo;
   const proposalKey = `${proposal.id}-${proposal.react_good}-${proposal.react_angry}-${proposal.react_disappoint}-${proposal.react_whatever}`;
 
   if (isDesktop)
@@ -232,24 +275,26 @@ const BudgetDetail = () => {
                           </p>
                         </div>
                       </div>
-                      <div className="mt-9 flex max-w-5/6 flex-col gap-y-9">
-                        <div className="grow">
-                          <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                            科目/計畫
-                          </p>
-                          <p className="flex border-t border-black pt-4 pr-9">
-                            {budgetCategory}
-                          </p>
+                      {shouldShowBudgetInfo && (
+                        <div className="mt-9 flex max-w-5/6 flex-col gap-y-9">
+                          <div className="grow">
+                            <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                              科目/計畫
+                            </p>
+                            <p className="flex border-t border-black pt-4 pr-9">
+                              {budgetCategoryDisplay}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                              計畫說明
+                            </p>
+                            <p className="flex border-t border-black pt-4 whitespace-pre-wrap">
+                              {projectDescriptionDisplay}
+                            </p>
+                          </div>
                         </div>
-                        <div className="">
-                          <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                            計畫說明
-                          </p>
-                          <p className="flex border-t border-black pt-4 whitespace-pre-wrap">
-                            {proposal.budget?.projectDescription || "N/A"}
-                          </p>
-                        </div>
-                      </div>
+                      )}
                     </div>
                     <div id="right" className="w-5/11">
                       <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
@@ -268,14 +313,14 @@ const BudgetDetail = () => {
                   </section>
                 )}
                 {/* row 5 without image */}
-                {!hasImage && (
+                {!hasImage && shouldShowBudgetInfo && (
                   <section className="flex">
                     <div className="grow">
                       <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
                         科目/計畫
                       </p>
                       <p className="flex border-t border-black pt-4 pr-9">
-                        {budgetCategory}
+                        {budgetCategoryDisplay}
                       </p>
                     </div>
 
@@ -284,20 +329,20 @@ const BudgetDetail = () => {
                         計畫說明
                       </p>
                       <p className="flex border-t border-black pt-4 whitespace-pre-wrap">
-                        {proposal.budget?.projectDescription || "N/A"}
+                        {projectDescriptionDisplay}
                       </p>
                     </div>
                   </section>
                 )}
                 {/* row 6 */}
-                {ShowLastYearData && (
+                {showLastYearSection && (
                   <section className="flex">
                     <div>
                       <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
                         上年度決算
                       </p>
                       <p className="flex w-fit border-t border-black pt-4 pr-[136px] font-bold">
-                        {formatNumber(proposal.budget?.lastYearSettlement)}
+                        {lastYearSettlementDisplay}
                       </p>
                     </div>
                     <div>
@@ -305,7 +350,7 @@ const BudgetDetail = () => {
                         上年度法定預算
                       </p>
                       <p className="flex w-fit border-t border-black pt-4 pr-[136px] font-bold">
-                        N/A
+                        {lastYearLegalBudgetDisplay}
                       </p>
                     </div>
                     <div className="grow">
@@ -313,7 +358,7 @@ const BudgetDetail = () => {
                         與上年度比較
                       </p>
                       <p className="text-brand-primary flex border-t border-black pt-4 font-bold">
-                        N/A
+                        {lastYearComparisonDisplay}
                       </p>
                     </div>
                   </section>
@@ -444,58 +489,62 @@ const BudgetDetail = () => {
               />
             </section>
           </div>
-          <div className="my-4 h-px w-full bg-gray-300" />
-          <div className="flex flex-col gap-y-4">
-            <div className="flex justify-between">
-              <div className="flex items-center gap-x-2">
-                <p className="font-bold">科目/計畫</p>
-                <button>
-                  <Image
-                    src="/icon/explain-term.svg"
-                    alt="explain-term"
-                    className="size-5"
-                  />
-                </button>
+          {shouldShowBudgetInfo && (
+            <>
+              <div className="my-4 h-px w-full bg-gray-300" />
+              <div className="flex flex-col gap-y-4">
+                <div className="flex justify-between">
+                  <div className="flex items-center gap-x-2">
+                    <p className="font-bold">科目/計畫</p>
+                    <button>
+                      <Image
+                        src="/icon/explain-term.svg"
+                        alt="explain-term"
+                        className="size-5"
+                      />
+                    </button>
+                  </div>
+                  <a
+                    href="#"
+                    className="text-brand-primary underline"
+                    target="_blank"
+                  >
+                    預算書連結
+                  </a>
+                </div>
+                <p>{budgetCategoryDisplay}</p>
+                <div className="flex items-center gap-x-2">
+                  <p className="font-bold">計畫說明</p>
+                  <button>
+                    <Image
+                      src="/icon/explain-term.svg"
+                      alt="explain-term"
+                      className="size-5"
+                    />
+                  </button>
+                </div>
+                <p className="whitespace-pre-wrap">
+                  {projectDescriptionDisplay}
+                </p>
               </div>
-              <a
-                href="#"
-                className="text-brand-primary underline"
-                target="_blank"
-              >
-                預算書連結
-              </a>
-            </div>
-            <p>{budgetCategory}</p>
-            <div className="flex items-center gap-x-2">
-              <p className="font-bold">科目/計畫</p>
-              <button>
-                <Image
-                  src="/icon/explain-term.svg"
-                  alt="explain-term"
-                  className="size-5"
-                />
-              </button>
-            </div>
-            <p className="whitespace-pre-wrap">
-              {proposal.budget?.projectDescription || "N/A"}
-            </p>
-          </div>
-          {/* divider */}
-          <div className="my-4 h-px w-full bg-gray-300" />
-          <div className="flex">
-            <div className="flex flex-col gap-y-4">
-              <p className="font-bold">上年度決算</p>
-              <p>{formatNumber(proposal.budget?.lastYearSettlement)}</p>
-            </div>
-            <div className="flex flex-col gap-y-4">
-              <p className="font-bold">上年度法定預算</p>
-              <p>N/A</p>
-            </div>
-            <div className="flex flex-col gap-y-4">
-              <p className="font-bold">與上年度比較</p>
-              <p>N/A</p>
-            </div>
-          </div>
+              {/* divider */}
+              <div className="my-4 h-px w-full bg-gray-300" />
+              <div className="flex">
+                <div className="flex flex-col gap-y-4">
+                  <p className="font-bold">上年度決算</p>
+                  <p>{lastYearSettlementDisplay}</p>
+                </div>
+                <div className="flex flex-col gap-y-4">
+                  <p className="font-bold">上年度法定預算</p>
+                  <p>{lastYearLegalBudgetDisplay}</p>
+                </div>
+                <div className="flex flex-col gap-y-4">
+                  <p className="font-bold">與上年度比較</p>
+                  <p>{lastYearComparisonDisplay}</p>
+                </div>
+              </div>
+            </>
+          )}
           <section className="grid grid-cols-2 items-center justify-items-center gap-10">
             <VoteButtons key={proposalKey} proposal={proposal} />
           </section>
