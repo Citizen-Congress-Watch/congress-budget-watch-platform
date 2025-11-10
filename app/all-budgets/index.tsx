@@ -197,10 +197,6 @@ export const AllBudgets = () => {
 
   const whereFilter = useMemo((): ProposalWhereInput => {
     const filters: ProposalWhereInput = {};
-
-    console.log("departmentId", departmentId);
-    console.log("personId", personId);
-    console.log("debouncedSearchedValue", debouncedSearchedValue);
     // Department 過濾
     if (departmentId) {
       filters.government = {
@@ -250,7 +246,6 @@ export const AllBudgets = () => {
       }),
     placeholderData: keepPreviousData, // 避免切頁時閃爍
   });
-  console.log("data", data);
   // 更新總數到 store（用於計算總頁數）
   useEffect(() => {
     if (data?.proposalsCount != null) {
