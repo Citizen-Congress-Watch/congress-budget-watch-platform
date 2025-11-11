@@ -456,8 +456,8 @@ export const transformToCategorizedData = (
 
           if (freezeAmount <= 0 && reductionAmount <= 0) return;
           proposerNodes.push({
-            id: `proposer-${categoryName}-${proposerId}-${key}-${proposalIds}`,
-            proposalId: `${proposalIds}`,
+            id: `proposer-${categoryName}-${proposerId}-${key}`, // 更新 ID，使其更清晰地表示立委節點
+            proposalId: undefined, // 將 proposalId 設定為 undefined
             name: `${groupedByProposerProposals[0]?.proposers?.[0].name}\n${GROUP_LABELS[key]}\n${formatAmountWithUnit(defaultTo(key === "freeze" ? freezeAmount : reductionAmount, 0))}`,
             value: Math.pow(
               defaultTo(key === "freeze" ? freezeAmount : reductionAmount, 0),
@@ -490,7 +490,7 @@ export const transformToCategorizedData = (
       if (totalCount > 0) {
         proposerNodes.push({
           id: `proposer-${categoryName}-main-resolution`,
-          proposalId: undefined,
+          proposalId: undefined, // 確保這裡也是 undefined
           name: `${proposerName}\n${GROUP_LABELS.other}\n${totalCount}案`,
           value: Math.pow(totalCount, 0.45),
           color: partyColor,
