@@ -68,7 +68,7 @@ type MobileControlsProps = {
   selectedYear: SelectOption;
   onYearChange: (option: SelectOption) => void;
   isShowingAll: boolean;
-  onClearFilters: () => void;
+  onToggleShowAll: () => void;
   legislatorOptions: SelectOption[];
   selectedLegislator: SelectOption | null;
   onLegislatorChange: (option: SelectOption | null) => void;
@@ -84,7 +84,7 @@ export const MobileControls = ({
   selectedYear,
   onYearChange,
   isShowingAll,
-  onClearFilters,
+  onToggleShowAll,
   legislatorOptions,
   selectedLegislator,
   onLegislatorChange,
@@ -96,7 +96,7 @@ export const MobileControls = ({
     <div className="flex flex-col gap-y-2 md:hidden">
       <div className="flex items-center justify-center gap-x-1.5">
         <button
-          onClick={onClearFilters}
+          onClick={onToggleShowAll}
           className={`rounded px-2.5 transition-colors ${
             isShowingAll
               ? "bg-brand-primary text-white"
@@ -139,7 +139,7 @@ export const MobileControls = ({
           inputId="visualization-year-mobile"
         />
       </div>
-      {activeTab === "legislator" &&
+      {!isShowingAll && activeTab === "legislator" &&
         (legislatorOptions.length > 0 ? (
           <Select
             className="w-full"
@@ -157,7 +157,7 @@ export const MobileControls = ({
         ) : (
           <p className="text-center text-sm text-gray-500">目前沒有立委資料</p>
         ))}
-      {activeTab === "department" &&
+      {!isShowingAll && activeTab === "department" &&
         (departmentOptions.length > 0 ? (
           <Select
             className="w-full"

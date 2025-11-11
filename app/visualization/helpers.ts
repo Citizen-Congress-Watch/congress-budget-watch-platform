@@ -6,7 +6,15 @@ import {
   type VisualizationProposalWithContextFragment,
   type VisualizationProposalBaseFragment,
 } from "~/graphql/graphql";
-import { groupBy, mapValues, sumBy } from "lodash";
+import {
+  defaultTo,
+  entries,
+  forEach,
+  groupBy,
+  mapValues,
+  reduce,
+  sumBy,
+} from "lodash";
 import { formatNumber } from "~/budget-detail/helpers";
 import { useFragment } from "~/graphql";
 
@@ -21,11 +29,11 @@ type VisualizationProposal = {
 };
 
 const extractProposals = (
-  data: GetVisualizationProposalsQuery,
+  data?: GetVisualizationProposalsQuery | null
 ): VisualizationProposal[] =>
   useFragment(
     VisualizationProposalWithContextFragmentDoc,
-    data.proposals ?? [],
+    data?.proposals ?? []
   ).map((proposal) => {
     const base = useFragment(VisualizationProposalBaseFragmentDoc, proposal);
     return {
@@ -40,19 +48,22 @@ const extractProposals = (
   });
 
 export const mapVisualizationProposals = (
-  data?: GetVisualizationProposalsQuery | null,
+  data?: GetVisualizationProposalsQuery | null
 ): VisualizationProposal[] => {
-  if (!data) return [];
   return extractProposals(data);
 };
+
+export type ProposalVisualizationType = "freeze" | "reduce" | "main-resolution";
 
 export type NodeDatum = {
   name: string;
   value?: number;
   color?: string;
-  id: string; // 代表提案 ID
+  id: string; // 圖表節點唯一 ID
+  proposalId?: string; // 代表提案 ID（僅單一提案節點使用）
   proposerId?: string; // 代表提案人 ID
   isFrozen?: boolean;
+  proposalType?: ProposalVisualizationType;
   children?: NodeDatum[];
 };
 
@@ -71,6 +82,16 @@ export const PARTY_COLORS = new Map<string, string>([
 ]);
 export const DEFAULT_COLOR = "#D5D5D5"; // 無黨籍
 
+export type VisualizationGroupedData = Record<string, NodeDatum>;
+
+const GROUP_LABELS = {
+  freeze: "凍結",
+  reduce: "刪減",
+  other: "主決議",
+} as const;
+
+type VisualizationMode = "amount" | "count";
+
 export const formatAmountWithUnit = (value: number): string => {
   const formatted = formatNumber(value);
   if (formatted === "無預算金額") return formatted;
@@ -78,7 +99,7 @@ export const formatAmountWithUnit = (value: number): string => {
 };
 
 export const transformToCirclePackData = (
-  data: GetVisualizationProposalsQuery,
+  data: GetVisualizationProposalsQuery
 ): NodeDatum => {
   const proposals = extractProposals(data);
   const children = proposals
@@ -94,7 +115,7 @@ export const transformToCirclePackData = (
 
       const scaledValue = Math.pow(originalValue, 0.45);
       const name = `${proposer?.name}\n${party}\n${formatAmountWithUnit(
-        originalValue,
+        originalValue
       )}`;
       const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
 
@@ -118,135 +139,91 @@ export const transformToCirclePackData = (
   };
 };
 
-export type VisualizationGroupedData = Record<string, NodeDatum>;
-
-const GROUP_LABELS = {
-  freeze: "凍結",
-  reduce: "刪減",
-  other: "主決議",
-} as const;
-
-const GROUP_DISPLAY_COLORS: Record<
-  keyof typeof GROUP_LABELS,
-  string
-> = {
-  freeze: "#4E7AE6",
-  reduce: "#E9808E",
-  other: "#FFB347",
-};
-
-type VisualizationMode = "amount" | "count";
-
 /**
  * 將提案資料依立委與類型群組，回傳 DepartmentVisualization 可迭代的資料格式。
  */
 export const transformToGroupedByLegislatorData = (
   data: GetVisualizationProposalsQuery,
-  mode: VisualizationMode = "amount",
+  mode: VisualizationMode = "amount"
 ): VisualizationGroupedData => {
   const proposals = extractProposals(data);
 
   const groupedByLegislator = groupBy(
     proposals,
-    (proposal) => proposal.proposers?.[0]?.id ?? "unknown-proposer",
+    (proposal) => proposal.proposers?.[0]?.id ?? "unknown-proposer"
   );
 
-  const legislatorNodes: NodeDatum[] = Object.entries(
-    groupedByLegislator,
-  )
-    .map<NodeDatum | null>(([proposerId, legislatorProposals]) => {
-      const mainProposer = legislatorProposals[0]?.proposers?.[0];
-      const legislatorName = mainProposer?.name ?? "未知立委";
-      const partyName = mainProposer?.party?.name ?? "無黨籍";
-      const partyColor =
-        mainProposer?.party?.color ??
-        PARTY_COLORS.get(partyName) ??
-        DEFAULT_COLOR;
+  const legislatorNodes: NodeDatum[] = [];
 
-      const freezeProposals = legislatorProposals.filter(
-        (proposal) => (proposal.freezeAmount ?? 0) > 0,
-      );
-      const reductionProposals = legislatorProposals.filter(
-        (proposal) => (proposal.reductionAmount ?? 0) > 0,
-      );
-      const mainResolutionProposals = legislatorProposals.filter((proposal) =>
-        proposal.proposalTypes?.includes(ProposalProposalTypeType.Other),
-      );
+  forEach(entries(groupedByLegislator), ([proposerId, legislatorProposals]) => {
+    const mainProposer = legislatorProposals[0]?.proposers?.[0];
+    const legislatorName = mainProposer?.name ?? "未知立委";
+    const partyName = mainProposer?.party?.name ?? "未知黨派";
+    const partyColor =
+      mainProposer?.party?.color ??
+      PARTY_COLORS.get(partyName) ??
+      DEFAULT_COLOR;
+    const freezeProposals = legislatorProposals.filter(
+      (proposal) => defaultTo(proposal.freezeAmount, 0) > 0
+    );
+    const reductionProposals = legislatorProposals.filter(
+      (proposal) => defaultTo(proposal.reductionAmount, 0) > 0
+    );
+    const mainResolutionProposals = legislatorProposals.filter((proposal) =>
+      proposal.proposalTypes?.includes(ProposalProposalTypeType.Other)
+    );
 
-      const groupDefinitions: Array<{
-        key: keyof typeof GROUP_LABELS;
-        proposals: typeof legislatorProposals;
-        getAmount: (proposal: (typeof legislatorProposals)[number]) => number;
-        isFrozen?: boolean;
-      }> = [
-        {
-          key: "freeze",
-          proposals: freezeProposals,
-          getAmount: (proposal) => proposal.freezeAmount ?? 0,
+    if (mode === "amount") {
+      const legislatorFreezeAmount = sumBy(freezeProposals, (proposal) =>
+        defaultTo(proposal.freezeAmount, 0)
+      );
+      const legislatorReductionAmount = sumBy(reductionProposals, (proposal) =>
+        defaultTo(proposal.reductionAmount, 0)
+      );
+      // 因為這些節點代表「立委」的總結，而不是單一「提案」，所以不應該有 proposalId
+      // 移除 proposalId 屬性，讓 handleNodeClick 能依據 proposerId 導航
+      if (legislatorFreezeAmount > 0) {
+        legislatorNodes.push({
+          id: `${proposerId}-freeze`, // 使用 proposerId 來建立唯一的節點 ID
+          // proposalId: undefined, // 移除或設定為 undefined
+          name: `${legislatorName}\n${formatAmountWithUnit(legislatorFreezeAmount)}`,
+          value: Math.pow(legislatorFreezeAmount, 0.45),
+          color: partyColor,
+          proposerId: mainProposer?.id, // 立委 ID 是這裡
+          proposalType: "freeze",
           isFrozen: true,
-        },
-        {
-          key: "reduce",
-          proposals: reductionProposals,
-          getAmount: (proposal) => proposal.reductionAmount ?? 0,
-        },
-        {
-          key: "other",
-          proposals: mainResolutionProposals,
-          getAmount: () => 0,
-        },
-      ];
-
-      const groupNodes: NodeDatum[] = groupDefinitions
-        .map<NodeDatum | null>(({ key, proposals, getAmount, isFrozen }) => {
-          if (!proposals.length) return null;
-
-          const totalAmount = sumBy(proposals, getAmount);
-          const totalCount = proposals.length;
-
-          let rawValue = 0;
-          if (mode === "amount") {
-            rawValue = key === "other" ? totalCount : totalAmount;
-          } else {
-            rawValue = totalCount;
-          }
-
-          if (rawValue <= 0) {
-            return null;
-          }
-
-          const displayValue =
-            mode === "amount" && key !== "other"
-              ? formatAmountWithUnit(totalAmount)
-              : `${totalCount}案`;
-
-          return {
-            id: `${proposerId}-${key}`,
-            name: `${GROUP_LABELS[key]}\n${displayValue}`,
-            value: Math.pow(rawValue, 0.45),
-            color: GROUP_DISPLAY_COLORS[key] ?? partyColor,
-            proposerId: mainProposer?.id,
-            isFrozen,
-            children: [],
-          };
-        })
-        .filter((node): node is NodeDatum => node !== null);
-
-      if (!groupNodes.length) {
-        return null;
+        });
       }
-
-      return {
-        id: `legislator-${proposerId}`,
-        name: legislatorName,
-        color: partyColor,
-        children: groupNodes,
-      };
-    })
-    .filter((node): node is NodeDatum => node !== null);
+      if (legislatorReductionAmount > 0) {
+        legislatorNodes.push({
+          id: `${proposerId}-reduce`, // 使用 proposerId 來建立唯一的節點 ID
+          // proposalId: undefined, // 移除或設定為 undefined
+          name: `${legislatorName}\n${formatAmountWithUnit(legislatorReductionAmount)}`,
+          value: Math.pow(legislatorReductionAmount, 0.45),
+          color: partyColor,
+          proposerId: mainProposer?.id, // 立委 ID 是這裡
+          proposalType: "reduce",
+        });
+      }
+    } else {
+      if (mainResolutionProposals.length <= 0) return;
+      const totalCount = mainResolutionProposals.length;
+      if (totalCount > 0) {
+        legislatorNodes.push({
+          id: `${proposerId}-main-resolution`,
+          // proposalId: undefined, // 移除或設定為 undefined
+          name: `${legislatorName}\n${totalCount}案`,
+          value: Math.pow(totalCount, 0.45),
+          color: partyColor,
+          proposerId: mainProposer?.id, // 立委 ID 是這裡
+          proposalType: "main-resolution",
+        });
+      }
+    }
+  });
 
   return {
-    立委提案彙整: {
+    "": {
       id: "legislator-summary-root",
       name: "root",
       children: legislatorNodes,
@@ -272,9 +249,7 @@ export const transformToGroupedSessionData = (
 ): NodeDatum[] => {
   const proposals = extractProposals(data);
 
-  if (proposals.length === 0) {
-    return [];
-  }
+  if (proposals.length === 0) return [];
 
   // 第一步：雙層分組（年度 -> 政府類別）
   const groupedData = mapValues(
@@ -287,18 +262,16 @@ export const transformToGroupedSessionData = (
   const result: NodeDatum[] = [];
 
   // 遍歷每個年度
-  Object.entries(groupedData).forEach(([year, categoryGroups]) => {
+  forEach(entries(groupedData), ([year, categoryGroups]) => {
     const categoryNodes: NodeDatum[] = [];
 
-    Object.entries(categoryGroups).forEach(([category, categoryProposals]) => {
+    forEach(entries(categoryGroups), ([category, categoryProposals]) => {
       if (mode === "amount") {
         const proposalsToProcess = categoryProposals.filter(
-          (p) => (p.freezeAmount ?? 0) > 0 || (p.reductionAmount ?? 0) > 0,
+          (p) => (p.freezeAmount ?? 0) > 0 || (p.reductionAmount ?? 0) > 0
         );
 
-        if (proposalsToProcess.length === 0) {
-          return;
-        }
+        if (proposalsToProcess.length === 0) return;
 
         const proposalNodes: NodeDatum[] = proposalsToProcess.map(
           (proposal) => {
@@ -312,7 +285,10 @@ export const transformToGroupedSessionData = (
             const name = `${id}\n${
               government?.name ?? "未知部會"
             }\n${displayValue}`;
-            const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
+            const color =
+              proposer?.party?.color ||
+              PARTY_COLORS.get(party) ||
+              DEFAULT_COLOR;
 
             return {
               id,
@@ -323,7 +299,7 @@ export const transformToGroupedSessionData = (
               proposerId: proposer?.id,
               children: [],
             };
-          },
+          }
         );
 
         const categoryValue = sumBy(proposalNodes, (n) => n.value || 0);
@@ -338,7 +314,7 @@ export const transformToGroupedSessionData = (
         // mode === 'count'
         const groupedByGov = groupBy(
           categoryProposals,
-          (p) => p.government?.name ?? "未知部會",
+          (p) => p.government?.name ?? "未知部會"
         );
 
         const governmentNodes: NodeDatum[] = Object.entries(groupedByGov).map(
@@ -347,9 +323,7 @@ export const transformToGroupedSessionData = (
               const { id, government, proposers } = proposal;
               const proposer = proposers?.[0];
               const party = proposer?.party?.name ?? "無黨籍";
-              const name = `${id}\n${
-                government?.name ?? "未知部會"
-              }\n1案`;
+              const name = `${id}\n${government?.name ?? "未知部會"}\n1案`;
               const color = PARTY_COLORS.get(party) || DEFAULT_COLOR;
 
               return {
@@ -369,7 +343,7 @@ export const transformToGroupedSessionData = (
               children: proposalNodes,
               color: "#8884d8", // Placeholder color for government nodes
             };
-          },
+          }
         );
 
         if (governmentNodes.length === 0) {
@@ -401,8 +375,8 @@ export const transformToGroupedSessionData = (
 
   // 按年度排序（降序）
   result.sort((a, b) => {
-    const yearA = parseInt(a.id.replace("session-", ""));
-    const yearB = parseInt(b.id.replace("session-", ""));
+    const yearA = parseInt(a.id.replace("session-", ""), 10) || 0;
+    const yearB = parseInt(b.id.replace("session-", ""), 10) || 0;
     return yearB - yearA;
   });
 
@@ -411,7 +385,7 @@ export const transformToGroupedSessionData = (
 
 export const transformToCategorizedData = (
   data: GetVisualizationProposalsQuery,
-  mode: "amount" | "count",
+  mode: "amount" | "count"
 ): Record<string, NodeDatum> => {
   const proposals = extractProposals(data);
 
@@ -419,55 +393,110 @@ export const transformToCategorizedData = (
   const proposalsToProcess =
     mode === "amount"
       ? proposals.filter(
-          (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0) > 0,
+          (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0) > 0
         )
       : proposals;
-
+  console.log({ proposalsToProcess });
   // 第一層：按 government.category 分組
-  const groupedByCategory = groupBy(
+  const groupedByDepartment = groupBy(
     proposalsToProcess,
-    (p) => p.government?.category ?? "未分類",
+    (p) => p.government?.name ?? "unknown-government-name"
   );
 
-  return mapValues(groupedByCategory, (categoryProposals, categoryName) => {
-    // 第二層：在類別內按 proposer.id 分組
-    const groupedByProposer = groupBy(
-      categoryProposals,
-      (p) => p.proposers?.[0]?.id ?? "unknown-proposer",
+  return mapValues(groupedByDepartment, (departmentProposals, categoryName) => {
+    const proposerNodes: NodeDatum[] = [];
+    const mainProposer = departmentProposals[0]?.proposers?.[0];
+    const proposerName = mainProposer?.name ?? "未知提案者";
+    const partyName = mainProposer?.party?.name ?? "未知黨籍";
+    const partyColor =
+      mainProposer?.party?.color ??
+      PARTY_COLORS.get(partyName) ??
+      DEFAULT_COLOR;
+
+    const freezeProposals = departmentProposals.filter(
+      (proposal) => (proposal.freezeAmount ?? 0) > 0
+    );
+    const reductionProposals = departmentProposals.filter(
+      (proposal) => (proposal.reductionAmount ?? 0) > 0
+    );
+    const mainResolutionProposals = departmentProposals.filter((proposal) =>
+      proposal.proposalTypes?.includes(ProposalProposalTypeType.Other)
     );
 
-    const proposerNodes: NodeDatum[] = Object.entries(groupedByProposer).map(
-      ([proposerId, proposerProposals]) => {
-        const mainProposer = proposerProposals[0]?.proposers?.[0];
-        const party = mainProposer?.party?.name ?? "無黨籍";
-
-        if (mode === "amount") {
-          const totalAmount = sumBy(
-            proposerProposals,
-            (p) => (p.freezeAmount ?? 0) + (p.reductionAmount ?? 0),
+    const pushFinancialNode = (
+      key: Extract<ProposalVisualizationType, "freeze" | "reduce">,
+      proposalsForKey: typeof departmentProposals
+    ) => {
+      if (!proposalsForKey.length) return;
+      const groupedByProposer = groupBy(
+        proposalsForKey,
+        (p) => p.proposers?.[0]?.id ?? "unknown-proposer"
+      );
+      forEach(
+        entries(groupedByProposer),
+        ([proposerId, groupedByProposerProposals]) => {
+          const freezeAmount = defaultTo(
+            reduce(
+              groupedByProposerProposals,
+              (acc, cur) => acc + (cur.freezeAmount ?? 0),
+              0
+            ),
+            0
           );
-          const scaledValue = Math.pow(totalAmount, 0.45);
+          const reductionAmount = defaultTo(
+            reduce(
+              groupedByProposerProposals,
+              (acc, cur) => acc + (cur.reductionAmount ?? 0),
+              0
+            ),
+            0
+          );
 
-          return {
-            id: `proposer-${categoryName}-${proposerId}`,
-            name: `${mainProposer?.name ?? "未知"}\n${party}\n${formatAmountWithUnit(totalAmount)}`,
-            value: scaledValue,
-            color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
-            proposerId: mainProposer?.id,
-          };
-        } else {
-          // mode === "count"
-          const proposalCount = proposerProposals.length;
-          return {
-            id: `proposer-${categoryName}-${proposerId}`,
-            name: `${mainProposer?.name ?? "未知"}\n${party}\n${proposalCount}案`,
-            value: proposalCount,
-            color: PARTY_COLORS.get(party) || DEFAULT_COLOR,
-            proposerId: mainProposer?.id,
-          };
+          if (freezeAmount <= 0 && reductionAmount <= 0) return;
+          proposerNodes.push({
+            id: `proposer-${categoryName}-${proposerId}-${key}`, // 更新 ID，使其更清晰地表示立委節點
+            proposalId: undefined, // 將 proposalId 設定為 undefined
+            name: `${groupedByProposerProposals[0]?.proposers?.[0].name}\n${GROUP_LABELS[key]}\n${formatAmountWithUnit(defaultTo(key === "freeze" ? freezeAmount : reductionAmount, 0))}`,
+            value: Math.pow(
+              defaultTo(key === "freeze" ? freezeAmount : reductionAmount, 0),
+              0.45
+            ),
+            color:
+              groupedByProposerProposals[0]?.proposers?.[0].party?.color ??
+              PARTY_COLORS.get(
+                groupedByProposerProposals[0]?.proposers?.[0].party?.name ??
+                  "無黨籍"
+              ) ??
+              DEFAULT_COLOR,
+            proposerId,
+            proposalType: key,
+            isFrozen: key === "freeze",
+          });
+
+          return;
         }
-      },
-    );
+      );
+    };
+
+    if (mode === "amount") {
+      pushFinancialNode("freeze", freezeProposals);
+      pushFinancialNode("reduce", reductionProposals);
+    }
+
+    if (mode === "count" && mainResolutionProposals.length > 0) {
+      const totalCount = mainResolutionProposals.length;
+      if (totalCount > 0) {
+        proposerNodes.push({
+          id: `proposer-${categoryName}-main-resolution`,
+          proposalId: undefined, // 確保這裡也是 undefined
+          name: `${proposerName}\n${GROUP_LABELS.other}\n${totalCount}案`,
+          value: Math.pow(totalCount, 0.45),
+          color: partyColor,
+          proposerId: mainProposer?.id,
+          proposalType: "main-resolution",
+        });
+      }
+    }
 
     return {
       id: "root",

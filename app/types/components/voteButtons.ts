@@ -13,5 +13,7 @@ export type VoteButtonsProps = {
     Proposal,
     "id" | "react_good" | "react_angry" | "react_disappoint" | "react_whatever"
   >;
+  singleButtonStyle?: string;
+  shouldShowCount?: boolean;
   displayMode?: "inline" | "popup";
 };

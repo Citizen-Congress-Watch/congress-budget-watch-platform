@@ -4,6 +4,7 @@ import type {
   ProposalProposalTypeType,
 } from "~/graphql/graphql";
 import { ProposalProposalTypeType as ProposalProposalTypeTypeEnum } from "~/graphql/graphql";
+import { mapStageLabel } from "~/utils/stage";
 
 /**
  * Timeline 元件所需的資料格式
@@ -68,13 +69,21 @@ export function formatNumber(num?: number | null): string {
     return num.toLocaleString("zh-TW");
   }
 
+  const formatWithUnit = (value: number, unit: string) => {
+    const formatted = value.toFixed(1);
+    const normalized = formatted.endsWith(".0")
+      ? formatted.slice(0, -2)
+      : formatted;
+    return `${normalized} ${unit}`;
+  };
+
   const inYi = num / 1_0000_0000;
   if (Math.abs(inYi) >= 1) {
-    return `${inYi.toFixed(1)} 億`;
+    return formatWithUnit(inYi, "億");
   }
 
   const inWan = num / 1_0000;
-  return `${inWan.toFixed(1)} 萬`;
+  return formatWithUnit(inWan, "萬");
 }
 
 /**
@@ -97,14 +106,24 @@ export function formatReducedAndFrozenAmount(
  * 如果沒有 meetings 資料，返回空陣列
  */
 export function meetingsToTimeline(
-  meetings?: Meeting[] | null
+  meetings?: Meeting[] | null,
+  historicalProposals?: Proposal["historicalProposals"]
 ): TimelineItem[] {
   if (!meetings || meetings.length === 0) return [];
-  console.log({ meetings });
-  const meetingTypeMap = {
-    budget_review: "預算審議",
-    budget_unfreeze: "預算解凍",
-  };
+
+  const meetingToHistoricalProposal = new Map<string, string>();
+  (historicalProposals ?? []).forEach((historicalProposal) => {
+    if (!historicalProposal?.id) return;
+    (historicalProposal.meetings ?? []).forEach((historicalMeeting) => {
+      if (historicalMeeting?.id) {
+        meetingToHistoricalProposal.set(
+          historicalMeeting.id,
+          historicalProposal.id
+        );
+      }
+    });
+  });
+
   return meetings.map((meeting, index) => ({
     id: meeting.id || index,
     date: meeting.meetingDate
@@ -114,9 +133,10 @@ export function meetingsToTimeline(
           day: "numeric",
         })
       : "日期未定",
-    title:
-      meetingTypeMap[(meeting.type as keyof typeof meetingTypeMap) ?? ""] ||
-      "會議",
+    title: mapStageLabel(meeting.type, "會議"),
+    historicalProposalId: meeting.id
+      ? meetingToHistoricalProposal.get(meeting.id)
+      : undefined,
     description: meeting.description || meeting.location || "",
   }));
 }

@@ -71,7 +71,7 @@ const Visualization = () => {
     departmentOptions,
     selectedDepartmentOption,
     handleDepartmentChange,
-    handleClearMobileFilters,
+    handleToggleShowAll,
     isShowingAll,
     isDesktop,
     isLoading,
@@ -101,9 +101,15 @@ const Visualization = () => {
 
   const handleNodeClick = useCallback(
     (node: NodeDatum) => {
+      if (node.proposalId) {
+        navigate(`/budget/${node.proposalId}`);
+        return true;
+      }
       if (node.proposerId && !node.children?.length) {
         navigate(`/visualization/legislator/${node.proposerId}`);
+        return true;
       }
+      return false;
     },
     [navigate],
   );
@@ -141,7 +147,7 @@ const Visualization = () => {
           selectedYear={selectedYear}
           onYearChange={handleYearChange}
           isShowingAll={isShowingAll}
-          onClearFilters={handleClearMobileFilters}
+          onToggleShowAll={handleToggleShowAll}
           legislatorOptions={legislatorOptions}
           selectedLegislator={selectedLegislatorOption}
           onLegislatorChange={handleLegislatorChange}
