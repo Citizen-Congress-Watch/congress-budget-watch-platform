@@ -11,7 +11,6 @@ import {
   entries,
   forEach,
   groupBy,
-  map,
   mapValues,
   reduce,
   sumBy,
@@ -436,7 +435,6 @@ export const transformToCategorizedData = (
       forEach(
         entries(groupedByProposer),
         ([proposerId, groupedByProposerProposals]) => {
-          const proposalIds = map(groupedByProposerProposals, (p) => p.id);
           const freezeAmount = defaultTo(
             reduce(
               groupedByProposerProposals,
