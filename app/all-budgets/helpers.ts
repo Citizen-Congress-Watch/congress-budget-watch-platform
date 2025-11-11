@@ -6,7 +6,17 @@ import {
 } from "~/graphql/graphql";
 import { mapStageLabel } from "~/utils/stage";
 
-import { flow, pick, values, sum, defaultTo, prop, get } from "lodash/fp";
+import {
+  flow,
+  pick,
+  values,
+  sum,
+  defaultTo,
+  prop,
+  get,
+  flatMap,
+  compact,
+} from "lodash/fp";
 import {
   formatNumber,
   formatReducedAndFrozenAmount,
@@ -49,6 +59,7 @@ type StageCommittee = {
 type MeetingForStage = {
   type?: string | null;
   committee?: (StageCommittee | null)[] | null;
+  meetingDate?: string | Date | null; // 重新加入 meetingDate
 };
 
 type PaginatedProposal = NonNullable<
@@ -75,6 +86,35 @@ function getLatestCommitteeEndDate(meeting: MeetingForStage): Date | null {
   return endDates.reduce((latest, current) =>
     current.getTime() > latest.getTime() ? current : latest
   );
+}
+
+function getLatestMeetingDate(
+  meetings?: (MeetingForStage | null)[] | null
+): string {
+  const validMeetings = (meetings ?? []).filter(
+    (meeting): meeting is MeetingForStage => Boolean(meeting)
+  );
+
+  const allDates = flatMap((meeting: MeetingForStage) => {
+    return compact([
+      toDate(meeting.meetingDate),
+      getLatestCommitteeEndDate(meeting),
+    ]);
+  })(validMeetings);
+
+  if (allDates.length === 0) return "無審議日期";
+  
+
+  const latestDate = allDates.reduce((latest, current) =>
+    current.getTime() > latest.getTime() ? current : latest
+  );
+
+  const formattedDate = latestDate.toLocaleDateString("zh-TW", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+  return formattedDate;
 }
 
 function hasMissingCommitteeEndDate(meeting: MeetingForStage): boolean {
@@ -149,7 +189,7 @@ export function proposalToBudgetTableData(
     id: prop("id"),
     sequence: () => 0,
     department: flow(get("government.name"), defaultTo("部會")),
-    date: () => "無審議日期",
+    date: (p: ProposalInput) => getLatestMeetingDate(p.meetings), // 重新使用 getLatestMeetingDate
     stage: (proposal: ProposalInput) => meetingsToStage(proposal.meetings),
     proposer: flow(prop("proposers"), formatProposers),
     proposalType: flow(prop("proposalTypes"), getProposalTypeDisplay),
