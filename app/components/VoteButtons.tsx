@@ -40,15 +40,10 @@ const VOTE_OPTIONS: { type: ReactionType; label: string }[] = [
   { type: "react_whatever", label: "我不在意" },
 ];
 
-const FEELING_TEXT: Record<ReactionType, string> = {
-  react_good: "讚",
-  react_angry: "生氣",
-  react_disappoint: "失望",
-  react_whatever: "無感",
-};
-
 export function VoteButtons({
   proposal,
+  shouldShowCount = true,
+  singleButtonStyle = "",
   displayMode = "inline",
 }: VoteButtonsProps) {
   const { initProposal, queueVote } = useVoteActions();
@@ -183,21 +178,24 @@ export function VoteButtons({
     );
   }
 
+  console.log({ singleButtonStyle });
   return (
-    <div className="flex flex-wrap justify-center gap-4">
+    <div className="flex justify-center gap-4 px-3 py-2.5">
       {VOTE_OPTIONS.map(({ type, label }) => (
         <div
           key={type}
-          className="flex w-[120px] flex-col items-center text-center"
+          className={`flex w-[120px] flex-col items-center text-center ${singleButtonStyle}`}
           onMouseEnter={() => setHoveredReaction(type)}
           onMouseLeave={() =>
             setHoveredReaction((current) => (current === type ? null : current))
           }
         >
-          <p className="text-sm font-medium">我覺得很{FEELING_TEXT[type]}</p>
-          <p className="text-base font-base">
-            {formatNumber(voteCounts[type])}
-          </p>
+          <p className="text-sm font-medium">{label}</p>
+          {shouldShowCount && (
+            <p className="font-base text-base">
+              {formatNumber(voteCounts[type])}
+            </p>
+          )}
           <button
             type="button"
             onClick={() => handleVote(type)}

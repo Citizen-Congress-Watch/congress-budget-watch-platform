@@ -20,7 +20,6 @@ function getProposalTypeDisplay(
     return "無";
   }
   const proposalTypeMap = new Map([["other", "主決議"], ["freeze", "凍結案"], ["reduction", "刪減案"]])
-  console.log({ proposalTypes })
   return proposalTypes
     .filter((proposalType) => proposalType !== null)
     .map((proposalType) => proposalTypeMap.get(proposalType ?? "") ?? "")

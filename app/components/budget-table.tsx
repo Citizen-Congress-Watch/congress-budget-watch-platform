@@ -189,6 +189,8 @@ const BudgetTableRow = ({ item }: { item: BudgetTableData }) => {
                 react_good: item.react_good,
                 react_whatever: item.react_whatever,
               }}
+              singleButtonStyle="max-w-[72px] text-[9px]"
+              shouldShowCount={false}
             />
           </div>
         </div>
