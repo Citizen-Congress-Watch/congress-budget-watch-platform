@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { EmbedCodeBlock } from "~/components/embed-code-block";
 import { execute } from "~/graphql/execute";
 import { GET_RECOGNITION_STATS_QUERY } from "~/queries/collaboration.queries";
+import { COLLABORATION_QA_EMBED_HTML } from "~/constants/collaboration-qa-embed";
 
 import Banner from "/image/banner-collaboration.svg";
 import QRCode from "/image/collaboration-QR-code.svg";
@@ -18,8 +20,10 @@ export function meta() {
   ];
 }
 
+type CollaborationTab = "steps" | "qa";
+
 export default function Collaboration() {
-  const [activeTab, setActiveTab] = useState("steps");
+  const [activeTab, setActiveTab] = useState<CollaborationTab>("steps");
   const { data } = useQuery({
     queryKey: ["recognitionStats"],
     queryFn: () => execute(GET_RECOGNITION_STATS_QUERY),
@@ -73,14 +77,22 @@ export default function Collaboration() {
         </div>
         <div className="flex w-full justify-center gap-4">
           <button
+            type="button"
+            aria-pressed={activeTab === "steps"}
             onClick={() => setActiveTab("steps")}
-            className={`rounded-sm border border-black bg-success p-2.5 text-base leading-none font-bold text-white`}
+            className={`rounded-sm border border-black p-2.5 text-base leading-none font-bold transition-colors ${
+              activeTab === "steps" ? "bg-success text-white" : "bg-white text-black"
+            }`}
           >
             教學步驟
           </button>
           <button
+            type="button"
+            aria-pressed={activeTab === "qa"}
             onClick={() => setActiveTab("qa")}
-            className={`rounded-sm border border-black bg-white p-2.5 text-base leading-none font-bold text-black`}
+            className={`rounded-sm border border-black p-2.5 text-base leading-none font-bold transition-colors ${
+              activeTab === "qa" ? "bg-success text-white" : "bg-white text-black"
+            }`}
           >
             Q&A 區
           </button>
@@ -140,20 +152,11 @@ export default function Collaboration() {
         )}
 
         {activeTab === "qa" && (
-          <div className="flex w-full flex-col items-start gap-4 text-left">
-            <h3 className="w-full text-center text-base leading-none font-bold">
-              什麼樣的提案單會需要辨識？
-            </h3>
-            <p className="text-sm leading-normal font-normal">
-              大部分通過的預算提案都會被記錄在議事錄中，我們可以拿到文字檔。僅有幾下幾種狀況會有掃描檔：
-            </p>
-            <ul className="list-disc pl-5 text-sm leading-normal font-normal">
-              <li>該提案被撤案</li>
-              <li>
-                該提案被併案（多個提案單經過協調之後，決定併案成一個通過）
-              </li>
-              <li>黨團協商的提案</li>
-            </ul>
+          <div className="flex w-full justify-center">
+            <EmbedCodeBlock
+              className="w-full"
+              html={COLLABORATION_QA_EMBED_HTML}
+            />
           </div>
         )}
       </div>

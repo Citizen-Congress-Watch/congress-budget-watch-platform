@@ -23,12 +23,6 @@ import {
 } from "~/budget-detail/helpers";
 import type { BudgetTableData } from "~/components/budget-table";
 
-const PROPOSAL_TYPE_LABEL_MAP: Record<ProposalProposalTypeType, string> = {
-  freeze: "凍結",
-  reduce: "刪減",
-  other: "主提案",
-};
-
 function getProposalTypeDisplay(
   proposalTypes?: (ProposalProposalTypeType | null)[] | null
 ): string {
