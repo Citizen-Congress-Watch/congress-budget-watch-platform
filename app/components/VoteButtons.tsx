@@ -108,7 +108,7 @@ export function VoteButtons({
     setHoveredReaction(null);
 
     if (displayMode === "popup") {
-      toggleIsVoteMenuOpen();
+      setVoteMenuOpen(false);
       cancelScheduledFlush();
       void flushPending();
     } else {
@@ -137,17 +137,29 @@ export function VoteButtons({
     return (
       <div
         ref={voteMenuRef}
-        className="relative rounded-sm border-2 bg-white px-0.5 py-1 text-[8px]"
+        className="relative"
       >
-        <span
+        <button
           onClick={(e) => {
             e.preventDefault();
             toggleIsVoteMenuOpen();
           }}
-          className="cursor-pointer"
+          className={`flex h-8 min-w-[68px] cursor-pointer items-center justify-center rounded-sm bg-white text-[8px] border-2 ${
+            selectedReaction
+              ? "border-transparent"
+              : "px-2 py-1"
+          }`}
         >
-          請支援心情
-        </span>
+          {selectedReaction ? (
+            <Image
+              src={getReactionIcon(selectedReaction)}
+              alt="Selected reaction"
+              className="h-full w-auto"
+            />
+          ) : (
+            <span>請支援心情</span>
+          )}
+        </button>
         {isVoteMenuOpen && (
           <div className="md: absolute right-0 bottom-0 z-10 w-[69px] rounded-[24px] border-2 bg-white p-2.5 text-[9px] md:translate-x-8 md:translate-y-[10.5rem] lg:translate-x-11 lg:translate-y-[10.5rem]">
             {VOTE_OPTIONS.map(({ type, label }) => (
