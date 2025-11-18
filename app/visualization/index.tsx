@@ -17,9 +17,9 @@ import BudgetDetailSkeleton from "~/components/skeleton/budget-detail-skeleton";
 import VisualizationSkeleton from "~/components/skeleton/visualization-skeleton";
 
 const useChartDimensions = () => {
+  const [height, setHeight] = useState<number>(0);
   const [width, setWidth] = useState(300);
   const observerRef = useRef<ResizeObserver | null>(null);
-
   const ref: RefCallback<HTMLDivElement> = useCallback((node) => {
     if (observerRef.current) {
       observerRef.current.disconnect();
@@ -30,6 +30,8 @@ const useChartDimensions = () => {
         const newWidth = node.getBoundingClientRect().width;
         if (newWidth > 0) {
           setWidth(newWidth);
+          // derive a height using a 16:9 aspect ratio
+          setHeight(Math.round(newWidth * 9 / 16));
         }
       };
 
@@ -38,7 +40,9 @@ const useChartDimensions = () => {
       observerRef.current = new ResizeObserver((entries) => {
         const entry = entries[0];
         if (entry) {
-          setWidth(entry.contentRect.width);
+          const w = entry.contentRect.width;
+          setWidth(w);
+          setHeight(Math.round(w * 9 / 16));
         }
       });
 
@@ -50,11 +54,11 @@ const useChartDimensions = () => {
     }
   }, []);
 
-  return { ref, width };
+  return { ref, width, height };
 };
 
 const Visualization = () => {
-  const { ref: chartContainerRef, width: chartWidth } = useChartDimensions();
+  const { ref: chartContainerRef, width: chartWidth, height: chartHeight } = useChartDimensions();
   const navigate = useNavigate();
 
   const {
@@ -227,16 +231,23 @@ const Visualization = () => {
               padding={legislatorPadding}
               onNodeClick={handleNodeClick}
               width={chartWidth}
+              height={chartHeight}
               mode={mode}
             />
           )}
           {activeTab === "department" && (
-            <DepartmentVisualization
-              data={visualizationData}
-              onNodeClick={handleNodeClick}
-              width={chartWidth}
-              mode={mode}
-            />
+            // Tailwind CSS: full-width visual with responsive aspect ratio
+            <div className="w-full">
+              <div className="aspect-video md:aspect-video lg:aspect-video">
+                <DepartmentVisualization
+                  data={visualizationData}
+                  onNodeClick={handleNodeClick}
+                  width={chartWidth}
+                  height={chartHeight}
+                  mode={mode}
+                />
+              </div>
+            </div>
           )}
         </div>
       </div>

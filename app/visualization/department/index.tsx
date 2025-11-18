@@ -6,6 +6,7 @@ import CirclePackChart, { type CirclePackPadding } from "../circle-pack-chart";
 type DepartmentVisualizationProps = {
   data: GetVisualizationProposalsQuery;
   width?: number;
+  height?: number;
   onNodeClick: (node: NodeDatum) => void;
   mode: "amount" | "count";
   transformedData?: Record<string, NodeDatum>;
@@ -25,6 +26,8 @@ const DEFAULT_PADDING: CirclePackPadding = (node) => {
 export const DepartmentVisualization = ({
   data,
   width = 928,
+  height,
+  // height will default to width if not provided to preserve existing visuals
   onNodeClick,
   mode,
   transformedData,
@@ -64,7 +67,7 @@ export const DepartmentVisualization = ({
               <CirclePackChart
                 data={chartData}
                 width={width}
-                height={width}
+              height={height ?? width}
                 padding={paddingValue}
                 onNodeClick={onNodeClick}
               />

@@ -128,7 +128,10 @@ const CirclePackChart = ({
     inertiaEnabled,
   } = useMemo(() => {
     const width = customWidth ?? DEFAULT_CHART_WIDTH;
-    const height = customHeight ?? width;
+    const height =
+      typeof customHeight === "number" && customHeight > 0
+        ? customHeight
+        : width;
 
     const color = d3
       .scaleLinear<string>()

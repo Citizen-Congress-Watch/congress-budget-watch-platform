@@ -1,5 +1,7 @@
+import { useMediaQuery } from "usehooks-ts";
 import CirclePackChart from "../circle-pack-chart";
 import type { NodeDatum } from "../helpers";
+import { useEffect } from "react";
 
 const getBorderBottomClass = (index: number, totalItems: number) => {
   return totalItems > 1 && index < totalItems - 1
@@ -8,13 +10,25 @@ const getBorderBottomClass = (index: number, totalItems: number) => {
 };
 
 type SessionChartProps = {
-  data: NodeDatum[]; // 每個元素代表一個年度 session
+  data: NodeDatum[];
   yearToCommitteeMap: Map<string, string>;
 };
 
 const SessionChart = ({ data, yearToCommitteeMap }: SessionChartProps) => {
-  // 如果沒有資料，顯示提示訊息
   const CIRCLE_PACK_CHART_PADDING = 50;
+  const matchTablet = useMediaQuery("(min-width: 768px)");
+  const matchScreenS = useMediaQuery("(min-width: 1024px)");
+  const matchScreenM = useMediaQuery("(min-width: 1440px)");
+  const matchScreenL = useMediaQuery("(min-width: 1920px)");
+  const circlePackChartWidth = () => {
+    if (matchScreenL) return 1800;
+    if (matchScreenM) return 1400;
+    if (matchScreenS) return 1000;
+    if (matchTablet) return 720;
+  };
+  useEffect(() => {
+    circlePackChartWidth();
+  });
   if (!data || data.length === 0) {
     return (
       <div className="flex w-full items-center justify-center py-8">
@@ -28,7 +42,7 @@ const SessionChart = ({ data, yearToCommitteeMap }: SessionChartProps) => {
       {data.map((session, index) => (
         <div
           key={session.id}
-          className={`mb-2 flex w-full max-w-[1000px] flex-col items-start justify-center ${getBorderBottomClass(
+          className={`mb-2 flex w-full flex-col items-start justify-center ${getBorderBottomClass(
             index,
             data.length
           )}`}
@@ -44,6 +58,7 @@ const SessionChart = ({ data, yearToCommitteeMap }: SessionChartProps) => {
                 name: "root",
                 children: session.children,
               }}
+              width={circlePackChartWidth()}
               padding={CIRCLE_PACK_CHART_PADDING}
             />
           </div>
