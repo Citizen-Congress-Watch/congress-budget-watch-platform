@@ -3,9 +3,6 @@ on:
   push:
     branches: [main]
 
-env:
-  DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -23,15 +20,12 @@ jobs:
         run: pnpm install
       - name: Build
         run: REACT_ROUTER_BASENAME=/congress-budget-watch-platform pnpm build
-      - name: Start ssh-agent
-        uses: webfactory/ssh-agent@v0.8.3
-        with:
-          ssh-private-key: ${{ env.DEPLOY_SSH_KEY }}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           publish_dir: ./build/client
           publish_branch: gh-pages
           keep_files: false
+          github_token: ${{ secrets.DEPLOY_SSH_KEY }}
           user_name: github-actions[bot]
           user_email: github-actions[bot]@users.noreply.github.com
