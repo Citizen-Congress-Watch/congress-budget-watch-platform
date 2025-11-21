@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { useEffect, useState } from "react";
 
 import type { Route } from "./+types/root";
 import appStylesHref from "./app.css?url";
@@ -14,8 +15,12 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Footer from "./components/footer";
 import BudgetHeader from "./components/budget-header";
 import DataProgressMarquee from "./components/data-progress-marquee";
+import BackToTopButton from "./components/back-to-top-button";
 // Create a client
 const queryClient = new QueryClient();
+const MOBILE_BREAKPOINT = 768;
+const DESKTOP_THRESHOLD_MULTIPLIER = 1;
+const MOBILE_THRESHOLD_MULTIPLIER = 1.5;
 
 export const links: Route.LinksFunction = () => [
   {
@@ -30,6 +35,29 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const computeThreshold = () => {
+      const multiplier =
+        window.innerWidth < MOBILE_BREAKPOINT
+          ? MOBILE_THRESHOLD_MULTIPLIER
+          : DESKTOP_THRESHOLD_MULTIPLIER;
+      return window.innerHeight * multiplier;
+    };
+
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > computeThreshold());
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
     <html lang="en">
       <head>
@@ -48,6 +76,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <main>{children}</main>
             <Footer />
           </div>
+          <BackToTopButton visible={showBackToTop} />
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
         <ScrollRestoration />

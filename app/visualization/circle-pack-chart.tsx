@@ -78,6 +78,21 @@ const getAmplitudeForRadius = (radius: number) => {
   return 0.025;
 };
 
+const SMALL_NODE_RADIUS_THRESHOLD = 18;
+const SMALL_NODE_RANDOM_OFFSET = 28;
+const SMALL_NODE_FORCE_TICKS = 12;
+const SMALL_NODE_FORCE_STRENGTH = 0.08;
+const SMALL_NODE_COLLISION_PADDING = 2;
+
+type RandomizedSmallNode = {
+  id: string;
+  x: number;
+  y: number;
+  r: number;
+  targetX: number;
+  targetY: number;
+};
+
 const createScallopedPath = (radius: number) => {
   const waveCount = getWaveCountForRadius(radius);
   const amplitudeRatio = getAmplitudeForRadius(radius);
@@ -219,6 +234,65 @@ const CirclePackChart = ({
     };
   }, [data, customWidth, customHeight, padding]);
 
+  const randomizedSmallNodePositions = useMemo(() => {
+    const leaves = root.descendants().filter(
+      (node) =>
+        (!node.children || node.children.length === 0) &&
+        node.r <= SMALL_NODE_RADIUS_THRESHOLD
+    );
+
+    if (leaves.length === 0) {
+      return new Map<string, { x: number; y: number }>();
+    }
+
+    const simulationNodes: RandomizedSmallNode[] = leaves.map((node) => {
+      const baseX = node.x ?? 0;
+      const baseY = node.y ?? 0;
+      return {
+        id: node.data.id,
+        x: baseX,
+        y: baseY,
+        r: node.r,
+        targetX: baseX + (Math.random() - 0.5) * SMALL_NODE_RANDOM_OFFSET,
+        targetY: baseY + (Math.random() - 0.5) * SMALL_NODE_RANDOM_OFFSET,
+      };
+    });
+
+    const simulation = d3
+      .forceSimulation<RandomizedSmallNode>(simulationNodes)
+      .force(
+        "x",
+        d3
+          .forceX<RandomizedSmallNode>((node) => node.targetX)
+          .strength(SMALL_NODE_FORCE_STRENGTH)
+      )
+      .force(
+        "y",
+        d3
+          .forceY<RandomizedSmallNode>((node) => node.targetY)
+          .strength(SMALL_NODE_FORCE_STRENGTH)
+      )
+      .force(
+        "collide",
+        d3
+          .forceCollide<RandomizedSmallNode>()
+          .radius((node) => node.r + SMALL_NODE_COLLISION_PADDING)
+      );
+
+    simulation.stop();
+    for (let i = 0; i < SMALL_NODE_FORCE_TICKS; i += 1) {
+      simulation.tick();
+    }
+    simulation.stop();
+
+    const positionMap = new Map<string, { x: number; y: number }>();
+    simulationNodes.forEach((node) => {
+      positionMap.set(node.id, { x: node.x, y: node.y });
+    });
+
+    return positionMap;
+  }, [root]);
+
   useEffect(() => {
     return () => {
       clearGestureHintTimeout();
@@ -259,6 +333,16 @@ const CirclePackChart = ({
     const nodesData: d3.HierarchyCircularNode<NodeDatum>[] = root
       .descendants()
       .slice(1) as d3.HierarchyCircularNode<NodeDatum>[];
+
+    const getRenderedCoords = (
+      node: d3.HierarchyCircularNode<NodeDatum>
+    ): { x: number; y: number } => {
+      const override = randomizedSmallNodePositions.get(node.data.id);
+      if (override) {
+        return override;
+      }
+      return { x: node.x ?? 0, y: node.y ?? 0 };
+    };
 
     const node = svg
       .append("g")
@@ -488,11 +572,12 @@ const CirclePackChart = ({
 
       label
         .attr("transform", (d) => {
+          const { x: nodeX, y: nodeY } = getRenderedCoords(d);
           const anchorY =
             d.children && d.children.length > 0
-              ? d.y - d.r * LABEL_CHILDREN_OFFSET_FACTOR
-              : d.y;
-          const [x, y] = transform.apply([d.x, anchorY]);
+              ? nodeY - d.r * LABEL_CHILDREN_OFFSET_FACTOR
+              : nodeY;
+          const [x, y] = transform.apply([nodeX, anchorY]);
           return `translate(${x}, ${y})`;
         })
         .style(
@@ -501,7 +586,8 @@ const CirclePackChart = ({
         );
 
       node.attr("transform", (d) => {
-        const [x, y] = transform.apply([d.x, d.y]);
+        const { x: nodeX, y: nodeY } = getRenderedCoords(d);
+        const [x, y] = transform.apply([nodeX, nodeY]);
         return `translate(${x},${y})`;
       });
 
@@ -546,9 +632,10 @@ const CirclePackChart = ({
         easing?: (normalizedTime: number) => number;
       } = {}
     ) => {
+      const { x: targetX, y: targetY } = getRenderedCoords(target);
       const targetView: [number, number, number] = [
-        target.x,
-        target.y,
+        targetX,
+        targetY,
         target.r * 2,
       ];
       const transform = viewToTransform(targetView);
@@ -783,6 +870,7 @@ const CirclePackChart = ({
     animationsEnabled,
     inertiaEnabled,
     dismissGestureHint,
+    randomizedSmallNodePositions,
     showGestureHint,
   ]);
 
