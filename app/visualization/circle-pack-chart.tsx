@@ -681,12 +681,8 @@ const CirclePackChart = ({
     const zoomBehavior = d3
       .zoom<SVGSVGElement, undefined>()
       .scaleExtent([0.5, 10]) // 限制縮放範圍：最小 0.5 倍，最大 10 倍
-      .filter((event) => {
-        return true;
-      })
       .on("start", (_) => {
         clearInertia();
-        // Note: We no longer change focus on start
       })
       .on("zoom", (event) => {
         if (
