@@ -46,7 +46,6 @@ type CirclePackChartProps = {
 
 const MOBILE_BREAKPOINT = 768;
 const GESTURE_HINT_AUTO_HIDE_MS = 2000;
-const GESTURE_HINT_TOUCH_INTERVAL_MS = 3000;
 
 const findLargestChild = (
   node: d3.HierarchyCircularNode<NodeDatum>
@@ -128,7 +127,6 @@ const CirclePackChart = ({
   const gestureHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
-  const hintShownAtRef = useRef<number | null>(null);
 
   const clearGestureHintTimeout = useCallback(() => {
     if (gestureHintTimeoutRef.current) {
@@ -142,15 +140,7 @@ const CirclePackChart = ({
     setGestureHintVisible(false);
   }, [clearGestureHintTimeout]);
 
-  const shouldShowHintForTouch = useCallback(() => {
-    if (gestureHintVisible) return false;
-    const now = performance.now();
-    const lastShown = hintShownAtRef.current ?? 0;
-    return now - lastShown >= GESTURE_HINT_TOUCH_INTERVAL_MS;
-  }, [gestureHintVisible]);
-
   const showGestureHint = useCallback(() => {
-    hintShownAtRef.current = performance.now();
     setGestureHintVisible(true);
     clearGestureHintTimeout();
     gestureHintTimeoutRef.current = setTimeout(() => {
@@ -694,13 +684,7 @@ const CirclePackChart = ({
       .filter((event) => {
         return true;
       })
-      .on("start", (event) => {
-        if (
-          event.sourceEvent?.type === "touchstart" &&
-          shouldShowHintForTouch()
-        ) {
-          showGestureHint();
-        }
+      .on("start", (_) => {
         clearInertia();
         // Note: We no longer change focus on start
       })
@@ -804,7 +788,6 @@ const CirclePackChart = ({
     inertiaEnabled,
     dismissGestureHint,
     showGestureHint,
-    shouldShowHintForTouch,
   ]);
 
   const handleZoomIn = () => {
