@@ -682,17 +682,20 @@ const CirclePackChart = ({
       .zoom<SVGSVGElement, undefined>()
       .scaleExtent([0.5, 10]) // 限制縮放範圍：最小 0.5 倍，最大 10 倍
       .filter((event) => {
-        if ("touches" in event && event.touches && event.touches.length > 1) {
-          return false;
-        }
         return true;
       })
-      .on("start", (_) => {
+      .on("start", (event) => {
+        if (event.sourceEvent?.type === "touchstart") {
+          showGestureHint();
+        }
         clearInertia();
         // Note: We no longer change focus on start
       })
       .on("zoom", (event) => {
-        if (event.sourceEvent?.type === "wheel") {
+        if (
+          event.sourceEvent?.type === "wheel" ||
+          event.sourceEvent?.type === "touchmove"
+        ) {
           event.sourceEvent.preventDefault();
         }
         renderWithTransform(event.transform);
@@ -814,8 +817,7 @@ const CirclePackChart = ({
       <div ref={containerRef} />
       <GestureHintOverlay
         visible={gestureHintVisible}
-        message="點擊後移動可以拖曳視野
-滑鼠滑動可以放大或縮小"
+        message="捏合或滑動即可縮放，點擊後拖曳可以平移"
         onDismiss={dismissGestureHint}
       />
       <div className="absolute right-4 bottom-4 flex flex-col gap-2">
