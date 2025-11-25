@@ -15,6 +15,7 @@ import { type NodeDatum } from "./helpers";
 import type { CirclePackPadding } from "./circle-pack-chart";
 import BudgetDetailSkeleton from "~/components/skeleton/budget-detail-skeleton";
 import VisualizationSkeleton from "~/components/skeleton/visualization-skeleton";
+import Image from "~/components/image";
 
 const useChartDimensions = () => {
   const [height, setHeight] = useState<number>(0);
@@ -203,6 +204,11 @@ const Visualization = () => {
                 {summaryStats.reductionCount}
               </span>
               個提案）
+              <Image
+                src="/icon/icon-explain.svg"
+                alt="說明"
+                className="ml-1 inline h-4 w-4"
+              />
             </p>
             <p>
               凍結{" "}
@@ -214,6 +220,11 @@ const Visualization = () => {
                 {summaryStats.freezeCount}
               </span>
               個提案）
+              <Image
+                src="/icon/icon-explain.svg"
+                alt="說明"
+                className="ml-1 inline h-4 w-4"
+              />
             </p>
             <p>
               主決議提案數：
@@ -221,6 +232,11 @@ const Visualization = () => {
                 {summaryStats.mainResolutionCount}
               </span>
               個
+              <Image
+                src="/icon/icon-explain.svg"
+                alt="說明"
+                className="ml-1 inline h-4 w-4"
+              />
             </p>
           </div>
         </div>
