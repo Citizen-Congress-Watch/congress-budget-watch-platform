@@ -63,10 +63,11 @@ const BudgetHeader = () => {
                 <NavLink
                   to={item.to}
                   onClick={() => setHamburgerShowValue(false)}
-                  className={`rounded-lg border px-1.5 ${isActive
-                    ? "border-[#E9808E] text-[#E9808E]"
-                    : "border-[#B3B3B3] text-white"
-                    }`}
+                  className={`rounded-lg border px-1.5 ${
+                    isActive
+                      ? "border-[#E9808E] text-[#E9808E]"
+                      : "border-[#B3B3B3] text-white"
+                  }`}
                 >
                   {item.label}
                 </NavLink>
@@ -97,10 +98,11 @@ const BudgetHeader = () => {
               <li key={item.to}>
                 <NavLink
                   to={item.to}
-                  className={`block rounded-lg border px-5 py-1 ${isActive
-                    ? "border-[#E9808E] bg-white text-[#E9808E]"
-                    : "border-[#B3B3B3] bg-[#E3E3E3] text-[#828282]"
-                    }`}
+                  className={`block rounded-lg border px-5 md:px-2 lg:px-5 py-1 ${
+                    isActive
+                      ? "border-[#E9808E] bg-white text-[#E9808E]"
+                      : "border-[#B3B3B3] bg-[#E3E3E3] text-[#828282]"
+                  }`}
                 >
                   {item.label}
                 </NavLink>
