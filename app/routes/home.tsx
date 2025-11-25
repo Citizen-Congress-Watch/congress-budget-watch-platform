@@ -81,7 +81,7 @@ export default function Home() {
           </h1>
 
           {/* Banner Image */}
-          <div className="mb-8 flex flex-col items-center justify-center">
+          <div className="relative mb-8 flex flex-col items-center justify-center">
             <Image
               src="/image/homepage-banner.svg"
               alt="國會預算監督平台 Banner"
@@ -100,7 +100,10 @@ export default function Home() {
                 審議進度載入失敗，請稍後再試
               </div>
             ) : latestBudgetYear ? (
-              <div className="max-w-banner bg-brand-primary -mt-1 flex min-h-[48px] w-full items-center justify-start rounded-lg pl-1 text-white">
+              <div className="max-w-banner bg-brand-primary relative -mt-1 flex min-h-[48px] w-full items-center justify-start rounded-lg pl-1 text-white">
+                <div className="border-brand-primary text-brand-primary absolute top-0 left-1/2 flex -translate-x-1/2 -translate-y-5/6 items-center justify-center rounded-lg border-2 bg-white px-1.5 py-2 text-center text-base font-bold shadow-lg md:hidden">
+                  最新審議進度
+                </div>
                 <p className="text-brand-primary mr-2 hidden w-[160px] rounded-lg bg-white px-3.5 py-2 md:flex">
                   最新審議進度
                 </p>
@@ -134,10 +137,11 @@ export default function Home() {
               key={button.label}
               to={button.href}
               className={({ isActive }) =>
-                `border-brand-accent flex min-h-[72px] w-full items-center justify-center rounded-lg border-3 px-6 py-4 text-center text-lg font-medium transition-colors ${isActive
-                  ? "bg-brand-accent"
-                  : "hover:bg-brand-accent bg-white hover:text-black"
-                } focus:ring-brand-accent focus:ring-2 focus:ring-offset-2 focus:outline-none text-budget-accent`
+                `border-brand-accent flex min-h-[72px] w-full items-center justify-center rounded-lg border-3 px-6 py-4 text-center text-lg font-medium transition-colors ${
+                  isActive
+                    ? "bg-brand-accent"
+                    : "hover:bg-brand-accent bg-white hover:text-black"
+                } focus:ring-brand-accent text-budget-accent focus:ring-2 focus:ring-offset-2 focus:outline-none`
               }
             >
               {button.label}
