@@ -110,7 +110,10 @@ const BudgetHeader = () => {
         </ul>
       </div>
       <div className="flex h-10 w-[134px] items-center justify-end gap-x-3.5">
-        <NavLink to="" className="cursor-pointer pt-2 underline">
+        <NavLink
+          to=""
+          className="hidden cursor-pointer pt-2 underline md:block"
+        >
           製作團隊
         </NavLink>
         {isMounted ? (
