@@ -397,7 +397,7 @@ const BudgetDetail = () => {
             <p>編號</p>
             <p className="text-budget-warning">{proposal.id}</p>
           </section>
-          <section className="flex gap-10 pb-4 border-b border-neutral-250">
+          <section className="flex gap-10 pb-4 border-b border-neutral-250 mt-3">
             <div className="flex flex-col gap-y-4 font-bold">
               <p>分類</p>
               <p>{proposal.government?.category || "暫無分類"}</p>
@@ -408,7 +408,7 @@ const BudgetDetail = () => {
             </div>
           </section>
           <section>
-            <p className="text-lg font-bold">審議階段/審議結果</p>
+            <p className="text-lg font-bold mt-3">審議階段</p>
             <div>
               {timelineData.length > 0 ? (
                 <Timeline items={timelineData} />
