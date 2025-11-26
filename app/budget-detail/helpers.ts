@@ -189,3 +189,13 @@ export function hasMergedProposals(proposal?: Proposal | null): boolean {
 
   return mergedCount + historicalCount > 0;
 }
+/**
+ * 判斷是否有併案
+ */
+export function hasHistoricalProposals(proposal?: Proposal | null): boolean {
+  if (!proposal) return false;
+
+  const historicalCount = proposal.historicalProposals?.length || 0;
+
+  return historicalCount > 0;
+}

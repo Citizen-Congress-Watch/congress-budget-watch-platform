@@ -44,6 +44,7 @@ const BudgetDetail = () => {
     proposal.historicalProposals
   );
   const mergedProposalsData = formatMergedProposals(proposal.mergedProposals);
+  console.log({ proposal });
   const hasMerged = hasMergedProposals(proposal);
   const hasImage = !!proposal.budgetImageUrl;
 
