@@ -209,10 +209,11 @@ export function hasMergedProposals(proposal?: Proposal | null): boolean {
   return hasParent || hasChildren;
 }
 /**
- * 判斷是否有併案
+ * 判斷是否為主提案：只要 併案母提案單historicalParentProposals 有值，就是
  */
 export function hasHistoricalProposals(proposal?: Proposal | null): boolean {
   if (!proposal) return false;
+  console.log(proposal.historicalParentProposals?.id)
 
   return Boolean(proposal.historicalParentProposals?.id);
 }

@@ -17,6 +17,7 @@ import {
   getResultDisplay,
   meetingsToTimeline,
   hasMergedProposals,
+  hasHistoricalProposals,
 } from "./helpers";
 import type { Proposal } from "~/graphql/graphql";
 
@@ -62,6 +63,31 @@ const BudgetDetail = () => {
       : "無";
   const proposalType = getProposalTypeDisplay(proposal.proposalTypes);
   const resultText = getResultDisplay(proposal.result);
+  const parentProposalId =
+    proposal.historicalParentProposals?.id ??
+    proposal.mergedParentProposals?.id;
+  const renderResultStatus = (
+    fallbackClassName: string,
+    navLinkClassName: string,
+    wrapperClassName = "flex"
+  ) => {
+    if (!hasHistoricalProposals(proposal) || !parentProposalId) {
+      return <p className={fallbackClassName}>{resultText}</p>;
+    }
+
+    return (
+      <p className={wrapperClassName}>
+        請至
+        <NavLink
+          to={`/budget/${parentProposalId}`}
+          className={navLinkClassName}
+        >
+          主提案單
+        </NavLink>
+        確認結果
+      </p>
+    );
+  };
   const budgetCategory = formatBudgetCategory(
     proposal.budget?.majorCategory,
     proposal.budget?.mediumCategory,
@@ -165,7 +191,11 @@ const BudgetDetail = () => {
                     <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
                       審議結果
                     </p>
-                    <p className="flex border-t pt-4 pr-12">{resultText}</p>
+                    {renderResultStatus(
+                      "flex border-t pt-4 pr-12 ",
+                      "text-brand-primary flex underline",
+                      "flex pt-4"
+                    )}
                   </div>
                 </section>
                 {/* row 2 */}
@@ -464,7 +494,10 @@ const BudgetDetail = () => {
               </section>
               <section className="flex-col">
                 <p className="font-bold">審議結果</p>
-                <p>{resultText}</p>
+                {renderResultStatus(
+                  "flex pt-4 pr-12",
+                  "text-brand-primary flex underline"
+                )}
               </section>
             </section>
             {/* fake link */}
