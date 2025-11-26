@@ -15,21 +15,10 @@ const ANIMATION_CONFIG = {
   thresholds: {
     disableAnimationsAfter: 1000,
   },
-  inertia: {
-    enabled: true,
-    maxHistory: 5,
-    decay: 0.92,
-    minVelocity: 0.02,
-    frameInterval: 16,
-  },
 } as const;
 
 const INTERACTION_FLAGS = {
   enableNodeNavigation: true,
-} as const;
-
-const INERTIA_FLAGS = {
-  enabled: true,
 } as const;
 
 export type CirclePackPadding =
@@ -134,10 +123,6 @@ const CirclePackChart = ({
   );
   const focusRef = useRef<d3.HierarchyCircularNode<NodeDatum> | null>(null);
   const lastFocusedNodeIdRef = useRef<string | null>(null);
-  const inertiaFrameRef = useRef<number | null>(null);
-  const transformHistoryRef = useRef<
-    Array<{ transform: d3.ZoomTransform; timestamp: number }>
-  >([]);
   const [gestureHintVisible, setGestureHintVisible] = useState(false);
   const gestureHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
@@ -177,7 +162,6 @@ const CirclePackChart = ({
     initialFocus,
     animations,
     animationsEnabled,
-    inertiaEnabled,
   } = useMemo(() => {
     const width = customWidth ?? DEFAULT_CHART_WIDTH;
     const height =
@@ -212,10 +196,6 @@ const CirclePackChart = ({
     const totalNodes = root.descendants().length;
     const disableAnimations =
       totalNodes > ANIMATION_CONFIG.thresholds.disableAnimationsAfter;
-    const inertiaEnabled =
-      !disableAnimations &&
-      ANIMATION_CONFIG.inertia.enabled &&
-      INERTIA_FLAGS.enabled;
 
     const animations = {
       focus: disableAnimations ? 0 : ANIMATION_CONFIG.focus.duration,
@@ -230,7 +210,6 @@ const CirclePackChart = ({
       initialFocus: focusNode,
       animations,
       animationsEnabled: !disableAnimations,
-      inertiaEnabled,
     };
   }, [data, customWidth, customHeight, padding]);
 
@@ -694,85 +673,10 @@ const CirclePackChart = ({
       }
     };
 
-    const getCurrentTransform = () => {
-      const node = svg.node();
-      return node ? d3.zoomTransform(node as SVGSVGElement) : d3.zoomIdentity;
-    };
-
-    const addTransformHistory = (transform: d3.ZoomTransform) => {
-      const now = performance.now();
-      transformHistoryRef.current.push({ transform, timestamp: now });
-      if (
-        transformHistoryRef.current.length > ANIMATION_CONFIG.inertia.maxHistory
-      ) {
-        transformHistoryRef.current.shift();
-      }
-    };
-
-    const clearInertia = () => {
-      if (inertiaFrameRef.current != null) {
-        cancelAnimationFrame(inertiaFrameRef.current);
-        inertiaFrameRef.current = null;
-      }
-      transformHistoryRef.current.length = 0;
-    };
-
-    const startInertia = () => {
-      if (!inertiaEnabled || transformHistoryRef.current.length < 2) return;
-
-      const latest =
-        transformHistoryRef.current[transformHistoryRef.current.length - 1];
-      const previous =
-        transformHistoryRef.current[transformHistoryRef.current.length - 2];
-      const dt = (latest.timestamp - previous.timestamp) / 1000; // seconds
-      if (dt <= 0) return;
-
-      let velocityX = (latest.transform.x - previous.transform.x) / dt;
-      let velocityY = (latest.transform.y - previous.transform.y) / dt;
-
-      const decay = ANIMATION_CONFIG.inertia.decay;
-      const minVelocity = ANIMATION_CONFIG.inertia.minVelocity;
-
-      const step = () => {
-        velocityX *= decay;
-        velocityY *= decay;
-
-        if (
-          Math.abs(velocityX) < minVelocity &&
-          Math.abs(velocityY) < minVelocity
-        ) {
-          clearInertia();
-          return;
-        }
-
-        const currentTransform = getCurrentTransform();
-        const deltaX =
-          velocityX * (ANIMATION_CONFIG.inertia.frameInterval / 1000);
-        const deltaY =
-          velocityY * (ANIMATION_CONFIG.inertia.frameInterval / 1000);
-        const nextTransform = currentTransform.translate(deltaX, deltaY);
-
-        (
-          zoomBehavior.transform as unknown as (
-            selection: d3.Selection<SVGSVGElement, undefined, null, undefined>,
-            transform: d3.ZoomTransform
-          ) => void
-        )(svg, nextTransform);
-
-        inertiaFrameRef.current = requestAnimationFrame(step);
-      };
-
-      clearInertia();
-      inertiaFrameRef.current = requestAnimationFrame(step);
-    };
-
     // 建立 d3-zoom behavior，用於程式化縮放與使用者拖曳平移
     const zoomBehavior = d3
       .zoom<SVGSVGElement, undefined>()
       .scaleExtent([0.5, 10]) // 限制縮放範圍：最小 0.5 倍，最大 10 倍
-      .on("start", (_) => {
-        clearInertia();
-      })
       .on("zoom", (event) => {
         if (
           event.sourceEvent?.type === "wheel" ||
@@ -781,19 +685,12 @@ const CirclePackChart = ({
           event.sourceEvent.preventDefault();
         }
         renderWithTransform(event.transform);
-        addTransformHistory(event.transform);
-      })
-      .on("end", (event) => {
-        if (event.sourceEvent) {
-          startInertia();
-        }
       });
 
     zoomRef.current = zoomBehavior;
 
     const resetToRoot = () => {
       setFocus(root);
-      clearInertia();
       setView(root, { duration: baseFocusDuration });
       updateLabelVisibility(baseLabelDuration);
     };
@@ -854,7 +751,6 @@ const CirclePackChart = ({
 
     // cleanup
     return () => {
-      clearInertia();
       svg.remove();
     };
   }, [
@@ -870,7 +766,6 @@ const CirclePackChart = ({
     animations.focus,
     animations.label,
     animationsEnabled,
-    inertiaEnabled,
     dismissGestureHint,
     randomizedSmallNodePositions,
     showGestureHint,
