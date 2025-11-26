@@ -15,12 +15,9 @@ import { type NodeDatum } from "./helpers";
 import type { CirclePackPadding } from "./circle-pack-chart";
 import BudgetDetailSkeleton from "~/components/skeleton/budget-detail-skeleton";
 import VisualizationSkeleton from "~/components/skeleton/visualization-skeleton";
-import Image from "~/components/image";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
+import SummaryPanel, {
+  type SummaryPanelSummary,
+} from "./components/SummaryPanel";
 
 const useChartDimensions = () => {
   const [height, setHeight] = useState<number>(0);
@@ -96,6 +93,23 @@ const Visualization = () => {
     formattedReductionAmount,
     formattedFreezeAmount,
   } = useVisualizationState();
+
+  const summaryForPanel = useMemo<SummaryPanelSummary>(
+    () => ({
+      formattedReductionAmount,
+      formattedFreezeAmount,
+      reductionCount: summaryStats.reductionCount,
+      freezeCount: summaryStats.freezeCount,
+      mainResolutionCount: summaryStats.mainResolutionCount,
+    }),
+    [
+      formattedReductionAmount,
+      formattedFreezeAmount,
+      summaryStats.reductionCount,
+      summaryStats.freezeCount,
+      summaryStats.mainResolutionCount,
+    ]
+  );
 
   const legislatorPadding = useMemo<CirclePackPadding | undefined>(() => {
     if (mode !== "amount") return undefined;
@@ -197,81 +211,7 @@ const Visualization = () => {
           </div>
         </div>
 
-        <div className="bg-surface-notice md:max-w-visualization-card flex flex-col items-center justify-center rounded-lg border-2 p-2.5 md:mx-auto">
-          <div>
-            <p>
-              總共刪減{" "}
-              <span className="text-budget-accent">
-                {formattedReductionAmount}
-              </span>
-              （
-              <span className="text-budget-accent">
-                {summaryStats.reductionCount}
-              </span>
-              個提案）
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="ml-1 inline-flex">
-                    <Image
-                      src="/icon/icon-explain.svg"
-                      alt="說明"
-                      className="h-4 w-4"
-                    />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="bg-black text-white">
-                  刪減案相關說明
-                </TooltipContent>
-              </Tooltip>
-            </p>
-            <p>
-              凍結{" "}
-              <span className="text-budget-accent">
-                {formattedFreezeAmount}
-              </span>
-              （
-              <span className="text-budget-accent">
-                {summaryStats.freezeCount}
-              </span>
-              個提案）
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="ml-1 inline-flex">
-                    <Image
-                      src="/icon/icon-explain.svg"
-                      alt="說明"
-                      className="h-4 w-4"
-                    />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="bg-black text-white">
-                  凍結案相關說明
-                </TooltipContent>
-              </Tooltip>
-            </p>
-            <p>
-              主決議提案數：
-              <span className="text-budget-accent">
-                {summaryStats.mainResolutionCount}
-              </span>
-              個
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="ml-1 inline-flex">
-                    <Image
-                      src="/icon/icon-explain.svg"
-                      alt="說明"
-                      className="h-4 w-4"
-                    />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="bg-black text-white">
-                  主決議提案相關說明
-                </TooltipContent>
-              </Tooltip>
-            </p>
-          </div>
-        </div>
+        <SummaryPanel summary={summaryForPanel} />
 
         <BudgetTypeLegend items={BUDGET_TYPE_LEGEND_ITEMS} />
 
