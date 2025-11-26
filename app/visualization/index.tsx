@@ -18,6 +18,9 @@ import VisualizationSkeleton from "~/components/skeleton/visualization-skeleton"
 import SummaryPanel, {
   type SummaryPanelSummary,
 } from "./components/SummaryPanel";
+import { useQuery } from "@tanstack/react-query";
+import { BUDGET_BY_LEGISLATOR_URL } from "~/config/budget-endpoints";
+import { budgetByLegislatorSchema } from "~/types/budget-by-legislator.schema";
 
 const useChartDimensions = () => {
   const [height, setHeight] = useState<number>(0);
@@ -94,6 +97,25 @@ const Visualization = () => {
     formattedFreezeAmount,
   } = useVisualizationState();
 
+  const legislatorBudgetQueryKey = [
+    "budget",
+    "legislators",
+    selectedLegislatorOption?.value ?? "all",
+  ];
+  const fetchLegislatorBudget = async () => {
+    const response = await fetch(BUDGET_BY_LEGISLATOR_URL);
+    // const response = await fetch('/api/budget/legislators');
+    if (!response.ok) {
+      throw new Error("無法載入立委預算資料");
+    }
+    return budgetByLegislatorSchema.parse(await response.json());
+  };
+  const { data: legislatorBudgetSummaryData } = useQuery({
+    queryKey: legislatorBudgetQueryKey,
+    queryFn: fetchLegislatorBudget,
+    enabled: Boolean(selectedLegislatorOption),
+  });
+  console.log({ legislatorBudgetSummaryData });
   const summaryForPanel = useMemo<SummaryPanelSummary>(
     () => ({
       formattedReductionAmount,
