@@ -213,7 +213,6 @@ export function hasMergedProposals(proposal?: Proposal | null): boolean {
  */
 export function hasHistoricalProposals(proposal?: Proposal | null): boolean {
   if (!proposal) return false;
-  console.log(proposal.historicalParentProposals?.id)
 
   return Boolean(proposal.historicalParentProposals?.id);
 }
