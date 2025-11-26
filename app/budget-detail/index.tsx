@@ -393,11 +393,11 @@ const BudgetDetail = () => {
           {"<" + "回到列表頁"}
         </NavLink>
         <div className="mt-2 border-2 px-2 py-3">
-          <section className="flex gap-6">
+          <section className="flex gap-6 pb-2 border-b border-neutral-250">
             <p>編號</p>
             <p className="text-budget-warning">{proposal.id}</p>
           </section>
-          <section className="flex gap-10">
+          <section className="flex gap-10 pb-4 border-b border-neutral-250">
             <div className="flex flex-col gap-y-4 font-bold">
               <p>分類</p>
               <p>{proposal.government?.category || "暫無分類"}</p>
