@@ -150,15 +150,22 @@ type MergedProposalLike = {
 
 /**
  * 將 mergedProposals / mergedParentProposals 轉換為顯示格式
+ * 如果查詢不到母提案資料但當前提案有併案子提案，會自動帶入當前提案為「主」
  */
 export function formatMergedProposals(
   mergedProposals?: Array<MergedProposalLike> | null,
-  mergedParentProposal?: MergedProposalLike
+  mergedParentProposal?: MergedProposalLike,
+  currentProposal?: MergedProposalLike
 ): MergedProposalInfo[] {
   const normalized: Array<{ raw: MergedProposalLike; isParent: boolean }> = [];
 
   if (mergedParentProposal?.id) {
     normalized.push({ raw: mergedParentProposal, isParent: true });
+  } else if (
+    currentProposal?.id &&
+    (mergedProposals?.length ?? 0) > 0
+  ) {
+    normalized.push({ raw: currentProposal, isParent: true });
   }
 
   if (mergedProposals && mergedProposals.length > 0) {
