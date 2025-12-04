@@ -103,6 +103,54 @@ export function formatReducedAndFrozenAmount(
   return `${formattedReduced} / ${formattedFrozen}`;
 }
 
+type MeetingCommittee = NonNullable<Meeting["committee"]>[number];
+
+function toDate(value?: string | Date | null): Date | null {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function getLatestCommitteeNameFromMeeting(
+  committees?: (MeetingCommittee | null)[] | null,
+  fallback = "會議"
+): string {
+  const latestCommittee = (committees ?? [])
+    .filter((committee): committee is MeetingCommittee => Boolean(committee))
+    .map((committee) => ({
+      committee,
+      startDate: toDate(committee.startDate),
+    }))
+    .filter(
+      (
+        entry
+      ): entry is {
+        committee: MeetingCommittee;
+        startDate: Date;
+      } => Boolean(entry.startDate)
+    )
+    .reduce<{
+      committee: MeetingCommittee;
+      startDate: Date;
+    } | null>((selected, current) => {
+      if (!selected) return current;
+      return current.startDate.getTime() > selected.startDate.getTime()
+        ? current
+        : selected;
+    }, null);
+
+  if (latestCommittee) {
+    return (
+      latestCommittee.committee.name ??
+      latestCommittee.committee.displayName ??
+      fallback
+    );
+  }
+
+  return fallback;
+}
+
 /**
  * 將 Meeting 陣列轉換為 Timeline 格式
  * 如果沒有 meetings 資料，返回空陣列
@@ -135,7 +183,10 @@ export function meetingsToTimeline(
           day: "numeric",
         })
       : "日期未定",
-    title: mapStageLabel(meeting.type, "會議"),
+    title: getLatestCommitteeNameFromMeeting(
+      meeting.committee,
+      mapStageLabel(meeting.type, "會議")
+    ),
     historicalProposalId: meeting.id
       ? meetingToHistoricalProposal.get(meeting.id)
       : undefined,

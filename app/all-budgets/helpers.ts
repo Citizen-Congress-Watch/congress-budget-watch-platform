@@ -57,6 +57,9 @@ const formatProposers = (proposers?: (People | null)[] | null): string =>
     : "未知提案人";
 
 type StageCommittee = {
+  name?: string | null;
+  displayName?: string | null;
+  startDate?: string | Date | null;
   endDate?: string | Date | null;
 };
 
@@ -177,6 +180,44 @@ function meetingsToStage(
   return fallbackStage;
 }
 
+function getLatestCommitteeName(
+  meetings?: (MeetingForStage | null)[] | null,
+  fallbackStage = "委員會"
+): string {
+  const latestCommittee = (meetings ?? [])
+    .flatMap((meeting) => meeting?.committee ?? [])
+    .map((committee) => {
+      if (!committee) return null;
+      return {
+        committee,
+        startDate: toDate(committee.startDate),
+      };
+    })
+    .filter(
+      (
+        entry
+      ): entry is {
+        committee: StageCommittee;
+        startDate: Date;
+      } => Boolean(entry?.committee?.name) && Boolean(entry?.startDate)
+    )
+    .reduce<{
+      committee: StageCommittee;
+      startDate: Date;
+    } | null>((selected, current) => {
+      if (!selected) return current;
+      return current.startDate.getTime() > selected.startDate.getTime()
+        ? current
+        : selected;
+    }, null);
+
+  if (latestCommittee) {
+    return latestCommittee.committee.name ?? fallbackStage;
+  }
+
+  return fallbackStage;
+}
+
 const transformProposalResult = (result?: string | null): string => {
   const resultMap: Record<string, string> = {
     passed: "通過",
@@ -193,7 +234,11 @@ export function proposalToBudgetTableData(
     sequence: () => 0,
     department: flow(get("government.name"), defaultTo("部會")),
     date: (p: ProposalInput) => getLatestMeetingDate(p.meetings), // 重新使用 getLatestMeetingDate
-    stage: (proposal: ProposalInput) => meetingsToStage(proposal.meetings),
+    stage: (proposal: ProposalInput) =>
+      getLatestCommitteeName(
+        proposal.meetings,
+        meetingsToStage(proposal.meetings)
+      ),
     proposer: flow(prop("proposers"), formatProposers),
     proposalType: flow(prop("proposalTypes"), getProposalTypeDisplay),
     proposalResult: flow(prop("result"), transformProposalResult),

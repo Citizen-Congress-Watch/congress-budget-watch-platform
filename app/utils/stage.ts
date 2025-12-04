@@ -7,6 +7,7 @@ export function mapStageLabel(
   type?: string | null,
   fallbackStage = "階段"
 ): string {
+  console.log("type",type)
   if (!type) return fallbackStage;
   return stageLabelMap[type] ?? fallbackStage;
 }

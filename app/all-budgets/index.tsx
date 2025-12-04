@@ -8,6 +8,7 @@ import {
   GET_PAGINATED_PROPOSALS_QUERY,
   GET_PROPOSAL_YEARS_QUERY,
   proposalQueryKeys,
+  proposalQueryKeysWithOrderAndSkip,
 } from "~/queries";
 import content from "./page-content";
 import {
@@ -36,7 +37,6 @@ import { SEARCH_DEBOUNCE_DELAY } from "~/constants/config";
 import { sortOptions } from "~/constants/options";
 import { find } from "lodash";
 import AllBudgetsView, { type YearOption } from "./AllBudgetsView";
-
 
 export function meta() {
   return [
@@ -182,7 +182,7 @@ export const AllBudgets = () => {
 
   // 修改後的 React Query（支援分頁）
   const { data, isLoading, isError, isPlaceholderData } = useQuery({
-    queryKey: proposalQueryKeys.paginated(
+    queryKey: proposalQueryKeysWithOrderAndSkip.paginated(
       currentPage,
       pageSize,
       selectedSort,
