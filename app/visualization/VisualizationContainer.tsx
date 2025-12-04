@@ -108,9 +108,6 @@ const VisualizationContainer = ({
     return null;
   }
 
-  if (!React.isValidElement<VisualizationViewProps>(children)) {
-    return null;
-  }
   return children({
     activeTab: activeTab,
     onTabChange: handleTabChange,

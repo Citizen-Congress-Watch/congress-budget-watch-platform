@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { find, filter, sumBy } from "lodash";
+import { filter, sumBy } from "lodash";
 import { useMediaQuery } from "usehooks-ts";
 import { execute } from "~/graphql/execute";
 import {
@@ -8,15 +8,13 @@ import {
   proposalQueryKeys,
 } from "~/queries";
 import {
-  OrderDirection,
   ProposalProposalTypeType,
   VisualizationProposalBaseFragmentDoc,
   VisualizationProposalWithContextFragmentDoc,
-  type ProposalOrderByInput,
   type ProposalWhereInput,
   type GetVisualizationProposalsQuery,
 } from "~/graphql/graphql";
-import { sortOptions, YEAR_OPTIONS } from "~/constants/options";
+import { YEAR_OPTIONS } from "~/constants/options";
 import {
   formatAmountWithUnit,
   mapVisualizationProposals,
@@ -56,9 +54,6 @@ const useVisualizationState = (): UseVisualizationStateResult => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const isMobile = !isDesktop;
 
-  const selectedSort = "id-asc";
-  const currentPage = 1;
-
   const whereFilter = useCallback((): ProposalWhereInput => {
     return {
       year: {
@@ -72,33 +67,13 @@ const useVisualizationState = (): UseVisualizationStateResult => {
     };
   }, [selectedYear.value]);
 
-  const orderBy = useMemo((): ProposalOrderByInput[] => {
-    const sortOption = find(sortOptions, (o) => o.value === selectedSort);
-    if (!sortOption) {
-      return [{ id: OrderDirection.Desc }];
-    }
-
-    const direction =
-      sortOption.direction === "asc" ? OrderDirection.Asc : OrderDirection.Desc;
-
-    return [
-      {
-        [sortOption.field]: direction,
-      },
-    ];
-  }, [selectedSort]);
-
   const { data, isLoading, isError } = useQuery({
     queryKey: proposalQueryKeys.paginated(
-      currentPage,
-      selectedSort,
       whereFilter(),
       parseInt(selectedYear.value, 10)
     ),
     queryFn: () =>
       execute(GET_VISUALIZATION_PROPOSALS_QUERY, {
-        skip: 0,
-        orderBy,
         where: whereFilter(),
       }),
     placeholderData: keepPreviousData,
@@ -259,8 +234,12 @@ const useVisualizationState = (): UseVisualizationStateResult => {
     const filteredProposals =
       data.proposals?.filter((proposal) => {
         if (!proposal) return false;
+        const proposalWithContext = useFragment(
+          VisualizationProposalWithContextFragmentDoc,
+          proposal
+        );
         const category = normalizeDepartmentCategory(
-          proposal.government?.category ?? null
+          proposalWithContext.government?.category ?? null
         );
         return category === selectedDepartmentOption.value;
       }) ?? [];

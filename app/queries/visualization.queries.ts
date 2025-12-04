@@ -1,12 +1,8 @@
 import { graphql } from "~/graphql";
 
 export const GET_VISUALIZATION_PROPOSALS_QUERY = graphql(`
-  query GetVisualizationProposals(
-    $skip: Int!
-    $orderBy: [ProposalOrderByInput!]!
-    $where: ProposalWhereInput!
-  ) {
-    proposals(skip: $skip, orderBy: $orderBy, where: $where) {
+  query GetVisualizationProposals($where: ProposalWhereInput!) {
+    proposals(where: $where) {
       ...VisualizationProposalWithContext
     }
   }
