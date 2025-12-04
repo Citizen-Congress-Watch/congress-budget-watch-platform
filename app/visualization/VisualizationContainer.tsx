@@ -15,9 +15,14 @@ const VisualizationContainer = ({
   children: (props: VisualizationViewProps) => React.ReactNode;
 }) => {
   const {
-    ref: chartContainerRef,
-    width: chartWidth,
-    height: chartHeight,
+    ref: legislatorChartContainerRef,
+    width: legislatorChartWidth,
+    height: legislatorChartHeight,
+  } = useChartDimensions();
+  const {
+    ref: departmentChartContainerRef,
+    width: departmentChartWidth,
+    height: departmentChartHeight,
   } = useChartDimensions();
   const navigate = useNavigate();
 
@@ -126,9 +131,12 @@ const VisualizationContainer = ({
     onDepartmentChange: handleDepartmentChange,
     isDesktop: isDesktop,
     isLoading: isLoading,
-    chartContainerRef: chartContainerRef,
-    chartWidth: chartWidth,
-    chartHeight: chartHeight,
+    legislatorChartContainerRef: legislatorChartContainerRef,
+    legislatorChartWidth: legislatorChartWidth,
+    legislatorChartHeight: legislatorChartHeight,
+    departmentChartContainerRef: departmentChartContainerRef,
+    departmentChartWidth: departmentChartWidth,
+    departmentChartHeight: departmentChartHeight,
     visualizationData: visualizationData,
     legislatorVisualizationData: legislatorVisualizationData,
     legislatorSummary: legislatorSummary,

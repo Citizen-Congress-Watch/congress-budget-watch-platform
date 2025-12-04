@@ -27,9 +27,12 @@ export type VisualizationViewProps = {
   onDepartmentChange: (option: SelectOption | null) => void;
   isDesktop: boolean;
   isLoading: boolean;
-  chartContainerRef: RefCallback<HTMLDivElement>;
-  chartWidth: number;
-  chartHeight: number;
+  legislatorChartContainerRef: RefCallback<HTMLDivElement>;
+  legislatorChartWidth: number;
+  legislatorChartHeight: number;
+  departmentChartContainerRef: RefCallback<HTMLDivElement>;
+  departmentChartWidth: number;
+  departmentChartHeight: number;
   visualizationData: GetVisualizationProposalsQuery;
   legislatorVisualizationData: VisualizationGroupedData | null;
   legislatorSummary: SummaryPanelSummary;

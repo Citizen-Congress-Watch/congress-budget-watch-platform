@@ -26,9 +26,12 @@ const VisualizationView = ({
   onDepartmentChange,
   isDesktop,
   isLoading,
-  chartContainerRef,
-  chartWidth,
-  chartHeight,
+  legislatorChartContainerRef,
+  legislatorChartWidth,
+  legislatorChartHeight,
+  departmentChartContainerRef,
+  departmentChartWidth,
+  departmentChartHeight,
   visualizationData,
   legislatorVisualizationData,
   legislatorSummary,
@@ -85,37 +88,37 @@ const VisualizationView = ({
           />
         )}
         <BudgetTypeLegend items={BUDGET_TYPE_LEGEND_ITEMS} />
-        <div ref={chartContainerRef} className="chart-container">
-          {showLegislatorVisualization && (
+        {showLegislatorVisualization && (
+          <div ref={legislatorChartContainerRef} className="chart-container">
             <DepartmentVisualization
+              key="legislator-chart"
               data={visualizationData}
               transformedData={legislatorVisualizationData}
               padding={legislatorPadding}
               onNodeClick={onNodeClick}
-              width={chartWidth}
-              height={chartHeight}
+              width={legislatorChartWidth}
+              height={legislatorChartHeight}
               mode={mode}
             />
-          )}
-          {showDepartmentVisualization && (
-            <div className="w-full">
-              <div className="aspect-video md:aspect-video lg:aspect-video">
-                <DepartmentVisualization
-                  data={visualizationData}
-                  onNodeClick={onNodeClick}
-                  width={chartWidth}
-                  height={chartHeight}
-                  mode={mode}
-                  selectedDepartmentCategorizedData={
-                    selectedDepartmentCategorizedData
-                  }
-                  selectedDepartmentTitle={selectedDepartmentTitle ?? null}
-                  showSelectedDepartmentChart={showSelectedDepartmentChart}
-                />
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+        {showDepartmentVisualization && (
+          <div ref={departmentChartContainerRef} className="chart-container">
+            <DepartmentVisualization
+              key="department-chart"
+              data={visualizationData}
+              onNodeClick={onNodeClick}
+              width={departmentChartWidth}
+              height={departmentChartHeight}
+              mode={mode}
+              selectedDepartmentCategorizedData={
+                selectedDepartmentCategorizedData
+              }
+              selectedDepartmentTitle={selectedDepartmentTitle ?? null}
+              showSelectedDepartmentChart={showSelectedDepartmentChart}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
