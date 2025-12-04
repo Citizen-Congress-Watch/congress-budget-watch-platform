@@ -1,41 +1,45 @@
 import { useState, useRef, type RefCallback, useCallback } from "react";
 
 const useChartDimensions = () => {
-  const [height, setHeight] = useState<number>(0);
-  const [width, setWidth] = useState(300);
+  const defaultWidth = 300;
+  const defaultAspectRatio = 3 / 4;
+  const defaultHeight = Math.round(defaultWidth * defaultAspectRatio);
+
+  const [height, setHeight] = useState<number>(defaultHeight);
+  const [width, setWidth] = useState(defaultWidth);
   const observerRef = useRef<ResizeObserver | null>(null);
+
   const ref: RefCallback<HTMLDivElement> = useCallback((node) => {
     if (observerRef.current) {
       observerRef.current.disconnect();
     }
 
-    if (node) {
-      const measure = () => {
-        const newWidth = node.getBoundingClientRect().width;
-        if (newWidth > 0) {
-          setWidth(newWidth);
-          // derive a height using a 16:9 aspect ratio
-          setHeight(Math.round((newWidth * 9) / 16));
-        }
-      };
+    if (!node) return;
 
-      const animationFrameId = requestAnimationFrame(measure);
+    const measure = () => {
+      const newWidth = node.getBoundingClientRect().width;
+      if (newWidth <= 0) return;
 
-      observerRef.current = new ResizeObserver((entries) => {
-        const entry = entries[0];
-        if (entry) {
-          const w = entry.contentRect.width;
-          setWidth(w);
-          setHeight(Math.round((w * 9) / 16));
-        }
-      });
+      setWidth(newWidth);
+      setHeight(Math.round(newWidth * defaultAspectRatio));
+    };
 
-      observerRef.current.observe(node);
+    const animationFrameId = requestAnimationFrame(measure);
 
-      return () => {
-        cancelAnimationFrame(animationFrameId);
-      };
-    }
+    observerRef.current = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+
+      const width = entry.contentRect.width;
+      setWidth(width);
+      setHeight(Math.round(width * defaultAspectRatio));
+    });
+
+    observerRef.current.observe(node);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
   return { ref, width, height };
