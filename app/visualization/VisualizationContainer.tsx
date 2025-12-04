@@ -18,7 +18,7 @@ import type { VisualizationViewProps } from "./types";
 const VisualizationContainer = ({
   children,
 }: {
-  children: React.ReactNode;
+  children: (props: VisualizationViewProps) => React.ReactNode;
 }) => {
   const {
     ref: chartContainerRef,
@@ -158,8 +158,7 @@ const VisualizationContainer = ({
   if (!React.isValidElement<VisualizationViewProps>(children)) {
     return null;
   }
-
-  return React.cloneElement(children, {
+  return children({
     activeTab: activeTab,
     onTabChange: handleTabChange,
     yearOptions: yearOptions,
