@@ -1546,6 +1546,7 @@ export type ProposalManyRelationFilter = {
 };
 
 export type ProposalOrderByInput = {
+  budgetAmount?: InputMaybe<OrderDirection>;
   budgetImageUrl?: InputMaybe<OrderDirection>;
   description?: InputMaybe<OrderDirection>;
   freezeAmount?: InputMaybe<OrderDirection>;
@@ -1629,6 +1630,7 @@ export type ProposalWhereInput = {
   NOT?: InputMaybe<Array<ProposalWhereInput>>;
   OR?: InputMaybe<Array<ProposalWhereInput>>;
   budget?: InputMaybe<BudgetWhereInput>;
+  budgetAmount?: InputMaybe<FloatNullableFilter>;
   budgetImageUrl?: InputMaybe<StringNullableFilter>;
   coSigners?: InputMaybe<PeopleManyRelationFilter>;
   description?: InputMaybe<StringNullableFilter>;
@@ -2403,8 +2405,6 @@ export type Update_Proposal_ReactsMutationVariables = Exact<{
 export type Update_Proposal_ReactsMutation = { __typename?: 'Mutation', updateProposal?: { __typename?: 'Proposal', id: string, react_angry?: number | null, react_disappoint?: number | null, react_good?: number | null, react_whatever?: number | null } | null };
 
 export type GetVisualizationProposalsQueryVariables = Exact<{
-  skip: Scalars['Int']['input'];
-  orderBy: Array<ProposalOrderByInput> | ProposalOrderByInput;
   where: ProposalWhereInput;
 }>;
 
@@ -2771,8 +2771,8 @@ export const Update_Proposal_ReactsDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<Update_Proposal_ReactsMutation, Update_Proposal_ReactsMutationVariables>;
 export const GetVisualizationProposalsDocument = new TypedDocumentString(`
-    query GetVisualizationProposals($skip: Int!, $orderBy: [ProposalOrderByInput!]!, $where: ProposalWhereInput!) {
-  proposals(skip: $skip, orderBy: $orderBy, where: $where) {
+    query GetVisualizationProposals($where: ProposalWhereInput!) {
+  proposals(where: $where) {
     ...VisualizationProposalWithContext
   }
 }

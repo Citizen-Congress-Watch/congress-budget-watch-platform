@@ -957,6 +957,7 @@ input ProposalManyRelationFilter {
 }
 
 input ProposalOrderByInput {
+  budgetAmount: OrderDirection
   budgetImageUrl: OrderDirection
   description: OrderDirection
   freezeAmount: OrderDirection
@@ -1040,6 +1041,7 @@ input ProposalWhereInput {
   NOT: [ProposalWhereInput!]
   OR: [ProposalWhereInput!]
   budget: BudgetWhereInput
+  budgetAmount: FloatNullableFilter
   budgetImageUrl: StringNullableFilter
   coSigners: PeopleManyRelationFilter
   description: StringNullableFilter
