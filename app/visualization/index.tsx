@@ -15,7 +15,6 @@ import { useVisualizationState } from "./use-visualization-state";
 import {
   formatAmountWithUnit,
   type NodeDatum,
-  type VisualizationGroupedData,
 } from "./helpers";
 import type { CirclePackPadding } from "./circle-pack-chart";
 import BudgetDetailSkeleton from "~/components/skeleton/budget-detail-skeleton";
@@ -30,12 +29,10 @@ import {
 } from "~/config/budget-endpoints";
 import { budgetByDepartmentSchema } from "~/types/budget-by-department.schema";
 import { budgetByLegislatorSchema } from "~/types/budget-by-legislator.schema";
-import type { GetVisualizationProposalsQuery } from "~/graphql/graphql";
 import type {
   SelectOption,
-  VisualizationMode,
-  VisualizationTab,
 } from "~/types/visualization";
+import type { VisualizationViewProps } from "./types";
 
 const useChartDimensions = () => {
   const [height, setHeight] = useState<number>(0);
@@ -78,37 +75,7 @@ const useChartDimensions = () => {
   return { ref, width, height };
 };
 
-type VisualizationViewProps = {
-  activeTab: VisualizationTab;
-  onTabChange: (tab: VisualizationTab) => void;
-  yearOptions: SelectOption[];
-  selectedYear: SelectOption;
-  onYearChange: (option: SelectOption) => void;
-  mode: VisualizationMode;
-  onModeChange: (mode: VisualizationMode) => void;
-  isShowingAll: boolean;
-  onToggleShowAll: () => void;
-  legislatorOptions: SelectOption[];
-  selectedLegislatorOption: SelectOption | null;
-  onLegislatorChange: (option: SelectOption | null) => void;
-  departmentOptions: SelectOption[];
-  selectedDepartmentOption: SelectOption | null;
-  onDepartmentChange: (option: SelectOption | null) => void;
-  isDesktop: boolean;
-  isLoading: boolean;
-  chartContainerRef: RefCallback<HTMLDivElement>;
-  chartWidth: number;
-  chartHeight: number;
-  visualizationData: GetVisualizationProposalsQuery;
-  legislatorVisualizationData: VisualizationGroupedData | null;
-  legislatorSummary: SummaryPanelSummary;
-  departmentSummary: SummaryPanelSummary;
-  legislatorPadding?: CirclePackPadding;
-  selectedDepartmentCategorizedData: Record<string, NodeDatum> | null;
-  selectedDepartmentTitle?: string | null;
-  showSelectedDepartmentChart: boolean;
-  onNodeClick: (node: NodeDatum) => void;
-};
+
 
 const VisualizationView = ({
   activeTab,
