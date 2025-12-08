@@ -44,13 +44,6 @@ export type VisualizationViewProps = {
   onNodeClick: (node: NodeDatum) => void;
 };
 
-export type SummaryStats = {
-  totalReductionAmount: number;
-  reductionCount: number;
-  totalFreezeAmount: number;
-  freezeCount: number;
-  mainResolutionCount: number;
-};
 export type UseVisualizationStateResult = {
   activeTab: VisualizationTab;
   handleTabChange: (tab: VisualizationTab) => void;
@@ -74,8 +67,5 @@ export type UseVisualizationStateResult = {
   rawData: GetVisualizationProposalsQuery | undefined;
   visualizationData: GetVisualizationProposalsQuery | null;
   legislatorVisualizationData: VisualizationGroupedData | null;
-  summaryStats: SummaryStats;
-  formattedReductionAmount: string;
-  formattedFreezeAmount: string;
   selectedDepartmentCategorizedData: Record<string, NodeDatum> | null;
 };

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { filter, sumBy } from "lodash";
 import { useMediaQuery } from "usehooks-ts";
 import { execute } from "~/graphql/execute";
 import {
@@ -8,7 +7,6 @@ import {
   proposalQueryKeys,
 } from "~/queries";
 import {
-  ProposalProposalTypeType,
   VisualizationProposalBaseFragmentDoc,
   VisualizationProposalWithContextFragmentDoc,
   type ProposalWhereInput,
@@ -16,7 +14,6 @@ import {
 } from "~/graphql/graphql";
 import { YEAR_OPTIONS } from "~/constants/options";
 import {
-  formatAmountWithUnit,
   mapVisualizationProposals,
   transformToCategorizedData,
   transformToGroupedByLegislatorData,
@@ -29,7 +26,7 @@ import {
   VisualizationMode,
   VisualizationTab,
 } from "~/types/visualization";
-import type { SummaryStats, UseVisualizationStateResult } from "./types";
+import type { UseVisualizationStateResult } from "./types";
 
 const useVisualizationState = (): UseVisualizationStateResult => {
   const [activeTab, setActiveTab] = useState<VisualizationTab>(
@@ -356,39 +353,6 @@ const useVisualizationState = (): UseVisualizationStateResult => {
 
   const visualizationData = effectiveData ?? data ?? null;
 
-  const summaryStats = useMemo<SummaryStats>(() => {
-    const proposals = mapVisualizationProposals(effectiveData);
-
-    const reductionProposals = filter(
-      proposals,
-      (p) => p.reductionAmount && p.reductionAmount > 0
-    );
-
-    const freezeProposals = filter(
-      proposals,
-      (p) => p.freezeAmount && p.freezeAmount > 0
-    );
-
-    const mainResolutionProposals = filter(proposals, (p) =>
-      p.proposalTypes?.includes(ProposalProposalTypeType.Other)
-    );
-
-    return {
-      totalReductionAmount: sumBy(reductionProposals, "reductionAmount"),
-      reductionCount: reductionProposals.length,
-      totalFreezeAmount: sumBy(freezeProposals, "freezeAmount"),
-      freezeCount: freezeProposals.length,
-      mainResolutionCount: mainResolutionProposals.length,
-    };
-  }, [effectiveData]);
-
-  const formattedReductionAmount = formatAmountWithUnit(
-    summaryStats.totalReductionAmount
-  );
-  const formattedFreezeAmount = formatAmountWithUnit(
-    summaryStats.totalFreezeAmount
-  );
-
   const legislatorVisualizationData =
     useMemo<VisualizationGroupedData | null>(() => {
       if (!effectiveData) return null;
@@ -422,9 +386,6 @@ const useVisualizationState = (): UseVisualizationStateResult => {
     rawData: data,
     visualizationData,
     legislatorVisualizationData,
-    summaryStats,
-    formattedReductionAmount,
-    formattedFreezeAmount,
     selectedDepartmentCategorizedData,
   };
 };
