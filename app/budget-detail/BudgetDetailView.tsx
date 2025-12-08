@@ -56,22 +56,24 @@ const BudgetDetailView = ({
     navLinkClassName: string,
     wrapperClassName = "flex"
   ) => {
-    if (!hasHistoricalProposals || !parentProposalId) {
+    if (!hasHistoricalProposals && !parentProposalId) {
       return <p className={fallbackClassName}>{resultText}</p>;
     }
 
-    return (
-      <p className={wrapperClassName}>
-        請至
-        <NavLink
-          to={`/budget/${parentProposalId}`}
-          className={navLinkClassName}
-        >
-          主提案單
-        </NavLink>
-        確認結果
-      </p>
-    );
+    if (parentProposalId)
+      return (
+        <p className={wrapperClassName}>
+          請至
+          <NavLink
+            to={`/budget/${parentProposalId}`}
+            className={navLinkClassName}
+          >
+            主提案單
+          </NavLink>
+          確認結果
+        </p>
+      );
+    return <p className={wrapperClassName}>請至主提案單確認結果</p>;
   };
 
   if (isDesktop)
@@ -131,7 +133,7 @@ const BudgetDetailView = ({
                     {renderResultStatus(
                       "flex border-t pt-4 pr-12 ",
                       "text-brand-primary flex underline",
-                      "flex pt-4"
+                      "flex pt-4 border-t"
                     )}
                   </div>
                 </section>
