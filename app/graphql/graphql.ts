@@ -2537,7 +2537,7 @@ export const GetPeopleListDocument = new TypedDocumentString(`
     `) as unknown as TypedDocumentString<GetPeopleListQuery, GetPeopleListQueryVariables>;
 export const RecognitionImagesDocument = new TypedDocumentString(`
     query RecognitionImages {
-  recognitionImages {
+  recognitionImages(where: {result: {equals: "passed"}}) {
     result
   }
   recognitionImagesCount

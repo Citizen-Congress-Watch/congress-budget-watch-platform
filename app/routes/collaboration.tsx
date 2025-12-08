@@ -29,13 +29,9 @@ export default function Collaboration() {
     queryFn: () => execute(GET_RECOGNITION_STATS_QUERY),
   });
 
-  const passedRecognitions =
-    data?.recognitionImages?.filter((img) => img.result === "passed") ?? [];
-
-  const stats = {
-    recognized: passedRecognitions.length,
-    unrecognized: data?.recognitionImagesCount ?? 0,
-  };
+  const passedRecognitions = data?.recognitionImages ?? [];
+  const recognizedCount = passedRecognitions.length;
+  const unrecognizedCount = data?.recognitionImagesCount ?? 0;
 
   return (
     <main className="font-noto-sans-tc flex flex-col items-center px-5 py-6 md:px-8 bg-surface-base">
@@ -47,9 +43,9 @@ export default function Collaboration() {
         <div className="text-center text-sm leading-none font-bold">
           <span>
             <span className="text-budget-accent">
-              {stats.recognized} 已辨識
+              {recognizedCount} 已辨識
             </span>
-            / {stats.unrecognized} 未辨識
+            / {unrecognizedCount} 未辨識
           </span>
         </div>
         <div className="flex w-full items-center justify-between gap-4 md:max-w-sm">
