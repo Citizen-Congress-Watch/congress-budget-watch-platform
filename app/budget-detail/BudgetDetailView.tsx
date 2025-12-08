@@ -482,7 +482,7 @@ const BudgetDetailView = ({
               </p>
             </section>
           </div>
-          <div className="my-4 h-px w-full bg-gray-300" />
+          {hasImage && <div className="my-4 h-px w-full bg-gray-300" />}
           <div className="flex gap-x-10">
             {hasImage && (
               <section className="flex flex-col gap-y-4 px-3.5">
