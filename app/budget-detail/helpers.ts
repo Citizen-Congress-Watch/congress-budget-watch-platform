@@ -26,21 +26,34 @@ export type MergedProposalInfo = {
   isParent?: boolean;
 };
 
+export const PROPOSAL_TYPE_LABELS: Record<ProposalProposalTypeType, string> = {
+  [ProposalProposalTypeTypeEnum.Freeze]: "凍結",
+  [ProposalProposalTypeTypeEnum.Reduce]: "減列",
+  [ProposalProposalTypeTypeEnum.Other]: "主決議",
+};
+
+export const PROPOSAL_RESULT_LABELS: Record<string, string> = {
+  passed: "通過",
+  rejected: "不通過",
+  pending: "待審議",
+  reserved: "保留",
+  withdrawn: "撤案",
+};
+
 /**
  * 將 ProposalProposalTypeType 轉換為中文顯示文字
  */
 export function getProposalTypeDisplay(
-  types?: Array<ProposalProposalTypeType> | null
+  types?: Array<ProposalProposalTypeType | null> | null
 ): string {
-  if (!types || types.length === 0) return "未分類";
+  const sanitizedTypes = (types ?? []).filter(
+    (type): type is ProposalProposalTypeType => Boolean(type)
+  );
+  if (sanitizedTypes.length === 0) return "未分類";
 
-  const typeMap: Record<ProposalProposalTypeType, string> = {
-    [ProposalProposalTypeTypeEnum.Freeze]: "凍結",
-    [ProposalProposalTypeTypeEnum.Reduce]: "減列",
-    [ProposalProposalTypeTypeEnum.Other]: "其他",
-  };
-
-  return types.map((t) => typeMap[t] || t).join("、");
+  return sanitizedTypes
+    .map((type) => PROPOSAL_TYPE_LABELS[type] ?? type)
+    .join("、");
 }
 
 /**
@@ -49,15 +62,8 @@ export function getProposalTypeDisplay(
 export function getResultDisplay(result?: string | null): string {
   if (!result) return "待審議";
 
-  // 根據實際 API 回傳的值來調整
-  const resultMap: Record<string, string> = {
-    passed: "通過",
-    rejected: "不通過",
-    pending: "待審議",
-    reserved: "保留",
-  };
-
-  return resultMap[result] || result;
+  const normalizedResult = result.trim().toLowerCase();
+  return PROPOSAL_RESULT_LABELS[normalizedResult] || result;
 }
 
 /**

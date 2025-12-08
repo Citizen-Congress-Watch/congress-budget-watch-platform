@@ -1,5 +1,4 @@
 import {
-  ProposalProposalTypeType,
   type People,
   type Proposal,
   type GetPaginatedProposalsQuery,
@@ -20,25 +19,10 @@ import {
 import {
   formatNumber,
   formatReducedAndFrozenAmount,
+  getProposalTypeDisplay,
+  PROPOSAL_RESULT_LABELS,
 } from "~/budget-detail/helpers";
 import type { BudgetTableData } from "~/components/budget-table";
-
-function getProposalTypeDisplay(
-  proposalTypes?: (ProposalProposalTypeType | null)[] | null
-): string {
-  if (!proposalTypes || proposalTypes.length === 0) {
-    return "無";
-  }
-  const proposalTypeMap = new Map([
-    ["other", "主決議"],
-    ["freeze", "凍結案"],
-    ["reduction", "刪減案"],
-  ]);
-  return proposalTypes
-    .filter((proposalType) => proposalType !== null)
-    .map((proposalType) => proposalTypeMap.get(proposalType ?? "") ?? "")
-    .join("、");
-}
 
 function formatLegislator(legislator: People | null): string {
   return legislator?.name || "";
@@ -219,11 +203,9 @@ function getLatestCommitteeName(
 }
 
 const transformProposalResult = (result?: string | null): string => {
-  const resultMap: Record<string, string> = {
-    passed: "通過",
-    rejected: "不通過",
-  };
-  return (result && resultMap[result]) || "待審議";
+  if (!result) return "待審議";
+  const normalized = result.trim().toLowerCase();
+  return PROPOSAL_RESULT_LABELS[normalized] || "待審議";
 };
 
 export function proposalToBudgetTableData(
