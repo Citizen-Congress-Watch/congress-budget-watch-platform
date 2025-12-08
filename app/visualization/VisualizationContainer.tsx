@@ -89,12 +89,14 @@ const VisualizationContainer = ({
         return true;
       }
       if (node.proposerId && !node.children?.length) {
-        navigate(`/visualization/legislator/${node.proposerId}`);
+        const yearParam = selectedYear.value;
+        const query = new URLSearchParams({ year: yearParam }).toString();
+        navigate(`/visualization/legislator/${node.proposerId}?${query}`);
         return true;
       }
       return false;
     },
-    [navigate]
+    [navigate, selectedYear.value]
   );
 
   if (isLoading || isLegislatorBudgetLoading || isDepartmentBudgetLoading) {

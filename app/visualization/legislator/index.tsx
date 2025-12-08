@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { sumBy, filter } from "lodash";
 import SessionChart, { type YearCommitteeInfo } from "./session-chart";
@@ -22,8 +22,10 @@ import {
   transformToGroupedSessionData,
   formatAmountWithUnit,
   mapVisualizationProposals,
+  PASSED_PROPOSAL_RESULTS,
   type NodeDatum,
 } from "../helpers";
+import { YEAR_OPTIONS } from "~/constants/options";
 import {
   GET_PERSON_BY_ID_QUERY,
   peopleQueryKeys,
@@ -64,11 +66,18 @@ type Committee = {
 
 const buildWhereFilter = (
   selectedType: ProposalKind,
-  proposerId: string | undefined
+  proposerId: string | undefined,
+  selectedYearValue: number
 ): ProposalWhereInput => {
   const baseFilter: ProposalWhereInput = {
     mergedParentProposals: null,
     historicalParentProposals: null,
+    result: {
+      in: [...PASSED_PROPOSAL_RESULTS],
+    },
+    year: {
+      year: { equals: selectedYearValue },
+    },
   };
 
   if (selectedType === "proposal-cosign") {
@@ -300,12 +309,23 @@ const ModeSelector = ({ mode, onChange }: ModeSelectorProps) => (
 
 const VisualizationLegislator = () => {
   const { id: proposerId } = useParams();
+  const [searchParams] = useSearchParams();
   const [selectedType, setSelectedType] = useState<ProposalKind>("proposal");
   const [mode, setMode] = useState<VisualizationModeType>("amount");
+  const selectedYearValue = useMemo(() => {
+    const paramValue = searchParams.get("year");
+    const parsed = paramValue ? parseInt(paramValue, 10) : NaN;
+    if (!Number.isNaN(parsed)) {
+      return parsed;
+    }
+    const defaultYear = YEAR_OPTIONS[0]?.value;
+    const fallback = defaultYear ? parseInt(defaultYear, 10) : 0;
+    return Number.isNaN(fallback) ? 0 : fallback;
+  }, [searchParams]);
 
   const whereFilter = useMemo(
-    () => buildWhereFilter(selectedType, proposerId),
-    [selectedType, proposerId]
+    () => buildWhereFilter(selectedType, proposerId, selectedYearValue),
+    [selectedType, proposerId, selectedYearValue]
   );
 
   const {

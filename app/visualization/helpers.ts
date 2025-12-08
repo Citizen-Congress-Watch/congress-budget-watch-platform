@@ -57,6 +57,8 @@ export const mapVisualizationProposals = (
   return extractProposals(data);
 };
 
+export const PASSED_PROPOSAL_RESULTS = ["passed", "通過"] as const;
+
 export type ProposalVisualizationType = "freeze" | "reduce" | "main-resolution";
 
 export type NodeDatum = {
