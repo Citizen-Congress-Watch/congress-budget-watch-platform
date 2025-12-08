@@ -14,6 +14,7 @@ import {
 } from "~/graphql/graphql";
 import { YEAR_OPTIONS } from "~/constants/options";
 import {
+  getProposerKey,
   mapVisualizationProposals,
   transformToCategorizedData,
   transformToGroupedByLegislatorData,
@@ -122,12 +123,17 @@ const useVisualizationState = (): UseVisualizationStateResult => {
   const legislatorOptions = useMemo<SelectOption[]>(() => {
     const unique = new Map<string, SelectOption>();
     allProposals.forEach((proposal) => {
-      const proposer = proposal.proposers?.[0];
-      const value = proposer?.id ?? proposer?.name ?? "";
-      const label = proposer?.name ?? "未命名立委";
-      if (value) {
-        unique.set(value, { value, label });
-      }
+      const proposers = proposal.proposers?.length
+        ? proposal.proposers
+        : [];
+      proposers.forEach((proposer, index) => {
+        const value = getProposerKey(proposer, proposal.id, index);
+        if (!value) return;
+        const label = proposer?.name ?? "未命名立委";
+        if (!unique.has(value)) {
+          unique.set(value, { value, label });
+        }
+      });
     });
     return Array.from(unique.values()).sort((a, b) =>
       a.label.localeCompare(b.label, "zh-Hant")
@@ -193,9 +199,12 @@ const useVisualizationState = (): UseVisualizationStateResult => {
     if (activeTab !== "legislator" || !selectedLegislatorOption) return null;
     const ids = allProposals
       .filter((proposal) => {
-        const proposer = proposal.proposers?.[0];
-        const value = proposer?.id ?? proposer?.name ?? "";
-        return value === selectedLegislatorOption.value;
+        const proposers = proposal.proposers ?? [];
+        if (proposers.length === 0) return false;
+        return proposers.some((proposer, index) => {
+          const key = getProposerKey(proposer, proposal.id, index);
+          return key === selectedLegislatorOption.value;
+        });
       })
       .map((proposal) => proposal.id)
       .filter((id): id is string => Boolean(id));
@@ -356,8 +365,36 @@ const useVisualizationState = (): UseVisualizationStateResult => {
   const legislatorVisualizationData =
     useMemo<VisualizationGroupedData | null>(() => {
       if (!effectiveData) return null;
-      return transformToGroupedByLegislatorData(effectiveData, mode);
-    }, [effectiveData, mode]);
+      const baseData = transformToGroupedByLegislatorData(effectiveData, mode);
+      const shouldFilterBySelection =
+        !isDesktop && activeTab === "legislator" && selectedLegislatorOption;
+      if (!shouldFilterBySelection) {
+        return baseData;
+      }
+      const rootNode = baseData[""];
+      if (!rootNode?.children) {
+        return baseData;
+      }
+      const filteredChildren = rootNode.children.filter((child) => {
+        return (
+          child.proposerId === selectedLegislatorOption.value ||
+          child.proposerKey === selectedLegislatorOption.value
+        );
+      });
+      return {
+        ...baseData,
+        "": {
+          ...rootNode,
+          children: filteredChildren,
+        },
+      };
+    }, [
+      activeTab,
+      effectiveData,
+      isDesktop,
+      mode,
+      selectedLegislatorOption,
+    ]);
 
   const isShowingAll =
     (activeTab === "legislator" && !selectedLegislatorOption) ||

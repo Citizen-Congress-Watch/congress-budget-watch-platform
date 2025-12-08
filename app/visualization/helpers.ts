@@ -28,6 +28,10 @@ type VisualizationProposal = {
   year: VisualizationProposalWithContextFragment["year"];
 };
 
+type VisualizationProposer = NonNullable<
+  NonNullable<VisualizationProposal["proposers"]>[number]
+>;
+
 const extractProposals = (
   data?: GetVisualizationProposalsQuery | null
 ): VisualizationProposal[] =>
@@ -62,6 +66,7 @@ export type NodeDatum = {
   id: string; // 圖表節點唯一 ID
   proposalId?: string; // 代表提案 ID（僅單一提案節點使用）
   proposerId?: string; // 代表提案人 ID
+  proposerKey?: string; // 立委識別值（含無 ID 的情況）
   isFrozen?: boolean;
   proposalType?: ProposalVisualizationType;
   children?: NodeDatum[];
@@ -108,6 +113,23 @@ const sanitizePartyName = (partyName?: string | null): string | null => {
 
 const hasLabelContent = (value?: string | null): value is string =>
   typeof value === "string" && value.trim().length > 0;
+
+export const getProposerKey = (
+  proposer: VisualizationProposer | null | undefined,
+  proposalId?: string | null,
+  index = 0
+): string => {
+  if (proposer?.id) {
+    return proposer.id;
+  }
+  if (hasLabelContent(proposer?.name)) {
+    return proposer!.name!.trim();
+  }
+  if (proposalId) {
+    return `unknown-${proposalId}`;
+  }
+  return `unknown-proposer-${index}`;
+};
 
 const buildNodeLabel = (...parts: Array<string | null | undefined>) =>
   parts.filter(hasLabelContent).join("\n");
@@ -164,44 +186,55 @@ export const transformToGroupedByLegislatorData = (
   mode: VisualizationMode = "amount"
 ): VisualizationGroupedData => {
   const proposals = extractProposals(data);
+  const proposerEntries = proposals.flatMap((proposal) => {
+    const proposers = proposal.proposers?.length
+      ? proposal.proposers
+      : [null];
+    return proposers.map((proposer, index) => ({
+      proposerKey: getProposerKey(proposer, proposal.id, index),
+      proposer,
+      proposal,
+    }));
+  });
 
   const groupedByLegislator = groupBy(
-    proposals,
-    (proposal) => proposal.proposers?.[0]?.id ?? "unknown-proposer"
+    proposerEntries,
+    (entry) => entry.proposerKey ?? "unknown-proposer"
   );
 
   const legislatorNodes: NodeDatum[] = [];
 
-  forEach(entries(groupedByLegislator), ([proposerId, legislatorProposals]) => {
-    const mainProposer = legislatorProposals[0]?.proposers?.[0];
+  forEach(entries(groupedByLegislator), ([proposerKey, groupedEntries]) => {
+    const mainEntry = groupedEntries[0];
+    const mainProposer = mainEntry?.proposer ?? null;
     const legislatorName = mainProposer?.name ?? "未知立委";
     const partyName = sanitizePartyName(mainProposer?.party?.name);
     const partyColor =
       mainProposer?.party?.color ??
       (partyName ? PARTY_COLORS.get(partyName) : undefined) ??
       DEFAULT_COLOR;
-    const freezeProposals = legislatorProposals.filter(
-      (proposal) => defaultTo(proposal.freezeAmount, 0) > 0
+    const freezeEntries = groupedEntries.filter(
+      (entry) => defaultTo(entry.proposal.freezeAmount, 0) > 0
     );
-    const reductionProposals = legislatorProposals.filter(
-      (proposal) => defaultTo(proposal.reductionAmount, 0) > 0
+    const reductionEntries = groupedEntries.filter(
+      (entry) => defaultTo(entry.proposal.reductionAmount, 0) > 0
     );
-    const mainResolutionProposals = legislatorProposals.filter((proposal) =>
-      proposal.proposalTypes?.includes(ProposalProposalTypeType.Other)
+    const mainResolutionEntries = groupedEntries.filter((entry) =>
+      entry.proposal.proposalTypes?.includes(ProposalProposalTypeType.Other)
     );
 
     if (mode === "amount") {
-      const legislatorFreezeAmount = sumBy(freezeProposals, (proposal) =>
-        defaultTo(proposal.freezeAmount, 0)
+      const legislatorFreezeAmount = sumBy(freezeEntries, (entry) =>
+        defaultTo(entry.proposal.freezeAmount, 0)
       );
-      const legislatorReductionAmount = sumBy(reductionProposals, (proposal) =>
-        defaultTo(proposal.reductionAmount, 0)
+      const legislatorReductionAmount = sumBy(reductionEntries, (entry) =>
+        defaultTo(entry.proposal.reductionAmount, 0)
       );
       // 因為這些節點代表「立委」的總結，而不是單一「提案」，所以不應該有 proposalId
       // 移除 proposalId 屬性，讓 handleNodeClick 能依據 proposerId 導航
       if (legislatorFreezeAmount > 0) {
         legislatorNodes.push({
-          id: `${proposerId}-freeze`, // 使用 proposerId 來建立唯一的節點 ID
+          id: `${proposerKey}-freeze`, // 使用 proposerKey 來建立唯一的節點 ID
           // proposalId: undefined, // 移除或設定為 undefined
           name: buildNodeLabel(
             legislatorName,
@@ -211,13 +244,14 @@ export const transformToGroupedByLegislatorData = (
           value: Math.pow(legislatorFreezeAmount, 0.45),
           color: partyColor,
           proposerId: mainProposer?.id, // 立委 ID 是這裡
+          proposerKey: proposerKey,
           proposalType: "freeze",
           isFrozen: true,
         });
       }
       if (legislatorReductionAmount > 0) {
         legislatorNodes.push({
-          id: `${proposerId}-reduce`, // 使用 proposerId 來建立唯一的節點 ID
+          id: `${proposerKey}-reduce`, // 使用 proposerKey 來建立唯一的節點 ID
           // proposalId: undefined, // 移除或設定為 undefined
           name: buildNodeLabel(
             legislatorName,
@@ -227,25 +261,27 @@ export const transformToGroupedByLegislatorData = (
           value: Math.pow(legislatorReductionAmount, 0.45),
           color: partyColor,
           proposerId: mainProposer?.id, // 立委 ID 是這裡
+          proposerKey: proposerKey,
           proposalType: "reduce",
         });
       }
     } else {
-      const freezeCount = freezeProposals.length;
-      const reductionCount = reductionProposals.length;
-      const pureMainResolutionCount = mainResolutionProposals.filter(
-        (proposal) =>
-          defaultTo(proposal.freezeAmount, 0) === 0 &&
-          defaultTo(proposal.reductionAmount, 0) === 0
+      const freezeCount = freezeEntries.length;
+      const reductionCount = reductionEntries.length;
+      const pureMainResolutionCount = mainResolutionEntries.filter(
+        (entry) =>
+          defaultTo(entry.proposal.freezeAmount, 0) === 0 &&
+          defaultTo(entry.proposal.reductionAmount, 0) === 0
       ).length;
 
       if (freezeCount > 0) {
         legislatorNodes.push({
-          id: `${proposerId}-freeze-count`,
+          id: `${proposerKey}-freeze-count`,
           name: buildNodeLabel(legislatorName, partyName, `${freezeCount}案`),
           value: freezeCount,
           color: partyColor,
           proposerId: mainProposer?.id,
+          proposerKey: proposerKey,
           proposalType: "freeze",
           isFrozen: true,
         });
@@ -253,7 +289,7 @@ export const transformToGroupedByLegislatorData = (
 
       if (reductionCount > 0) {
         legislatorNodes.push({
-          id: `${proposerId}-reduce-count`,
+          id: `${proposerKey}-reduce-count`,
           name: buildNodeLabel(
             legislatorName,
             partyName,
@@ -262,13 +298,14 @@ export const transformToGroupedByLegislatorData = (
           value: reductionCount,
           color: partyColor,
           proposerId: mainProposer?.id,
+          proposerKey: proposerKey,
           proposalType: "reduce",
         });
       }
 
       if (pureMainResolutionCount > 0) {
         legislatorNodes.push({
-          id: `${proposerId}-main-resolution-count`,
+          id: `${proposerKey}-main-resolution-count`,
           name: buildNodeLabel(
             legislatorName,
             partyName,
@@ -277,6 +314,7 @@ export const transformToGroupedByLegislatorData = (
           value: pureMainResolutionCount,
           color: partyColor,
           proposerId: mainProposer?.id,
+          proposerKey: proposerKey,
           proposalType: "main-resolution",
         });
       }
