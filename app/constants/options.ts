@@ -3,18 +3,6 @@ import type { SelectOption } from "~/types/visualization";
 
 export const sortOptions = [
   {
-    value: "id-asc",
-    label: "編號 (升序)",
-    field: "id",
-    direction: SortDirection.ASC,
-  },
-  {
-    value: "id-desc",
-    label: "編號 (降序)",
-    field: "id",
-    direction: SortDirection.DESC,
-  },
-  {
     value: "budget-amount-desc",
     label: "預算金額 (降序)",
     field: "budgetAmount",
