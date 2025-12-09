@@ -1,4 +1,4 @@
-import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js";const u="/congress-budget-watch-platform/".replace(/\/$/,""),m=`${u}/`,g=500,P=({src:e,...o})=>l.jsx("img",{src:m+e,...o});t(`
+import{p as l}from"./chunk-WWGJGFF6-C1k8rglg.js";import{t as a}from"./gql-CryelyAX.js";const m="/".replace(/\/$/,""),u=`${m}/`,P=500,y=/^([a-z][a-z\d+\-.]*:)?\/\//i,_=({src:e,...r})=>{const s=y.test(e)?e:`${u}${e.startsWith("/")?e.slice(1):e}`;return l.jsx("img",{src:s,...r})};a(`
   query GetBudgetsWithGovernment {
     budgets {
       id
@@ -19,7 +19,7 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
     }
     budgetsCount
   }
-`);const _=t(`
+`);const A=a(`
   query GetGovernments {
     governments {
       id
@@ -28,7 +28,7 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
       description
     }
   }
-`),a={all:["governments"],lists:()=>[...a.all,"list"],list:e=>[...a.lists(),{filters:e}]},A=t(`
+`),i={all:["governments"],lists:()=>[...i.all,"list"],list:e=>[...i.lists(),{filters:e}]},E=a(`
   query GetPeopleList {
     peopleList(orderBy: [{ name: asc }]) {
       id
@@ -41,7 +41,7 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
       }
     }
   }
-`),s={all:["people"],lists:()=>[...s.all,"list"],list:e=>[...s.lists(),{filters:e}]};t(`
+`),n={all:["people"],lists:()=>[...n.all,"list"],list:e=>[...n.lists(),{filters:e}]};a(`
   query GetProposalsOrderedByIdDesc {
     proposals(orderBy: [{ id: desc }]) {
       id
@@ -85,7 +85,7 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
     }
     proposalsCount
   }
-`);const E=t(`
+`);const S=a(`
   query GetProposalById($id: ID!) {
     proposal(where: { id: $id }) {
       id
@@ -156,6 +156,12 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
         location
         meetingRecordUrl
         type
+        committee {
+          displayName
+          name
+          endDate
+          startDate
+        }
       }
       mergedProposals {
         id
@@ -176,14 +182,14 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
       }
     }
   }
-`),h=t(`
+`),h=a(`
   query GetProposalYears {
     budgetYears(orderBy: [{ year: desc }]) {
       id
       year
     }
   }
-`),r={all:["proposals"],lists:()=>[...r.all,"list"],list:e=>[...r.lists(),{filters:e}],paginated:(e,o,n,p,d)=>[...r.lists(),"paginated",{page:e,pageSize:o,sortBy:n,where:p,year:d}],details:()=>[...r.all,"detail"],detail:e=>[...r.details(),e],years:()=>[...r.all,"years"]},$=t(`
+`),t={all:["proposals"],lists:()=>[...t.all,"list"],list:e=>[...t.lists(),{filters:e}],paginated:(e,r)=>[...t.lists(),"paginated",{where:e,year:r}],details:()=>[...t.all,"detail"],detail:e=>[...t.details(),e],years:()=>[...t.all,"years"]},T={all:["proposals"],lists:()=>[...t.all,"list"],list:e=>[...t.lists(),{filters:e}],paginated:(e,r,o,s,d)=>[...t.lists(),"paginated",{page:e,pageSize:r,sort:o,where:s,year:d}],details:()=>[...t.all,"detail"],detail:e=>[...t.details(),e],years:()=>[...t.all,"years"]},I=a(`
   query GetPaginatedProposals(
     $skip: Int!
     $take: Int!
@@ -201,6 +207,8 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
         id
         type
         committee {
+          displayName
+          name
           endDate
           startDate
         }
@@ -229,7 +237,7 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
     }
     proposalsCount(where: $where)
   }
-`),I=t(`
+`),$=a(`
   mutation UPDATE_PROPOSAL_REACTS(
     $where: ProposalWhereUniqueInput!
     $data: ProposalUpdateInput!
@@ -242,7 +250,7 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
       react_whatever
     }
   }
-`),S=t(`
+`),b=a(`
   query GetLatestBudgetYear($skip: Int!, $take: Int!) {
     budgetYears(orderBy: [{ year: desc }], skip: $skip, take: $take) {
       year
@@ -250,14 +258,9 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
       dataProgress
     }
   }
-`),i={all:["budgetYear"],list:(e=0,o=1)=>[...i.all,"list",{skip:e,take:o}],latest:()=>[...i.all,"latest"]},T=t(`
-  query GetVisualizationProposals(
-    $skip: Int!
-    $take: Int!
-    $orderBy: [ProposalOrderByInput!]!
-    $where: ProposalWhereInput!
-  ) {
-    proposals(skip: $skip, take: $take, orderBy: $orderBy, where: $where) {
+`),p={all:["budgetYear"],list:(e=0,r=1)=>[...p.all,"list",{skip:e,take:r}],latest:()=>[...p.all,"latest"]},R=a(`
+  query GetVisualizationProposals($where: ProposalWhereInput!) {
+    proposals(where: $where) {
       ...VisualizationProposalWithContext
     }
   }
@@ -287,4 +290,4 @@ import{p as l}from"./chunk-4WY6JWTD-BhhSccj7.js";import{t}from"./gql-J0UfXxmj.js
       }
     }
   }
-`);export{S as G,P as I,m as S,I as U,g as a,i as b,h as c,$ as d,T as e,E as f,a as g,_ as h,s as i,A as j,r as p};
+`);export{b as G,_ as I,u as S,$ as U,I as a,p as b,P as c,h as d,T as e,R as f,S as g,i as h,A as i,n as j,E as k,t as p};
