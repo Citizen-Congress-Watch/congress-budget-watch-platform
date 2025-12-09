@@ -13,16 +13,17 @@ import { STATIC_ASSETS_PREFIX } from "~/constants/config";
 
 const OG_DESCRIPTION =
   "收錄歷年及最新中央政府預算審議情形，包含立委提案刪減和凍結的緣由和金額，便於搜尋及比較，更能即時追蹤最新審議進度。還可透過視覺化方式瀏覽，一目暸然。除了已數位化的資料，此平台也透過群眾協力（crowdsourcing）辨識提案掃描檔，歡迎至協作區加入合作行列。";
+const OG_TITLE = "【持續更新】中央政府總預算案審查監督平台";
 const CANONICAL_URL =
   "https://readr-media.github.io/congress-budget-watch-platform/";
 const OG_IMAGE_URL = `${CANONICAL_URL}image/og.png`;
 
 export function meta() {
   return [
-    { title: "【持續更新】中央政府總預算案審查監督平台" },
+    { title: OG_TITLE },
     {
       property: "og:title",
-      content: "【持續更新】中央政府總預算案審查監督平台",
+      content: OG_TITLE,
     },
     {
       name: "description",
@@ -66,7 +67,7 @@ export function meta() {
     },
     {
       name: "twitter:title",
-      content: "【持續更新】中央政府總預算案審查監督平台",
+      content: OG_TITLE,
     },
     {
       name: "twitter:description",
