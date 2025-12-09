@@ -17,7 +17,12 @@ const useFetchDepartmentBudget = ({
     if (!response.ok) {
       throw new Error("無法載入部會預算資料");
     }
-    return budgetByDepartmentSchema.parse(await response.json());
+    const payload = await response.json();
+    const result = budgetByDepartmentSchema.safeParse(payload);
+    if (!result.success) {
+      throw new Error("部會預算資料格式不符合預期");
+    }
+    return result.data;
   };
   const departmentBudgetQueryKey = ["budget", "departments"];
   const {

@@ -25,7 +25,12 @@ const useFetchLegislatorBudget = ({
     if (!response.ok) {
       throw new Error("無法載入立委預算資料");
     }
-    return budgetByLegislatorSchema.parse(await response.json());
+    const payload = await response.json();
+    const result = budgetByLegislatorSchema.safeParse(payload);
+    if (!result.success) {
+      throw new Error("立委預算資料格式不符合預期");
+    }
+    return result.data;
   };
   const {
     data: legislatorBudgetSummaryData,
