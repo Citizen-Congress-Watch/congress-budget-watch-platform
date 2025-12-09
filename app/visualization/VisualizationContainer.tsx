@@ -57,6 +57,7 @@ const VisualizationContainer = ({
   } = useFetchLegislatorBudget({
     selectedLegislatorOption,
     activeTab,
+    isShowingAll,
   });
   const {
     departmentSummary,
