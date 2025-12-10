@@ -83,7 +83,7 @@ const BudgetDetailView = ({
           <NavLink to="/all-budgets" className="underline">
             {"<回到列表頁"}
           </NavLink>
-          <div className="relative mt-6">
+          <div className="relative mx-auto mt-6 max-w-7xl 2xl:w-3xl">
             <div className="absolute h-full w-full translate-x-3 -translate-y-3 rounded-lg border-2 bg-neutral-200" />
             <div className="bg-surface-base relative flex flex-col rounded-lg border-2 p-5 pb-30">
               <div className="mb-4 flex gap-5 border-b-2 p-3 text-xl font-bold">

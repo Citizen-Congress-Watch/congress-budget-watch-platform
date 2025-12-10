@@ -10,7 +10,7 @@ const BudgetDetailSkeleton = ({ isDesktop }: { isDesktop: boolean }) => {
           {/* Back link skeleton */}
           <div className="mb-6 h-5 w-32 animate-pulse rounded bg-gray-200" />
 
-          <div className="relative mt-6">
+          <div className="relative mx-auto mt-6 max-w-7xl 2xl:w-3xl">
             {/* Shadow box */}
             <div className="absolute h-full w-full translate-x-3 -translate-y-3 rounded-lg border-2 bg-neutral-200" />
 

@@ -16,6 +16,16 @@ import Footer from "./components/footer";
 import BudgetHeader from "./components/budget-header";
 import DataProgressMarquee from "./components/data-progress-marquee";
 import BackToTopButton from "./components/back-to-top-button";
+import { STATIC_ASSETS_PREFIX } from "./constants/config";
+
+const DEFAULT_TITLE = "【持續更新】中央政府總預算案審查監督平台";
+const DEFAULT_DESCRIPTION =
+  "收錄歷年及最新中央政府預算審議情形，包含立委提案刪減和凍結的緣由和金額，便於搜尋及比較，更能即時追蹤最新審議進度。還可透過視覺化方式瀏覽，一目暸然。除了已數位化的資料，此平台也透過群眾協力（crowdsourcing）辨識提案掃描檔，歡迎至協作區加入合作行列。";
+const DEFAULT_CANONICAL_URL =
+  "https://readr-media.github.io/congress-budget-watch-platform/";
+const DEFAULT_OG_IMAGE_URL = `${DEFAULT_CANONICAL_URL}image/og.png`;
+const DEFAULT_TWITTER_CARD = "summary_large_image";
+const DEFAULT_TWITTER_DOMAIN = "readr-media.github.io";
 // Create a client
 const queryClient = new QueryClient();
 const MOBILE_BREAKPOINT = 768;
@@ -65,6 +75,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <link rel="icon" href={`${STATIC_ASSETS_PREFIX}favicon.ico`} />
+        <title>{DEFAULT_TITLE}</title>
+        <meta name="description" content={DEFAULT_DESCRIPTION} />
+        <meta property="og:title" content={DEFAULT_TITLE} />
+        <meta property="og:description" content={DEFAULT_DESCRIPTION} />
+        <meta property="og:url" content={DEFAULT_CANONICAL_URL} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={DEFAULT_OG_IMAGE_URL} />
+        <meta property="og:image:width" content="2400" />
+        <meta property="og:image:height" content="1260" />
+        <meta name="twitter:card" content={DEFAULT_TWITTER_CARD} />
+        <meta property="twitter:domain" content={DEFAULT_TWITTER_DOMAIN} />
+        <meta property="twitter:url" content={DEFAULT_CANONICAL_URL} />
+        <meta name="twitter:title" content={DEFAULT_TITLE} />
+        <meta name="twitter:description" content={DEFAULT_DESCRIPTION} />
+        <meta name="twitter:image" content={DEFAULT_OG_IMAGE_URL} />
       </head>
       <body>
         <QueryClientProvider client={queryClient}>

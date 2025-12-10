@@ -11,13 +11,71 @@ import {
 import type { BudgetProgressStage } from "~/constants/progress-stages";
 import { STATIC_ASSETS_PREFIX } from "~/constants/config";
 
+const OG_DESCRIPTION =
+  "收錄歷年及最新中央政府預算審議情形，包含立委提案刪減和凍結的緣由和金額，便於搜尋及比較，更能即時追蹤最新審議進度。還可透過視覺化方式瀏覽，一目暸然。除了已數位化的資料，此平台也透過群眾協力（crowdsourcing）辨識提案掃描檔，歡迎至協作區加入合作行列。";
+const OG_TITLE = "【持續更新】中央政府總預算案審查監督平台";
+const CANONICAL_URL =
+  "https://readr-media.github.io/congress-budget-watch-platform/";
+const OG_IMAGE_URL = `${CANONICAL_URL}image/og.png`;
+
 export function meta() {
   return [
-    { title: "中央政府總預算案審查監督平台" },
+    { title: OG_TITLE },
+    {
+      property: "og:title",
+      content: OG_TITLE,
+    },
     {
       name: "description",
-      content:
-        "收錄歷年及最新中央政府預算審議情形，包含立委提案刪減和凍結的緣由和金額，便於搜尋及比較，更能即時追蹤最新審議進度。",
+      content: OG_DESCRIPTION,
+    },
+    {
+      property: "og:description",
+      content: OG_DESCRIPTION,
+    },
+    {
+      property: "og:url",
+      content: CANONICAL_URL,
+    },
+    {
+      property: "og:type",
+      content: "website",
+    },
+    {
+      property: "og:image",
+      content: OG_IMAGE_URL,
+    },
+    {
+      property: "og:image:width",
+      content: "2400",
+    },
+    {
+      property: "og:image:height",
+      content: "1260",
+    },
+    {
+      name: "twitter:card",
+      content: "summary_large_image",
+    },
+    {
+      property: "twitter:domain",
+      content: "readr-media.github.io",
+    },
+    {
+      property: "twitter:url",
+      content: CANONICAL_URL,
+    },
+    {
+      name: "twitter:title",
+      content: OG_TITLE,
+    },
+    {
+      name: "twitter:description",
+      content: OG_DESCRIPTION,
+    },
+    {
+      name: "twitter:image",
+      content: OG_IMAGE_URL,
     },
   ];
 }
@@ -130,7 +188,7 @@ export default function Home() {
         {/* Navigation Buttons */}
         <nav
           className="flex flex-col gap-3 md:grid md:grid-cols-2 md:gap-6 lg:grid-cols-4 lg:gap-4"
-          aria-label="主要導航"
+          aria-label="main navigate"
         >
           {navigationButtons.map((button) => (
             <NavLink
@@ -150,25 +208,46 @@ export default function Home() {
         </nav>
       </div>
       <div className="mt-15 flex items-center justify-center gap-x-2 md:mt-25 md:gap-x-3">
-        <Image
-          src="/image/readr-logo.svg"
-          alt="Readr logo"
-          width={110}
-          height={48}
-        />
-        <Image
-          src="/image/Friedrich-Naumann-Foundation-logo.svg"
-          alt="Friedrich-Naumann-Foundation-logo"
-          width={130}
-          height={48}
-          className="h-auto w-[130px] md:w-50"
-        />
-        <Image
-          src="/image/CCW-logo.svg"
-          alt="Citizen-Watch-logo"
-          width={90}
-          height={48}
-        />
+        <NavLink
+          to="https://www.readr.tw/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Readr"
+        >
+          <Image
+            src="/image/readr-logo.svg"
+            alt="Readr logo"
+            width={110}
+            height={48}
+          />
+        </NavLink>
+        <NavLink
+          to="https://www.freiheit.org/zh/taiwan"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Friedrich Naumann Foundation"
+        >
+          <Image
+            src="/image/Friedrich-Naumann-Foundation-logo.svg"
+            alt="Friedrich-Naumann-Foundation-logo"
+            width={130}
+            height={48}
+            className="h-auto w-[130px] md:w-50"
+          />
+        </NavLink>
+        <NavLink
+          to="https://ccw.org.tw/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Citizen Congress Watch"
+        >
+          <Image
+            src="/image/CCW-logo.svg"
+            alt="Citizen-Watch-logo"
+            width={90}
+            height={48}
+          />
+        </NavLink>
         <Image
           src="/image/donate-CCW-logo.svg"
           alt="donate-CCW-logo"
