@@ -91,6 +91,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="twitter:title" content={DEFAULT_TITLE} />
         <meta name="twitter:description" content={DEFAULT_DESCRIPTION} />
         <meta name="twitter:image" content={DEFAULT_OG_IMAGE_URL} />
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=UA-146517224-1"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'UA-146517224-1', {'page_type': 'home', 'content_group1': 'home'});
+            `,
+          }}
+        />
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
