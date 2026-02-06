@@ -1,6 +1,9 @@
 type ProgressBarProps = {
   isDesktop?: boolean;
   isFinished?: boolean;
+  completedCount?: number;
+  labelStatuses?: ("done" | "todo")[];
+  variant?: "latest" | "unfreeze";
   count?: number;
   width?: number;
   height?: number;
@@ -11,7 +14,10 @@ type ProgressBarProps = {
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
   isFinished = true,
-  count = 6,
+  completedCount,
+  labelStatuses,
+  variant = "latest",
+  count,
   width = 165,
   height = 48,
   gap = 16,
@@ -19,13 +25,36 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   labels = [],
   isDesktop = false,
 }) => {
+  const effectiveCount =
+    typeof count === "number"
+      ? count
+      : labels && labels.length > 0
+        ? labels.length
+        : 6;
   const progressBoxType = isFinished
     ? `${import.meta.env.BASE_URL}image/progress-box.svg`
     : `${import.meta.env.BASE_URL}image/not-finished-progress-box.svg`;
 
   const baseZIndex = 90;
 
-  const totalHeight = height + (height - gap) * (count - 1);
+  const totalHeight = height + (height - gap) * (effectiveCount - 1);
+  const isLabelDone = (index: number) => {
+    if (labelStatuses && labelStatuses.length > 0) {
+      return labelStatuses[index] === "done";
+    }
+    if (typeof completedCount === "number") {
+      return index < completedCount;
+    }
+    return isFinished;
+  };
+  const doneStyles =
+    variant === "unfreeze"
+      ? "bg-brand-primary border-black text-white font-bold"
+      : "bg-brand-accent border-black text-white font-bold";
+  const todoStyles =
+    variant === "unfreeze"
+      ? "bg-white border-brand-primary text-brand-primary font-medium"
+      : "bg-white border-brand-accent text-brand-accent font-medium";
   if (isDesktop)
     return (
       <div className="text-sm">
@@ -42,9 +71,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
             {labels.map((label, index) => (
               <div
                 className={`relative rounded-lg border-2 pr-3 md:text-xs ${
-                  isFinished
-                    ? "bg-brand-primary border-white text-white"
-                    : "border-brand-primary text-brand-primary bg-white"
+                  isLabelDone(index) ? doneStyles : todoStyles
                 } ${index > 0 ? "-ml-3 pl-5" : "pl-3"}`}
                 key={label}
                 style={{ zIndex: labels.length - index }}
@@ -66,7 +93,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         alt="eye icon"
         className="absolute -top-[14px] -right-[38px] z-99"
       />
-      {Array.from({ length: count }, (_, index) => (
+      {Array.from({ length: effectiveCount }, (_, index) => (
         <div
           key={index}
           className="absolute"

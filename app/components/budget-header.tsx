@@ -7,15 +7,7 @@ import Image from "./image";
 import { useOnClickOutside, useToggle } from "usehooks-ts";
 import { execute } from "~/graphql/execute";
 import { GET_BUDGET_YEARS_LIST_QUERY, budgetYearQueryKeys } from "~/queries";
-
-const getLatestBudgetYearValue = (
-  budgetYears?: Array<{ year?: number | null } | null> | null
-) => {
-  const years = (budgetYears ?? [])
-    .map((entry) => entry?.year)
-    .filter((year): year is number => typeof year === "number");
-  return years.length ? years[0] : null;
-};
+import { getLatestBudgetYearValue } from "~/utils/budget";
 
 const BudgetHeader = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -89,11 +81,10 @@ const BudgetHeader = () => {
                 <NavLink
                   to={item.to}
                   onClick={() => setHamburgerShowValue(false)}
-                  className={`rounded-lg border px-1.5 ${
-                    isActive
-                      ? "border-[#E9808E] text-[#E9808E]"
-                      : "border-[#B3B3B3] text-white"
-                  }`}
+                  className={`rounded-lg border px-1.5 ${isActive
+                    ? "border-[#E9808E] text-[#E9808E]"
+                    : "border-[#B3B3B3] text-white"
+                    }`}
                 >
                   {item.label}
                 </NavLink>
@@ -124,11 +115,10 @@ const BudgetHeader = () => {
               <li key={item.to}>
                 <NavLink
                   to={item.to}
-                  className={`block rounded-lg border px-5 py-1 md:px-2 lg:px-5 ${
-                    isActive
-                      ? "border-[#E9808E] bg-white text-[#E9808E]"
-                      : "border-[#B3B3B3] bg-[#E3E3E3] text-[#828282]"
-                  }`}
+                  className={`block rounded-lg border px-5 py-1 md:px-2 lg:px-5 ${isActive
+                    ? "border-[#E9808E] bg-white text-[#E9808E]"
+                    : "border-[#B3B3B3] bg-[#E3E3E3] text-[#828282]"
+                    }`}
                 >
                   {item.label}
                 </NavLink>
