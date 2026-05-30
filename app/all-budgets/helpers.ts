@@ -13,7 +13,6 @@ import {
   defaultTo,
   prop,
   get,
-  flatMap,
   compact,
 } from "lodash/fp";
 import {
@@ -97,18 +96,27 @@ function getLatestMeetingDate(
     (meeting): meeting is MeetingForStage => Boolean(meeting)
   );
 
-  const allDates = flatMap((meeting: MeetingForStage) => {
-    return compact([
-      toDate(meeting.meetingDate),
-      getLatestCommitteeEndDate(meeting),
-    ]);
-  })(validMeetings);
+  const pickLatest = (dates: Date[]): Date =>
+    dates.reduce((latest, current) =>
+      current.getTime() > latest.getTime() ? current : latest
+    );
 
-  if (allDates.length === 0) return "無審議日期";
-
-  const latestDate = allDates.reduce((latest, current) =>
-    current.getTime() > latest.getTime() ? current : latest
+  // 優先顯示實際開會日 meetingDate；沒有時才退而用委員會結束日
+  const meetingDates = compact(
+    validMeetings.map((meeting) => toDate(meeting.meetingDate))
   );
+  const endDates = compact(
+    validMeetings.map((meeting) => getLatestCommitteeEndDate(meeting))
+  );
+
+  const latestDate =
+    meetingDates.length > 0
+      ? pickLatest(meetingDates)
+      : endDates.length > 0
+        ? pickLatest(endDates)
+        : null;
+
+  if (!latestDate) return "無審議日期";
 
   const formattedDate = latestDate.toLocaleDateString("zh-TW", {
     year: "numeric",

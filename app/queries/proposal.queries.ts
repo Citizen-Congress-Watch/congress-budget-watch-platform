@@ -242,6 +242,7 @@ export const GET_PAGINATED_PROPOSALS_QUERY = graphql(`
       meetings {
         id
         type
+        meetingDate
         committee {
           displayName
           name
