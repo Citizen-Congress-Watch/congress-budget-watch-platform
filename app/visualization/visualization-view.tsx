@@ -51,7 +51,7 @@ const VisualizationView = ({
   if (isLoading) return <BudgetDetailSkeleton isDesktop={isDesktop} />;
   return (
     <div>
-      <DataProgressNotice />
+      <DataProgressNotice year={selectedYear?.value} />
       <div className="flex flex-col gap-y-3 p-4">
         <DesktopControls
           activeTab={activeTab}

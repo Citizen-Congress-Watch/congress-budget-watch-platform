@@ -6,13 +6,17 @@ import type { DataProgress } from "~/types/progress";
 const IN_PROGRESS_MESSAGE =
   "資料尚未建置完成或立法院尚在審議中，此處預算視覺化非最終通過狀態";
 
-const DataProgressNotice = () => {
+type DataProgressNoticeProps = {
+  year?: string | number | null;
+};
+
+const DataProgressNotice = ({ year }: DataProgressNoticeProps) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: budgetYearQueryKeys.latest(),
     queryFn: () =>
       execute(GET_LATEST_BUDGET_YEAR_QUERY, {
         skip: 0,
-        take: 1,
+        take: 100,
       }),
     staleTime: 5 * 60 * 1000,
   });
@@ -21,8 +25,15 @@ const DataProgressNotice = () => {
     return null;
   }
 
-  const latestBudgetYear = data?.budgetYears?.[0] ?? null;
-  const dataProgress = latestBudgetYear?.dataProgress as
+  const budgetYears = data?.budgetYears ?? [];
+  const selectedYear = year != null ? Number(year) : null;
+  const matchedBudgetYear =
+    (selectedYear != null
+      ? budgetYears.find((entry) => entry?.year === selectedYear)
+      : null) ??
+    budgetYears[0] ??
+    null;
+  const dataProgress = matchedBudgetYear?.dataProgress as
     | DataProgress
     | null
     | undefined;
