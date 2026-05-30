@@ -15,5 +15,10 @@ const base = process.env.REACT_ROUTER_BASENAME
 
 export default defineConfig({
   base,
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths(), mkcert()],
+  plugins: [
+    tailwindcss(),
+    reactRouter(),
+    tsconfigPaths(),
+    ...(process.env.DISABLE_MKCERT ? [] : [mkcert()]),
+  ],
 });
