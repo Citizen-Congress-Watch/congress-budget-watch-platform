@@ -4,6 +4,8 @@ import { useMediaQuery } from "usehooks-ts";
 import { execute } from "~/graphql/execute";
 import {
   GET_VISUALIZATION_PROPOSALS_QUERY,
+  GET_BUDGET_YEARS_LIST_QUERY,
+  budgetYearQueryKeys,
   proposalQueryKeys,
 } from "~/queries";
 import {
@@ -51,6 +53,34 @@ const useVisualizationState = (): UseVisualizationStateResult => {
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const isMobile = !isDesktop;
+
+  const { data: budgetYearsData } = useQuery({
+    queryKey: budgetYearQueryKeys.years(),
+    queryFn: () => execute(GET_BUDGET_YEARS_LIST_QUERY),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const yearOptions = useMemo<SelectOption[]>(() => {
+    const options = (budgetYearsData?.budgetYears ?? [])
+      .map((entry) => entry?.year)
+      .filter((year): year is number => year != null)
+      .sort((a, b) => b - a)
+      .map((year) => ({
+        value: String(year),
+        label: `${year}年度 (${year + 1911})`,
+      }));
+    return options.length > 0 ? options : YEAR_OPTIONS;
+  }, [budgetYearsData]);
+
+  useEffect(() => {
+    if (yearOptions.length === 0) return;
+    const exists = yearOptions.some(
+      (option) => option.value === selectedYear.value
+    );
+    if (!exists) {
+      setSelectedYear(yearOptions[0]);
+    }
+  }, [yearOptions, selectedYear.value]);
 
   const whereFilter = useCallback((): ProposalWhereInput => {
     return {
@@ -407,7 +437,7 @@ const useVisualizationState = (): UseVisualizationStateResult => {
     setMode,
     selectedYear,
     handleYearChange,
-    yearOptions: YEAR_OPTIONS,
+    yearOptions,
     legislatorOptions,
     selectedLegislatorOption,
     handleLegislatorChange,
