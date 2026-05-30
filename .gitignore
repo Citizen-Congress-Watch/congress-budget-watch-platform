@@ -6,3 +6,5 @@
 /build/
 
 .env.*
+# 本機 pnpm 11 build 核准用，CI 用 pnpm 8 不相容，不進版控
+pnpm-workspace.yaml
