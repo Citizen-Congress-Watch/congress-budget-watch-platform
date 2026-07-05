@@ -54,6 +54,13 @@ MEETING_HEADER_ALIASES = {
     "sourceUrl": ("來源網址", "搜尋頁網址", "sourceUrl"),
     "meetingRecordUrl": ("會議記錄連結", "會議紀錄連結", "公報連結", "meetingRecordUrl"),
     "uploadAdminUrl": ("上傳後台", "後台連結"),
+    "term": ("屆", "屆期", "立法院屆別", "term"),
+    "session": ("會期", "session"),
+    "committee": ("委員會", "committee"),
+    "meetingNumber": ("第幾次會議", "第幾次", "會議次數", "meetingNumber"),
+    "meetingType": ("會議類型", "會議形式", "meetingType"),
+    "year": ("年度", "預算年度", "year"),
+    "dedupeKey": ("去重鍵", "dedupeKey", "key"),
 }
 
 
@@ -186,16 +193,39 @@ def scrape_meetings() -> list[dict[str, str]]:
 
             meetings.append(
                 {
+                    **parse_meeting_name(current_name),
                     "id": current_id,
                     "name": current_name,
                     "date": date_text,
                     "subject": subject,
                     "dataUrl": current_data_url,
                     "sourceUrl": url,
+                    "year": str(TARGET_YEAR),
                 }
             )
 
     return meetings
+
+
+def parse_meeting_name(name: str) -> dict[str, str]:
+    pattern = re.compile(r"第(?P<term>\d+)屆第(?P<session>\d+)會期(?P<committee>.+?)第(?P<number>\d+)次(?P<type>.+)")
+    match = pattern.search(clean_text(name))
+    if not match:
+        return {
+            "term": "",
+            "session": "",
+            "committee": "",
+            "meetingNumber": "",
+            "meetingType": "",
+        }
+
+    return {
+        "term": match.group("term"),
+        "session": match.group("session"),
+        "committee": match.group("committee"),
+        "meetingNumber": match.group("number"),
+        "meetingType": match.group("type"),
+    }
 
 
 def decode_service_account_json(value: str) -> dict[str, Any]:
@@ -215,7 +245,10 @@ def meeting_key(meeting: dict[str, str], header_mapping: dict[str, int]) -> tupl
     meeting_id = clean_text(meeting.get("id", ""))
     meeting_date = clean_text(meeting.get("date", ""))
     data_url = clean_text(meeting.get("dataUrl", ""))
+    dedupe_key = clean_text(meeting.get("dedupeKey", ""))
 
+    if "dedupeKey" in header_mapping and dedupe_key:
+        return ("key", dedupe_key)
     if {"id", "date"}.issubset(header_mapping) and meeting_id and meeting_date:
         return ("id-date", meeting_id, meeting_date)
     if {"date", "dataUrl"}.issubset(header_mapping) and meeting_date and data_url:
@@ -237,6 +270,63 @@ def map_meeting_headers(headers: list[str]) -> dict[str, int]:
                 break
 
     return mapping
+
+
+def build_dedupe_key(meeting: dict[str, str]) -> str:
+    return "|".join(
+        (
+            clean_text(meeting.get("id", "")),
+            clean_text(meeting.get("date", "")),
+            clean_text(meeting.get("dataUrl", "")),
+        )
+    )
+
+
+def cell_text(cell: dict[str, Any]) -> str:
+    if "formattedValue" in cell:
+        return str(cell["formattedValue"])
+
+    effective_value = cell.get("effectiveValue", {})
+    for key in ("stringValue", "numberValue", "boolValue", "formulaValue"):
+        if key in effective_value:
+            return str(effective_value[key])
+    return ""
+
+
+def cell_links(cell: dict[str, Any]) -> list[str]:
+    links = []
+    hyperlink = cell.get("hyperlink")
+    if hyperlink:
+        links.append(str(hyperlink))
+
+    for run in cell.get("textFormatRuns", []) or []:
+        uri = run.get("format", {}).get("link", {}).get("uri")
+        if uri:
+            links.append(str(uri))
+
+    return list(dict.fromkeys(links))
+
+
+def read_meeting_sheet_rows(service: Any) -> tuple[list[str], list[dict[str, Any]]]:
+    sheet_range = f"{quote_sheet_name(GOOGLE_MEETING_SHEET)}!A:Z"
+    response = service.spreadsheets().get(
+        spreadsheetId=GOOGLE_SHEET_ID,
+        ranges=[sheet_range],
+        includeGridData=True,
+    ).execute()
+
+    sheets = response.get("sheets", [])
+    row_data = []
+    if sheets:
+        data_blocks = sheets[0].get("data", [])
+        if data_blocks:
+            row_data = data_blocks[0].get("rowData", [])
+
+    if not row_data:
+        raise RuntimeError(f"Google Sheet tab {GOOGLE_MEETING_SHEET!r} has no header row.")
+
+    headers = [cell_text(cell) for cell in row_data[0].get("values", [])]
+    return headers, row_data[1:]
 
 
 def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
@@ -261,15 +351,7 @@ def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
     values_api = service.spreadsheets().values()
     sheet_range = f"{quote_sheet_name(GOOGLE_MEETING_SHEET)}!A:Z"
 
-    response = values_api.get(
-        spreadsheetId=GOOGLE_SHEET_ID,
-        range=sheet_range,
-    ).execute()
-    rows = response.get("values", [])
-    if not rows:
-        raise RuntimeError(f"Google Sheet tab {GOOGLE_MEETING_SHEET!r} has no header row.")
-
-    headers = rows[0]
+    headers, existing_rows = read_meeting_sheet_rows(service)
     header_mapping = map_meeting_headers(headers)
     if "dataUrl" not in header_mapping and not {"id", "date"}.issubset(header_mapping):
         raise RuntimeError(
@@ -279,11 +361,17 @@ def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
 
     existing_keys = set()
 
-    for row in rows[1:]:
-        existing_meeting = {
-            field: row[index] if index < len(row) else ""
-            for field, index in header_mapping.items()
-        }
+    for row in existing_rows:
+        cells = row.get("values", [])
+        existing_meeting = {}
+        for field, index in header_mapping.items():
+            cell = cells[index] if index < len(cells) else {}
+            value = cell_text(cell)
+            if field == "dataUrl":
+                links = cell_links(cell)
+                value = next((link for link in links if "ly-budget.openfun.app" in link), value)
+            existing_meeting[field] = value
+
         key = meeting_key(existing_meeting, header_mapping)
         if any(key[1:]):
             existing_keys.add(key)
@@ -298,7 +386,9 @@ def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
             continue
 
         row = [""] * len(headers)
+        dedupe_key = build_dedupe_key(meeting)
         field_values = {
+            "dedupeKey": dedupe_key,
             "id": meeting.get("id", ""),
             "date": meeting.get("date", ""),
             "name": meeting.get("name", ""),
@@ -307,6 +397,12 @@ def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
             "sourceUrl": meeting.get("sourceUrl", ""),
             "meetingRecordUrl": "",
             "uploadAdminUrl": "",
+            "term": meeting.get("term", ""),
+            "session": meeting.get("session", ""),
+            "committee": meeting.get("committee", ""),
+            "meetingNumber": meeting.get("meetingNumber", ""),
+            "meetingType": meeting.get("meetingType", ""),
+            "year": meeting.get("year", ""),
         }
         for field, value in field_values.items():
             index = header_mapping.get(field)
