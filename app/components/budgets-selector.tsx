@@ -1,16 +1,19 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useStore } from "zustand";
 import { useQuery } from "@tanstack/react-query";
 import { execute } from "~/graphql/execute";
 import {
-  GET_GOVERNMENTS_QUERY,
+  GET_PROPOSAL_GOVERNMENTS_QUERY,
   governmentQueryKeys,
   GET_PEOPLE_LIST_QUERY,
   peopleQueryKeys,
 } from "~/queries";
+import type { ProposalWhereInput } from "~/graphql/graphql";
 import useBudgetSelectStore, {
   useFreezeOnly,
   useSetFreezeOnly,
+  useSelectedResult,
+  useSetSelectedResult,
 } from "~/stores/budget-selector";
 import Select, {
   components,
@@ -18,6 +21,7 @@ import Select, {
   type SingleValue,
 } from "react-select";
 import Image from "./image";
+import { proposalResultFilterOptions } from "~/constants/options";
 
 type OptionType = {
   value: string;
@@ -32,6 +36,7 @@ type BudgetOption = {
 type BudgetsSelectorProps = {
   onSelectionChange?: (selectedValue: string) => void;
   className?: string;
+  selectedYear?: number | null;
 };
 
 const content = {
@@ -66,7 +71,13 @@ export const DropdownIndicator = (
   );
 };
 
-const ByDepartmentSelector = ({ value }: { value: string }) => {
+const ByDepartmentSelector = ({
+  value,
+  selectedYear,
+}: {
+  value: string;
+  selectedYear?: number | null;
+}) => {
   // 從 store 取得狀態與 actions
   const departmentFilter = useStore(
     useBudgetSelectStore,
@@ -81,20 +92,57 @@ const ByDepartmentSelector = ({ value }: { value: string }) => {
     (state) => state.actions.setDepartmentId
   );
 
-  // Fetch governments data
+  const proposalGovernmentWhere = useMemo<ProposalWhereInput>(() => {
+    if (!selectedYear) return {};
+    return {
+      year: {
+        year: {
+          equals: selectedYear,
+        },
+      },
+    };
+  }, [selectedYear]);
+
+  // Fetch governments from proposals so unavailable departments stay hidden.
   const { data: governmentsData, isLoading } = useQuery({
-    queryKey: governmentQueryKeys.lists(),
-    queryFn: () => execute(GET_GOVERNMENTS_QUERY),
+    queryKey: governmentQueryKeys.proposalList({
+      year: selectedYear ?? "all",
+    }),
+    queryFn: () =>
+      execute(GET_PROPOSAL_GOVERNMENTS_QUERY, {
+        where: proposalGovernmentWhere,
+      }),
     enabled: value === "by-department", // 只在選中時 fetch
   });
 
+  const governments = useMemo(() => {
+    const uniqueGovernments = new Map<
+      string,
+      {
+        id: string;
+        name?: string | null;
+        category?: string | null;
+        description?: string | null;
+      }
+    >();
+
+    governmentsData?.proposals?.forEach((proposal) => {
+      const government = proposal.government;
+      if (government?.id) {
+        uniqueGovernments.set(government.id, government);
+      }
+    });
+
+    return Array.from(uniqueGovernments.values());
+  }, [governmentsData?.proposals]);
+
   // 計算 unique categories
   const categoryOptions = useMemo(() => {
-    if (!governmentsData?.governments) return [];
+    if (!governments.length) return [];
 
     const uniqueCategories = Array.from(
       new Set(
-        governmentsData.governments
+        governments
           .map((g) => g.category)
           .filter((c): c is string => c != null && c !== "")
       )
@@ -104,15 +152,15 @@ const ByDepartmentSelector = ({ value }: { value: string }) => {
       value: cat,
       label: cat,
     }));
-  }, [governmentsData?.governments]);
+  }, [governments]);
 
   // 根據選定的 category 過濾 departments
   const departmentOptions = useMemo(() => {
-    if (!governmentsData?.governments || !departmentFilter.category) {
+    if (!governments.length || !departmentFilter.category) {
       return [];
     }
 
-    const filtered = governmentsData.governments
+    const filtered = governments
       .filter((g) => g.category === departmentFilter.category)
       .map((g) => ({
         value: g.id,
@@ -121,7 +169,45 @@ const ByDepartmentSelector = ({ value }: { value: string }) => {
       .sort((a, b) => a.label.localeCompare(b.label));
 
     return filtered;
-  }, [governmentsData?.governments, departmentFilter.category]);
+  }, [governments, departmentFilter.category]);
+
+  useEffect(() => {
+    if (
+      !governmentsData ||
+      !departmentFilter.category ||
+      categoryOptions.some(
+        (option) => option.value === departmentFilter.category
+      )
+    ) {
+      return;
+    }
+
+    setDepartmentCategory(null);
+  }, [
+    categoryOptions,
+    departmentFilter.category,
+    governmentsData,
+    setDepartmentCategory,
+  ]);
+
+  useEffect(() => {
+    if (
+      !governmentsData ||
+      !departmentFilter.departmentId ||
+      departmentOptions.some(
+        (option) => option.value === departmentFilter.departmentId
+      )
+    ) {
+      return;
+    }
+
+    setDepartmentId(null);
+  }, [
+    departmentFilter.departmentId,
+    departmentOptions,
+    governmentsData,
+    setDepartmentId,
+  ]);
 
   // 當前選擇的值（用於 react-select）
   const selectedCategoryValue = departmentFilter.category
@@ -129,14 +215,14 @@ const ByDepartmentSelector = ({ value }: { value: string }) => {
     : null;
 
   const selectedDepartmentValue = useMemo(() => {
-    if (!departmentFilter.departmentId || !governmentsData?.governments) {
+    if (!departmentFilter.departmentId || !governments.length) {
       return null;
     }
-    const dept = governmentsData.governments.find(
+    const dept = governments.find(
       (g) => g.id === departmentFilter.departmentId
     );
     return dept ? { value: dept.id, label: dept.name || "未命名機關" } : null;
-  }, [departmentFilter.departmentId, governmentsData?.governments]);
+  }, [departmentFilter.departmentId, governments]);
 
   if (value !== "by-department") return null;
 
@@ -263,6 +349,7 @@ const ByPeopleSelector = ({ value }: { value: string }) => {
 const BudgetsSelector: React.FC<BudgetsSelectorProps> = ({
   onSelectionChange,
   className = "",
+  selectedYear = null,
 }) => {
   const selectedValue = useStore(
     useBudgetSelectStore,
@@ -298,6 +385,15 @@ const BudgetsSelector: React.FC<BudgetsSelectorProps> = ({
   );
   const freezeOnly = useFreezeOnly();
   const setFreezeOnly = useSetFreezeOnly();
+  const selectedResult = useSelectedResult();
+  const setSelectedResult = useSetSelectedResult();
+  const selectedResultValue = useMemo(
+    () =>
+      proposalResultFilterOptions.find(
+        (option) => option.value === selectedResult
+      ) ?? null,
+    [selectedResult]
+  );
 
   const handleSelectionChange = (value: string) => {
     setSelectedValue(value);
@@ -371,7 +467,10 @@ const BudgetsSelector: React.FC<BudgetsSelectorProps> = ({
                 </label>
               </div>
               {selectedValue === "by-department" && (
-                <ByDepartmentSelector value={option.value} />
+                <ByDepartmentSelector
+                  value={option.value}
+                  selectedYear={selectedYear}
+                />
               )}
               {selectedValue === "by-legislator" && (
                 <ByPeopleSelector value={option.value} />
@@ -379,7 +478,51 @@ const BudgetsSelector: React.FC<BudgetsSelectorProps> = ({
             </div>
           ))}
           <section className="md:flex md:items-center">
-            <label htmlFor="budget-search-input" className="mr-2">
+            <label
+              htmlFor="budget-result-selector"
+              className="mr-2 md:w-20 md:text-right"
+            >
+              審議結果：
+            </label>
+            <Select
+              inputId="budget-result-selector"
+              value={selectedResultValue}
+              onChange={(opt) => {
+                const singleValue = opt as SingleValue<OptionType>;
+                setSelectedResult(singleValue?.value ?? null);
+              }}
+              options={proposalResultFilterOptions}
+              components={{ DropdownIndicator }}
+              className="w-full md:w-80"
+              styles={{
+                control: (styles) => ({
+                  ...styles,
+                  minHeight: "28px",
+                  border: "2px solid black",
+                  borderRadius: "2px",
+                  backgroundColor: "white",
+                  boxShadow: "none",
+                }),
+                indicatorSeparator: (styles) => ({
+                  ...styles,
+                  display: "none",
+                }),
+                valueContainer: (styles) => ({
+                  ...styles,
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                }),
+              }}
+              placeholder="全部審議結果"
+              isClearable
+              aria-label="選擇審議結果"
+            />
+          </section>
+          <section className="md:flex md:items-center">
+            <label
+              htmlFor="budget-search-input"
+              className="mr-2 md:w-20 md:text-right"
+            >
               或搜尋：
             </label>
             <input

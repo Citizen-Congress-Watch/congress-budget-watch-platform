@@ -1,7 +1,6 @@
 import { useMemo, useEffect, useRef, useState, useCallback } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { redirect, useSearchParams } from "react-router";
-import type { SingleValue } from "react-select";
 import { ERROR_REDIRECT_ROUTE } from "~/constants/endpoints";
 import { execute } from "~/graphql/execute";
 import {
@@ -20,6 +19,7 @@ import {
   useSelectedYear,
   useSetSelectedYear,
   useFreezeOnly,
+  useSelectedResult,
 } from "~/stores/budget-selector";
 import { useMediaQuery } from "usehooks-ts";
 import type {
@@ -35,7 +35,7 @@ import { usePagination, usePaginationActions } from "~/stores/paginationStore";
 import { proposalToBudgetTableData } from "./helpers";
 import useDebounce from "~/hooks/useDebounce";
 import { SEARCH_DEBOUNCE_DELAY } from "~/constants/config";
-import { sortOptions } from "~/constants/options";
+import { EMPTY_PROPOSAL_RESULT_VALUE, sortOptions } from "~/constants/options";
 import { find } from "lodash";
 import AllBudgetsView, {
   type YearOption,
@@ -109,7 +109,10 @@ export const AllBudgets = () => {
   const selectedYear = useSelectedYear();
   const setSelectedYear = useSetSelectedYear();
   const freezeOnly = useFreezeOnly();
+  const selectedResult = useSelectedResult();
   const [progressMode, setProgressMode] = useState<ProgressMode>("latest");
+  const hasAppliedDefaultYear = useRef(false);
+  const previousYearParam = useRef<string | null>(null);
 
   useEffect(() => {
     const yearFromParams = searchParams.get("year");
@@ -156,6 +159,31 @@ export const AllBudgets = () => {
     [typedYearsData]
   );
 
+  useEffect(() => {
+    const currentYearParam = searchParams.get("year");
+    const lastYearParam = previousYearParam.current;
+    previousYearParam.current = currentYearParam;
+
+    if (lastYearParam !== null && currentYearParam === null) {
+      hasAppliedDefaultYear.current = false;
+    }
+
+    if (hasAppliedDefaultYear.current || !availableBudgetYears.length) {
+      return;
+    }
+
+    hasAppliedDefaultYear.current = true;
+
+    if (currentYearParam) {
+      return;
+    }
+
+    const latestYear = availableBudgetYears[0]?.year;
+    if (latestYear != null) {
+      setSelectedYear(latestYear);
+    }
+  }, [availableBudgetYears, searchParams, setSelectedYear]);
+
   const yearOptions: YearOption[] = useMemo(() => {
     if (!availableBudgetYears.length) return [];
     const years = availableBudgetYears
@@ -168,7 +196,7 @@ export const AllBudgets = () => {
     ];
   }, [availableBudgetYears]);
 
-  const selectedOption: SingleValue<YearOption> = useMemo(
+  const selectedOption: YearOption | null = useMemo(
     () => yearOptions.find((option) => option.value === selectedYear) ?? null,
     [yearOptions, selectedYear]
   );
@@ -250,8 +278,8 @@ export const AllBudgets = () => {
     progressMode === "latest" ? latestProgressData : unfreezeProgressData;
 
   const handleYearChange = useCallback(
-    (option: SingleValue<YearOption>) => {
-      setSelectedYear(option?.value ?? null);
+    (option: YearOption) => {
+      setSelectedYear(option.value);
     },
     [setSelectedYear]
   );
@@ -334,9 +362,21 @@ export const AllBudgets = () => {
       // TODO: backend schema目前沒有對proposalTypes的has/contains filter，暫時以freezeAmount>0近似篩出凍結案；待schema支援後改用proposalTypes判斷。
       filters.freezeAmount = { gt: 0 };
     }
+    if (selectedResult === EMPTY_PROPOSAL_RESULT_VALUE) {
+      filters.result = { equals: null };
+    } else if (selectedResult) {
+      filters.result = { equals: selectedResult };
+    }
 
     return filters;
-  }, [departmentId, personId, debouncedSearchedValue, selectedYear, freezeOnly]);
+  }, [
+    departmentId,
+    personId,
+    debouncedSearchedValue,
+    selectedYear,
+    freezeOnly,
+    selectedResult,
+  ]);
 
   // 修改後的 React Query（支援分頁）
   const fetchBudgetAmountSorted = useCallback(async () => {
@@ -445,6 +485,7 @@ export const AllBudgets = () => {
     debouncedSearchedValue,
     selectedYear,
     freezeOnly,
+    selectedResult,
     setPage,
   ]);
 
