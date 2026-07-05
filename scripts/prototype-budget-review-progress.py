@@ -283,6 +283,13 @@ def build_dedupe_key(meeting: dict[str, str]) -> str:
 
 
 def cell_text(cell: dict[str, Any]) -> str:
+    user_value = cell.get("userEnteredValue", {})
+    formula = str(user_value.get("formulaValue", ""))
+    if formula:
+        match = re.search(r'=HYPERLINK\("([^"]+)"', formula, flags=re.IGNORECASE)
+        if match:
+            return match.group(1)
+
     if "formattedValue" in cell:
         return str(cell["formattedValue"])
 
@@ -295,6 +302,11 @@ def cell_text(cell: dict[str, Any]) -> str:
 
 def cell_links(cell: dict[str, Any]) -> list[str]:
     links = []
+    user_value = cell.get("userEnteredValue", {})
+    formula = str(user_value.get("formulaValue", ""))
+    if formula:
+        links.extend(re.findall(r'=HYPERLINK\("([^"]+)"', formula, flags=re.IGNORECASE))
+
     hyperlink = cell.get("hyperlink")
     if hyperlink:
         links.append(str(hyperlink))
@@ -305,6 +317,29 @@ def cell_links(cell: dict[str, Any]) -> list[str]:
             links.append(str(uri))
 
     return list(dict.fromkeys(links))
+
+
+def row_search_text(cells: list[dict[str, Any]]) -> str:
+    parts = []
+    for cell in cells:
+        parts.append(cell_text(cell))
+        parts.extend(cell_links(cell))
+    return "\n".join(clean_text(part) for part in parts if clean_text(part))
+
+
+def row_contains_meeting(search_text: str, meeting: dict[str, str]) -> bool:
+    meeting_id = clean_text(meeting.get("id", ""))
+    meeting_date = clean_text(meeting.get("date", ""))
+    data_url = clean_text(meeting.get("dataUrl", ""))
+    encoded_id = clean_text(urllib.parse.quote(meeting_id, safe="")) if meeting_id else ""
+
+    if data_url and data_url in search_text and (not meeting_date or meeting_date in search_text):
+        return True
+    if meeting_id and meeting_date and meeting_id in search_text and meeting_date in search_text:
+        return True
+    if encoded_id and meeting_date and encoded_id in search_text and meeting_date in search_text:
+        return True
+    return False
 
 
 def read_meeting_sheet_rows(service: Any) -> tuple[list[str], list[dict[str, Any]]]:
@@ -360,9 +395,11 @@ def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
         )
 
     existing_keys = set()
+    existing_row_texts = []
 
     for row in existing_rows:
         cells = row.get("values", [])
+        existing_row_texts.append(row_search_text(cells))
         existing_meeting = {}
         for field, index in header_mapping.items():
             cell = cells[index] if index < len(cells) else {}
@@ -381,6 +418,8 @@ def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
     for meeting in meetings:
         key = meeting_key(meeting, header_mapping)
         if key in existing_keys:
+            continue
+        if any(row_contains_meeting(search_text, meeting) for search_text in existing_row_texts):
             continue
         if key in seen_new_keys:
             continue
