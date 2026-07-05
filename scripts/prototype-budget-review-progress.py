@@ -40,6 +40,8 @@ GOOGLE_SERVICE_ACCOUNT_JSON = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
 
 MEETING_HEADER_ALIASES = {
     "id": ("id", "會議id", "會議ID", "會議代碼", "會議編號"),
+    "place": ("地點", "meetingPlace"),
+    "category": ("類型", "meetingCategory"),
     "date": ("日期", "會議日期", "date", "meetingDate"),
     "name": ("會議名稱", "會議", "會議場次", "name", "displayName"),
     "subject": ("主旨", "會議事由", "案由", "審查事項", "subject", "description"),
@@ -56,7 +58,7 @@ MEETING_HEADER_ALIASES = {
     "uploadAdminUrl": ("上傳後台", "後台連結"),
     "term": ("屆", "屆期", "立法院屆別", "term"),
     "session": ("會期", "session"),
-    "committee": ("委員會", "committee"),
+    "committee": ("委員會", "委員會名稱", "committee"),
     "meetingNumber": ("第幾次會議", "第幾次", "會議次數", "meetingNumber"),
     "meetingType": ("會議類型", "會議形式", "meetingType"),
     "year": ("年度", "預算年度", "year"),
@@ -72,6 +74,23 @@ def clean_text(value: Any) -> str:
 
 def normalize_header(value: Any) -> str:
     return clean_text(value).lower()
+
+
+def normalize_meeting_date(value: Any) -> str:
+    value = clean_text(value)
+    match = re.match(r"^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$", value)
+    if not match:
+        return value
+    year, month, day = match.groups()
+    return f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+
+
+def normalize_dates_in_text(value: str) -> str:
+    return re.sub(
+        r"(\d{4})[-/](\d{1,2})[-/](\d{1,2})",
+        lambda match: f"{match.group(1)}-{match.group(2).zfill(2)}-{match.group(3).zfill(2)}",
+        value,
+    )
 
 
 def normalize_name(value: str) -> str:
@@ -243,7 +262,7 @@ def quote_sheet_name(name: str) -> str:
 
 def meeting_key(meeting: dict[str, str], header_mapping: dict[str, int]) -> tuple[str, ...]:
     meeting_id = clean_text(meeting.get("id", ""))
-    meeting_date = clean_text(meeting.get("date", ""))
+    meeting_date = normalize_meeting_date(meeting.get("date", ""))
     data_url = clean_text(meeting.get("dataUrl", ""))
     dedupe_key = clean_text(meeting.get("dedupeKey", ""))
 
@@ -272,17 +291,14 @@ def map_meeting_headers(headers: list[str]) -> dict[str, int]:
     return mapping
 
 
-def build_dedupe_key(meeting: dict[str, str]) -> str:
-    return "|".join(
-        (
-            clean_text(meeting.get("id", "")),
-            clean_text(meeting.get("date", "")),
-            clean_text(meeting.get("dataUrl", "")),
-        )
-    )
-
-
 def cell_text(cell: dict[str, Any]) -> str:
+    user_value = cell.get("userEnteredValue", {})
+    formula = str(user_value.get("formulaValue", ""))
+    if formula:
+        match = re.search(r'=HYPERLINK\("([^"]+)"', formula, flags=re.IGNORECASE)
+        if match:
+            return match.group(1)
+
     if "formattedValue" in cell:
         return str(cell["formattedValue"])
 
@@ -295,6 +311,11 @@ def cell_text(cell: dict[str, Any]) -> str:
 
 def cell_links(cell: dict[str, Any]) -> list[str]:
     links = []
+    user_value = cell.get("userEnteredValue", {})
+    formula = str(user_value.get("formulaValue", ""))
+    if formula:
+        links.extend(re.findall(r'=HYPERLINK\("([^"]+)"', formula, flags=re.IGNORECASE))
+
     hyperlink = cell.get("hyperlink")
     if hyperlink:
         links.append(str(hyperlink))
@@ -305,6 +326,30 @@ def cell_links(cell: dict[str, Any]) -> list[str]:
             links.append(str(uri))
 
     return list(dict.fromkeys(links))
+
+
+def row_search_text(cells: list[dict[str, Any]]) -> str:
+    parts = []
+    for cell in cells:
+        parts.append(cell_text(cell))
+        parts.extend(cell_links(cell))
+    return "\n".join(clean_text(part) for part in parts if clean_text(part))
+
+
+def row_contains_meeting(search_text: str, meeting: dict[str, str]) -> bool:
+    meeting_id = clean_text(meeting.get("id", ""))
+    meeting_date = normalize_meeting_date(meeting.get("date", ""))
+    data_url = clean_text(meeting.get("dataUrl", ""))
+    encoded_id = clean_text(urllib.parse.quote(meeting_id, safe="")) if meeting_id else ""
+    normalized_search_text = normalize_dates_in_text(search_text)
+
+    if data_url and data_url in normalized_search_text and (not meeting_date or meeting_date in normalized_search_text):
+        return True
+    if meeting_id and meeting_date and meeting_id in normalized_search_text and meeting_date in normalized_search_text:
+        return True
+    if encoded_id and meeting_date and encoded_id in normalized_search_text and meeting_date in normalized_search_text:
+        return True
+    return False
 
 
 def read_meeting_sheet_rows(service: Any) -> tuple[list[str], list[dict[str, Any]]]:
@@ -360,9 +405,11 @@ def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
         )
 
     existing_keys = set()
+    existing_row_texts = []
 
     for row in existing_rows:
         cells = row.get("values", [])
+        existing_row_texts.append(row_search_text(cells))
         existing_meeting = {}
         for field, index in header_mapping.items():
             cell = cells[index] if index < len(cells) else {}
@@ -382,27 +429,20 @@ def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
         key = meeting_key(meeting, header_mapping)
         if key in existing_keys:
             continue
+        if any(row_contains_meeting(search_text, meeting) for search_text in existing_row_texts):
+            continue
         if key in seen_new_keys:
             continue
 
         row = [""] * len(headers)
-        dedupe_key = build_dedupe_key(meeting)
         field_values = {
-            "dedupeKey": dedupe_key,
-            "id": meeting.get("id", ""),
-            "date": meeting.get("date", ""),
-            "name": meeting.get("name", ""),
-            "subject": meeting.get("subject", ""),
-            "dataUrl": meeting.get("dataUrl", ""),
-            "sourceUrl": meeting.get("sourceUrl", ""),
+            "place": "委員會",
+            "category": "預算審議",
+            "date": normalize_meeting_date(meeting.get("date", "")),
             "meetingRecordUrl": "",
-            "uploadAdminUrl": "",
-            "term": meeting.get("term", ""),
+            "dataUrl": meeting.get("dataUrl", ""),
             "session": meeting.get("session", ""),
             "committee": meeting.get("committee", ""),
-            "meetingNumber": meeting.get("meetingNumber", ""),
-            "meetingType": meeting.get("meetingType", ""),
-            "year": meeting.get("year", ""),
         }
         for field, value in field_values.items():
             index = header_mapping.get(field)
