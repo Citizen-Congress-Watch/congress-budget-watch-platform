@@ -11,6 +11,7 @@ This is intentionally a prototype:
 from __future__ import annotations
 
 import datetime as dt
+import base64
 import json
 import os
 import re
@@ -32,12 +33,38 @@ GQL_ENDPOINT = "https://ly-budget-gql-prod-702918025200.asia-east1.run.app/api/g
 TARGET_YEAR = int(os.environ.get("BUDGET_REVIEW_YEAR", "115"))
 MAX_PAGES = 20
 EXCLUDED_PARENT_NAMES = {"直轄市及縣市政府"}
+DEFAULT_SPREADSHEET_ID = "1WAK0BiGl7_qIhIGzJirkaHJwsCL2Vp2GQCxcVYWiWwg"
+GOOGLE_SHEET_ID = os.environ.get("BUDGET_REVIEW_SPREADSHEET_ID", DEFAULT_SPREADSHEET_ID)
+GOOGLE_MEETING_SHEET = os.environ.get("BUDGET_REVIEW_MEETING_SHEET", "meeting")
+GOOGLE_SERVICE_ACCOUNT_JSON = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
+
+MEETING_HEADER_ALIASES = {
+    "id": ("id", "會議id", "會議ID", "會議代碼", "會議編號"),
+    "date": ("日期", "會議日期", "date", "meetingDate"),
+    "name": ("會議名稱", "會議", "會議場次", "name", "displayName"),
+    "subject": ("主旨", "會議事由", "案由", "審查事項", "subject", "description"),
+    "dataUrl": (
+        "議事錄轉檔網址",
+        "資料",
+        "資料連結",
+        "轉檔網址",
+        "ly-budget連結",
+        "ly budget連結",
+    ),
+    "sourceUrl": ("來源網址", "搜尋頁網址", "sourceUrl"),
+    "meetingRecordUrl": ("會議記錄連結", "會議紀錄連結", "公報連結", "meetingRecordUrl"),
+    "uploadAdminUrl": ("上傳後台", "後台連結"),
+}
 
 
 def clean_text(value: Any) -> str:
     if value is None or pd.isna(value):
         return ""
     return re.sub(r"\s+", "", str(value).replace("\u3000", "")).strip()
+
+
+def normalize_header(value: Any) -> str:
+    return clean_text(value).lower()
 
 
 def normalize_name(value: str) -> str:
@@ -171,6 +198,138 @@ def scrape_meetings() -> list[dict[str, str]]:
     return meetings
 
 
+def decode_service_account_json(value: str) -> dict[str, Any]:
+    value = value.strip()
+    if not value:
+        return {}
+    if value.startswith("{"):
+        return json.loads(value)
+    return json.loads(base64.b64decode(value).decode("utf-8"))
+
+
+def quote_sheet_name(name: str) -> str:
+    return "'" + name.replace("'", "''") + "'"
+
+
+def meeting_key(meeting: dict[str, str], header_mapping: dict[str, int]) -> tuple[str, ...]:
+    meeting_id = clean_text(meeting.get("id", ""))
+    meeting_date = clean_text(meeting.get("date", ""))
+    data_url = clean_text(meeting.get("dataUrl", ""))
+
+    if {"id", "date"}.issubset(header_mapping) and meeting_id and meeting_date:
+        return ("id-date", meeting_id, meeting_date)
+    if {"date", "dataUrl"}.issubset(header_mapping) and meeting_date and data_url:
+        return ("date-url", meeting_date, data_url)
+    if "dataUrl" in header_mapping and data_url:
+        return ("url", data_url)
+    return ("fallback", meeting_id, meeting_date, data_url)
+
+
+def map_meeting_headers(headers: list[str]) -> dict[str, int]:
+    normalized_headers = {normalize_header(header): index for index, header in enumerate(headers)}
+    mapping: dict[str, int] = {}
+
+    for field, aliases in MEETING_HEADER_ALIASES.items():
+        for alias in aliases:
+            index = normalized_headers.get(normalize_header(alias))
+            if index is not None:
+                mapping[field] = index
+                break
+
+    return mapping
+
+
+def sync_meetings_to_google_sheet(meetings: list[dict[str, str]]) -> None:
+    if not GOOGLE_SERVICE_ACCOUNT_JSON:
+        print("Skipping Google Sheet meeting sync: GOOGLE_SERVICE_ACCOUNT_JSON is not set.")
+        return
+
+    try:
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+    except ImportError as error:
+        raise RuntimeError(
+            "Google Sheet sync requires google-api-python-client and google-auth."
+        ) from error
+
+    credentials_info = decode_service_account_json(GOOGLE_SERVICE_ACCOUNT_JSON)
+    credentials = service_account.Credentials.from_service_account_info(
+        credentials_info,
+        scopes=["https://www.googleapis.com/auth/spreadsheets"],
+    )
+    service = build("sheets", "v4", credentials=credentials, cache_discovery=False)
+    values_api = service.spreadsheets().values()
+    sheet_range = f"{quote_sheet_name(GOOGLE_MEETING_SHEET)}!A:Z"
+
+    response = values_api.get(
+        spreadsheetId=GOOGLE_SHEET_ID,
+        range=sheet_range,
+    ).execute()
+    rows = response.get("values", [])
+    if not rows:
+        raise RuntimeError(f"Google Sheet tab {GOOGLE_MEETING_SHEET!r} has no header row.")
+
+    headers = rows[0]
+    header_mapping = map_meeting_headers(headers)
+    if "dataUrl" not in header_mapping and not {"id", "date"}.issubset(header_mapping):
+        raise RuntimeError(
+            "Google Sheet meeting tab needs either a 議事錄轉檔網址 column "
+            "or both 會議代碼 and 會議日期 columns for duplicate detection."
+        )
+
+    existing_keys = set()
+
+    for row in rows[1:]:
+        existing_meeting = {
+            field: row[index] if index < len(row) else ""
+            for field, index in header_mapping.items()
+        }
+        key = meeting_key(existing_meeting, header_mapping)
+        if any(key[1:]):
+            existing_keys.add(key)
+
+    values_to_append: list[list[str]] = []
+    seen_new_keys = set()
+    for meeting in meetings:
+        key = meeting_key(meeting, header_mapping)
+        if key in existing_keys:
+            continue
+        if key in seen_new_keys:
+            continue
+
+        row = [""] * len(headers)
+        field_values = {
+            "id": meeting.get("id", ""),
+            "date": meeting.get("date", ""),
+            "name": meeting.get("name", ""),
+            "subject": meeting.get("subject", ""),
+            "dataUrl": meeting.get("dataUrl", ""),
+            "sourceUrl": meeting.get("sourceUrl", ""),
+            "meetingRecordUrl": "",
+            "uploadAdminUrl": "",
+        }
+        for field, value in field_values.items():
+            index = header_mapping.get(field)
+            if index is not None:
+                row[index] = value
+
+        values_to_append.append(row)
+        seen_new_keys.add(key)
+
+    if not values_to_append:
+        print("No new meetings to append to Google Sheet.")
+        return
+
+    values_api.append(
+        spreadsheetId=GOOGLE_SHEET_ID,
+        range=sheet_range,
+        valueInputOption="USER_ENTERED",
+        insertDataOption="INSERT_ROWS",
+        body={"values": values_to_append},
+    ).execute()
+    print(f"Appended {len(values_to_append)} meetings to Google Sheet tab {GOOGLE_MEETING_SHEET!r}.")
+
+
 def fetch_uploaded_governments(agencies: list[dict[str, Any]]) -> dict[str, int]:
     query = """
     query PrototypeUploadedGovernments($take: Int!, $where: ProposalWhereInput) {
@@ -290,6 +449,7 @@ def write_output(output: dict[str, Any]) -> None:
 def main() -> None:
     agencies = read_agencies()
     meetings = scrape_meetings()
+    sync_meetings_to_google_sheet(meetings)
     uploaded_governments = fetch_uploaded_governments(agencies)
     agencies = attach_statuses(agencies, meetings, uploaded_governments)
     summary = {
