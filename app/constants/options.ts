@@ -22,3 +22,12 @@ export const YEAR_OPTIONS: SelectOption[] = [
   { value: "115", label: "115年度 (2026)" },
   { value: "114", label: "114年度 (2025)" },
 ];
+
+export const EMPTY_PROPOSAL_RESULT_VALUE = "__empty_result__";
+
+export const proposalResultFilterOptions = [
+  { value: "passed", label: "通過" },
+  { value: "reserved", label: "保留" },
+  { value: "withdrawn", label: "撤案" },
+  { value: EMPTY_PROPOSAL_RESULT_VALUE, label: "待審議" },
+];
