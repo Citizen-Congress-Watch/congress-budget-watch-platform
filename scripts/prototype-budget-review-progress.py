@@ -33,6 +33,10 @@ GQL_ENDPOINT = "https://ly-budget-gql-prod-702918025200.asia-east1.run.app/api/g
 TARGET_YEAR = int(os.environ.get("BUDGET_REVIEW_YEAR", "115"))
 MAX_PAGES = 20
 EXCLUDED_PARENT_NAMES = {"直轄市及縣市政府"}
+ADDITIONAL_BUDGET_REVIEW_MEETING_IDS = {
+    # Source subject misses "繼續審查", but this is a 115年度 budget review meeting.
+    "委員會-11-5-15-12",
+}
 DEFAULT_SPREADSHEET_ID = "1WAK0BiGl7_qIhIGzJirkaHJwsCL2Vp2GQCxcVYWiWwg"
 GOOGLE_SHEET_ID = os.environ.get("BUDGET_REVIEW_SPREADSHEET_ID", DEFAULT_SPREADSHEET_ID)
 GOOGLE_MEETING_SHEET = os.environ.get("BUDGET_REVIEW_MEETING_SHEET", "meeting")
@@ -129,6 +133,14 @@ def subject_matches(match_name: str, subject: str) -> bool:
     return match_name in clean_subject or match_name in normalize_name(subject)
 
 
+def is_budget_review_meeting(meeting_id: str, subject: str) -> bool:
+    if f"{TARGET_YEAR}年度" not in subject:
+        return False
+    if "繼續審查" in subject:
+        return True
+    return clean_text(meeting_id) in ADDITIONAL_BUDGET_REVIEW_MEETING_IDS
+
+
 def read_agencies() -> list[dict[str, Any]]:
     df = pd.read_excel(GOV_INDEX_PATH, header=None)
     agencies: list[dict[str, Any]] = []
@@ -207,7 +219,7 @@ def scrape_meetings() -> list[dict[str, str]]:
             else:
                 continue
 
-            if "繼續審查" not in subject or f"{TARGET_YEAR}年度" not in subject:
+            if not is_budget_review_meeting(current_id, subject):
                 continue
 
             meetings.append(
