@@ -1,6 +1,6 @@
 {
   "year": 115,
-  "generatedAt": "2026-07-05T15:04:15.081554+00:00",
+  "generatedAt": "2026-07-06T03:26:59.838192+00:00",
   "sources": {
     "governmentIndex": "gov_index.xlsx",
     "meetingSearch": "https://ly-budget.openfun.app/",
@@ -25,10 +25,10 @@
   ],
   "summary": {
     "totalAgencies": 239,
-    "reviewedAgencies": 182,
+    "reviewedAgencies": 185,
     "uploadedAgencies": 122,
-    "notReviewedAgencies": 57,
-    "matchedMeetings": 55
+    "notReviewedAgencies": 54,
+    "matchedMeetings": 56
   },
   "agencies": [
     {
@@ -1430,7 +1430,7 @@
       "itemCode": "1",
       "name": "內政部",
       "status": "reviewed",
-      "reviewedMeetingCount": 1,
+      "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-29",
       "uploadedProposalCount": 0,
       "meetings": [
@@ -1439,6 +1439,12 @@
           "date": "2026-06-29",
           "name": "第11屆第5會期內政委員會第18次全體委員會議",
           "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-15-18"
+        },
+        {
+          "id": "委員會-11-5-15-12",
+          "date": "2026-05-18",
+          "name": "第11屆第5會期內政委員會第12次全體委員會議",
+          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-15-12"
         }
       ]
     },
@@ -1448,11 +1454,18 @@
       "parentName": "內政部主管",
       "itemCode": "2",
       "name": "國土管理署及所屬",
-      "status": "notReviewed",
-      "reviewedMeetingCount": 0,
-      "latestReviewDate": null,
+      "status": "reviewed",
+      "reviewedMeetingCount": 1,
+      "latestReviewDate": "2026-05-18",
       "uploadedProposalCount": 0,
-      "meetings": []
+      "meetings": [
+        {
+          "id": "委員會-11-5-15-12",
+          "date": "2026-05-18",
+          "name": "第11屆第5會期內政委員會第12次全體委員會議",
+          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-15-12"
+        }
+      ]
     },
     {
       "id": "7-3",
@@ -1517,11 +1530,18 @@
       "parentName": "內政部主管",
       "itemCode": "6",
       "name": "國家公園署及所屬",
-      "status": "notReviewed",
-      "reviewedMeetingCount": 0,
-      "latestReviewDate": null,
+      "status": "reviewed",
+      "reviewedMeetingCount": 1,
+      "latestReviewDate": "2026-05-18",
       "uploadedProposalCount": 0,
-      "meetings": []
+      "meetings": [
+        {
+          "id": "委員會-11-5-15-12",
+          "date": "2026-05-18",
+          "name": "第11屆第5會期內政委員會第12次全體委員會議",
+          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-15-12"
+        }
+      ]
     },
     {
       "id": "7-7",
@@ -1548,11 +1568,18 @@
       "parentName": "內政部主管",
       "itemCode": "8",
       "name": "建築研究所",
-      "status": "notReviewed",
-      "reviewedMeetingCount": 0,
-      "latestReviewDate": null,
+      "status": "reviewed",
+      "reviewedMeetingCount": 1,
+      "latestReviewDate": "2026-05-18",
       "uploadedProposalCount": 0,
-      "meetings": []
+      "meetings": [
+        {
+          "id": "委員會-11-5-15-12",
+          "date": "2026-05-18",
+          "name": "第11屆第5會期內政委員會第12次全體委員會議",
+          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-15-12"
+        }
+      ]
     },
     {
       "id": "7-9",
