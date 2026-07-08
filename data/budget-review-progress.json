@@ -1,6 +1,6 @@
 {
   "year": 115,
-  "generatedAt": "2026-07-06T03:26:59.838192+00:00",
+  "generatedAt": "2026-07-08T22:03:56.511520+00:00",
   "sources": {
     "governmentIndex": "gov_index.xlsx",
     "meetingSearch": "https://ly-budget.openfun.app/",
@@ -26,7 +26,7 @@
   "summary": {
     "totalAgencies": 239,
     "reviewedAgencies": 185,
-    "uploadedAgencies": 122,
+    "uploadedAgencies": 128,
     "notReviewedAgencies": 54,
     "matchedMeetings": 56
   },
@@ -1797,10 +1797,10 @@
       "parentName": "財政部主管",
       "itemCode": "3",
       "name": "賦稅署",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 44,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1822,10 +1822,10 @@
       "parentName": "財政部主管",
       "itemCode": "4",
       "name": "臺北國稅局",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 2,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1847,10 +1847,10 @@
       "parentName": "財政部主管",
       "itemCode": "5",
       "name": "高雄國稅局",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 4,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1872,10 +1872,10 @@
       "parentName": "財政部主管",
       "itemCode": "6",
       "name": "北區國稅局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 7,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1897,10 +1897,10 @@
       "parentName": "財政部主管",
       "itemCode": "7",
       "name": "中區國稅局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 4,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1922,10 +1922,10 @@
       "parentName": "財政部主管",
       "itemCode": "8",
       "name": "南區國稅局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 3,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
