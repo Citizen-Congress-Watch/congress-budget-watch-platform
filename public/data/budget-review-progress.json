@@ -1,6 +1,6 @@
 {
   "year": 115,
-  "generatedAt": "2026-07-08T22:03:56.511520+00:00",
+  "generatedAt": "2026-07-10T21:59:54.987576+00:00",
   "sources": {
     "governmentIndex": "gov_index.xlsx",
     "meetingSearch": "https://ly-budget.openfun.app/",
@@ -28,7 +28,7 @@
     "reviewedAgencies": 185,
     "uploadedAgencies": 128,
     "notReviewedAgencies": 54,
-    "matchedMeetings": 56
+    "matchedMeetings": 57
   },
   "agencies": [
     {
@@ -2553,10 +2553,16 @@
       "itemCode": "1",
       "name": "經濟部",
       "status": "reviewed",
-      "reviewedMeetingCount": 3,
-      "latestReviewDate": "2026-07-02",
+      "reviewedMeetingCount": 4,
+      "latestReviewDate": "2026-07-15",
       "uploadedProposalCount": 0,
       "meetings": [
+        {
+          "id": "委員會-11-5-19-21",
+          "date": "2026-07-15",
+          "name": "第11屆第5會期經濟委員會第21次全體委員會議",
+          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-19-21"
+        },
         {
           "id": "委員會-11-5-19-19",
           "date": "2026-07-02",
