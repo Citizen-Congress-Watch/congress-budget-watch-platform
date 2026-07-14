@@ -1,6 +1,6 @@
 {
   "year": 115,
-  "generatedAt": "2026-07-12T21:46:25.844371+00:00",
+  "generatedAt": "2026-07-14T21:55:36.282460+00:00",
   "sources": {
     "governmentIndex": "gov_index.xlsx",
     "meetingSearch": "https://ly-budget.openfun.app/",
@@ -28,7 +28,7 @@
     "reviewedAgencies": 185,
     "uploadedAgencies": 128,
     "notReviewedAgencies": 54,
-    "matchedMeetings": 57
+    "matchedMeetings": 58
   },
   "agencies": [
     {
@@ -98,10 +98,16 @@
       "itemCode": "1",
       "name": "行政院",
       "status": "uploaded",
-      "reviewedMeetingCount": 9,
-      "latestReviewDate": "2026-07-02",
+      "reviewedMeetingCount": 10,
+      "latestReviewDate": "2026-07-16",
       "uploadedProposalCount": 2,
       "meetings": [
+        {
+          "id": "委員會-11-5-20-22",
+          "date": "2026-07-16",
+          "name": "第11屆第5會期財政委員會第22次全體委員會議",
+          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-20-22"
+        },
         {
           "id": "委員會-11-5-15-18",
           "date": "2026-07-01",
@@ -123,12 +129,6 @@
         {
           "id": "委員會-11-5-20-16",
           "date": "2026-06-01",
-          "name": "第11屆第5會期財政委員會第16次全體委員會議",
-          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-20-16"
-        },
-        {
-          "id": "委員會-11-5-20-16",
-          "date": "2026-06-03",
           "name": "第11屆第5會期財政委員會第16次全體委員會議",
           "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-20-16"
         }
@@ -1730,10 +1730,16 @@
       "itemCode": "1",
       "name": "財政部",
       "status": "uploaded",
-      "reviewedMeetingCount": 6,
-      "latestReviewDate": "2026-06-18",
+      "reviewedMeetingCount": 7,
+      "latestReviewDate": "2026-07-16",
       "uploadedProposalCount": 2,
       "meetings": [
+        {
+          "id": "委員會-11-5-20-22",
+          "date": "2026-07-16",
+          "name": "第11屆第5會期財政委員會第22次全體委員會議",
+          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-20-22"
+        },
         {
           "id": "委員會-11-5-20-19",
           "date": "2026-06-17",
@@ -1755,12 +1761,6 @@
         {
           "id": "委員會-11-5-20-16",
           "date": "2026-06-01",
-          "name": "第11屆第5會期財政委員會第16次全體委員會議",
-          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-20-16"
-        },
-        {
-          "id": "委員會-11-5-20-16",
-          "date": "2026-06-03",
           "name": "第11屆第5會期財政委員會第16次全體委員會議",
           "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-20-16"
         }
@@ -4011,10 +4011,16 @@
       "itemCode": "1",
       "name": "金融監督管理委員會",
       "status": "reviewed",
-      "reviewedMeetingCount": 1,
-      "latestReviewDate": "2026-06-08",
+      "reviewedMeetingCount": 2,
+      "latestReviewDate": "2026-07-16",
       "uploadedProposalCount": 0,
       "meetings": [
+        {
+          "id": "委員會-11-5-20-22",
+          "date": "2026-07-16",
+          "name": "第11屆第5會期財政委員會第22次全體委員會議",
+          "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-20-22"
+        },
         {
           "id": "委員會-11-5-20-17",
           "date": "2026-06-08",
