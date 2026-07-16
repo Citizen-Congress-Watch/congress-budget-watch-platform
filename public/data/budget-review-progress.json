@@ -1,6 +1,6 @@
 {
   "year": 115,
-  "generatedAt": "2026-07-15T21:58:41.467213+00:00",
+  "generatedAt": "2026-07-16T22:01:42.303535+00:00",
   "sources": {
     "governmentIndex": "gov_index.xlsx",
     "meetingSearch": "https://ly-budget.openfun.app/",
@@ -25,9 +25,9 @@
   ],
   "summary": {
     "totalAgencies": 239,
-    "reviewedAgencies": 127,
-    "uploadedAgencies": 0,
-    "notReviewedAgencies": 112,
+    "reviewedAgencies": 185,
+    "uploadedAgencies": 128,
+    "notReviewedAgencies": 54,
     "matchedMeetings": 58
   },
   "agencies": [
@@ -37,10 +37,10 @@
       "parentName": "總統府主管",
       "itemCode": "1",
       "name": "總統府",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 25,
       "meetings": []
     },
     {
@@ -49,10 +49,10 @@
       "parentName": "總統府主管",
       "itemCode": "2",
       "name": "國家安全會議",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 11,
       "meetings": []
     },
     {
@@ -61,10 +61,10 @@
       "parentName": "總統府主管",
       "itemCode": "3",
       "name": "國史館",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": []
     },
     {
@@ -73,10 +73,10 @@
       "parentName": "總統府主管",
       "itemCode": "4",
       "name": "國史館臺灣文獻館",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 7,
       "meetings": []
     },
     {
@@ -85,10 +85,10 @@
       "parentName": "總統府主管",
       "itemCode": "5",
       "name": "中央研究院",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 93,
       "meetings": []
     },
     {
@@ -97,10 +97,10 @@
       "parentName": "行政院主管",
       "itemCode": "1",
       "name": "行政院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 10,
       "latestReviewDate": "2026-07-16",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 2,
       "meetings": [
         {
           "id": "委員會-11-5-20-22",
@@ -140,10 +140,10 @@
       "parentName": "行政院主管",
       "itemCode": "2",
       "name": "主計總處",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-06",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 61,
       "meetings": [
         {
           "id": "委員會-11-5-20-12",
@@ -159,10 +159,10 @@
       "parentName": "行政院主管",
       "itemCode": "3",
       "name": "人事行政總處",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-20",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 32,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -178,10 +178,10 @@
       "parentName": "行政院主管",
       "itemCode": "4",
       "name": "公務人力發展學院",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 3,
       "meetings": []
     },
     {
@@ -209,10 +209,10 @@
       "parentName": "行政院主管",
       "itemCode": "6",
       "name": "國家發展委員會",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-27",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 71,
       "meetings": [
         {
           "id": "委員會-11-5-19-15",
@@ -228,10 +228,10 @@
       "parentName": "行政院主管",
       "itemCode": "7",
       "name": "檔案管理局",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 9,
       "meetings": []
     },
     {
@@ -414,10 +414,10 @@
       "parentName": "行政院主管",
       "itemCode": "18",
       "name": "公共工程委員會",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-20",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 26,
       "meetings": [
         {
           "id": "委員會-11-5-23-14",
@@ -433,10 +433,10 @@
       "parentName": "立法院主管",
       "itemCode": "1",
       "name": "立法院",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 34,
       "meetings": []
     },
     {
@@ -445,10 +445,10 @@
       "parentName": "司法院主管",
       "itemCode": "1",
       "name": "司法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 45,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -464,10 +464,10 @@
       "parentName": "司法院主管",
       "itemCode": "2",
       "name": "最高法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -483,10 +483,10 @@
       "parentName": "司法院主管",
       "itemCode": "3",
       "name": "最高行政法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -502,10 +502,10 @@
       "parentName": "司法院主管",
       "itemCode": "4",
       "name": "臺北高等行政法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -521,10 +521,10 @@
       "parentName": "司法院主管",
       "itemCode": "5",
       "name": "臺中高等行政法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -540,10 +540,10 @@
       "parentName": "司法院主管",
       "itemCode": "6",
       "name": "高雄高等行政法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -559,10 +559,10 @@
       "parentName": "司法院主管",
       "itemCode": "7",
       "name": "懲戒法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -578,10 +578,10 @@
       "parentName": "司法院主管",
       "itemCode": "8",
       "name": "法官學院",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 1,
       "meetings": []
     },
     {
@@ -590,10 +590,10 @@
       "parentName": "司法院主管",
       "itemCode": "9",
       "name": "智慧財產及商業法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -609,10 +609,10 @@
       "parentName": "司法院主管",
       "itemCode": "10",
       "name": "臺灣高等法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -628,10 +628,10 @@
       "parentName": "司法院主管",
       "itemCode": "11",
       "name": "臺灣高等法院臺中分院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -647,10 +647,10 @@
       "parentName": "司法院主管",
       "itemCode": "12",
       "name": "臺灣高等法院臺南分院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -666,10 +666,10 @@
       "parentName": "司法院主管",
       "itemCode": "13",
       "name": "臺灣高等法院高雄分院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -685,10 +685,10 @@
       "parentName": "司法院主管",
       "itemCode": "14",
       "name": "臺灣高等法院花蓮分院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -704,10 +704,10 @@
       "parentName": "司法院主管",
       "itemCode": "15",
       "name": "臺灣臺北地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -723,10 +723,10 @@
       "parentName": "司法院主管",
       "itemCode": "16",
       "name": "臺灣士林地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -742,10 +742,10 @@
       "parentName": "司法院主管",
       "itemCode": "17",
       "name": "臺灣新北地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -761,10 +761,10 @@
       "parentName": "司法院主管",
       "itemCode": "18",
       "name": "臺灣桃園地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -780,10 +780,10 @@
       "parentName": "司法院主管",
       "itemCode": "19",
       "name": "臺灣新竹地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -799,10 +799,10 @@
       "parentName": "司法院主管",
       "itemCode": "20",
       "name": "臺灣苗栗地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -818,10 +818,10 @@
       "parentName": "司法院主管",
       "itemCode": "21",
       "name": "臺灣臺中地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -837,10 +837,10 @@
       "parentName": "司法院主管",
       "itemCode": "22",
       "name": "臺灣南投地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -856,10 +856,10 @@
       "parentName": "司法院主管",
       "itemCode": "23",
       "name": "臺灣彰化地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -875,10 +875,10 @@
       "parentName": "司法院主管",
       "itemCode": "24",
       "name": "臺灣雲林地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -894,10 +894,10 @@
       "parentName": "司法院主管",
       "itemCode": "25",
       "name": "臺灣嘉義地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -913,10 +913,10 @@
       "parentName": "司法院主管",
       "itemCode": "26",
       "name": "臺灣臺南地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -932,10 +932,10 @@
       "parentName": "司法院主管",
       "itemCode": "27",
       "name": "臺灣橋頭地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -951,10 +951,10 @@
       "parentName": "司法院主管",
       "itemCode": "28",
       "name": "臺灣高雄地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -970,10 +970,10 @@
       "parentName": "司法院主管",
       "itemCode": "29",
       "name": "臺灣屏東地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -989,10 +989,10 @@
       "parentName": "司法院主管",
       "itemCode": "30",
       "name": "臺灣臺東地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1008,10 +1008,10 @@
       "parentName": "司法院主管",
       "itemCode": "31",
       "name": "臺灣花蓮地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1027,10 +1027,10 @@
       "parentName": "司法院主管",
       "itemCode": "32",
       "name": "臺灣宜蘭地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1046,10 +1046,10 @@
       "parentName": "司法院主管",
       "itemCode": "33",
       "name": "臺灣基隆地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1065,10 +1065,10 @@
       "parentName": "司法院主管",
       "itemCode": "34",
       "name": "臺灣澎湖地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1084,10 +1084,10 @@
       "parentName": "司法院主管",
       "itemCode": "35",
       "name": "臺灣高雄少年及家事法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1103,10 +1103,10 @@
       "parentName": "司法院主管",
       "itemCode": "36",
       "name": "福建高等法院金門分院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1122,10 +1122,10 @@
       "parentName": "司法院主管",
       "itemCode": "37",
       "name": "福建金門地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1141,10 +1141,10 @@
       "parentName": "司法院主管",
       "itemCode": "38",
       "name": "福建連江地方法院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 15,
       "meetings": [
         {
           "id": "委員會-11-5-36-14",
@@ -1271,10 +1271,10 @@
       "parentName": "監察院主管",
       "itemCode": "1",
       "name": "監察院",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-25",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 47,
       "meetings": [
         {
           "id": "委員會-11-5-36-15",
@@ -1290,10 +1290,10 @@
       "parentName": "監察院主管",
       "itemCode": "2",
       "name": "審計部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-05-25",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 30,
       "meetings": [
         {
           "id": "委員會-11-5-36-15",
@@ -1729,10 +1729,10 @@
       "parentName": "財政部主管",
       "itemCode": "1",
       "name": "財政部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 7,
       "latestReviewDate": "2026-07-16",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 2,
       "meetings": [
         {
           "id": "委員會-11-5-20-22",
@@ -1772,10 +1772,10 @@
       "parentName": "財政部主管",
       "itemCode": "2",
       "name": "國庫署",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-08",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 1,
       "meetings": [
         {
           "id": "委員會-11-5-20-17",
@@ -1797,10 +1797,10 @@
       "parentName": "財政部主管",
       "itemCode": "3",
       "name": "賦稅署",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 44,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1822,10 +1822,10 @@
       "parentName": "財政部主管",
       "itemCode": "4",
       "name": "臺北國稅局",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 2,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1847,10 +1847,10 @@
       "parentName": "財政部主管",
       "itemCode": "5",
       "name": "高雄國稅局",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 4,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1872,10 +1872,10 @@
       "parentName": "財政部主管",
       "itemCode": "6",
       "name": "北區國稅局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 7,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1897,10 +1897,10 @@
       "parentName": "財政部主管",
       "itemCode": "7",
       "name": "中區國稅局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 4,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -1922,10 +1922,10 @@
       "parentName": "財政部主管",
       "itemCode": "8",
       "name": "南區國稅局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-03",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 3,
       "meetings": [
         {
           "id": "委員會-11-5-20-16",
@@ -2004,10 +2004,10 @@
       "parentName": "教育部主管",
       "itemCode": "1",
       "name": "教育部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-05-20",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 137,
       "meetings": [
         {
           "id": "委員會-11-5-22-10",
@@ -2029,10 +2029,10 @@
       "parentName": "教育部主管",
       "itemCode": "2",
       "name": "國民及學前教育署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 80,
       "meetings": []
     },
     {
@@ -2041,10 +2041,10 @@
       "parentName": "教育部主管",
       "itemCode": "3",
       "name": "青年發展署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 17,
       "meetings": []
     },
     {
@@ -2053,10 +2053,10 @@
       "parentName": "教育部主管",
       "itemCode": "4",
       "name": "國家圖書館",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 3,
       "meetings": []
     },
     {
@@ -2065,10 +2065,10 @@
       "parentName": "教育部主管",
       "itemCode": "5",
       "name": "國立公共資訊圖書館",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 2,
       "meetings": []
     },
     {
@@ -2077,10 +2077,10 @@
       "parentName": "教育部主管",
       "itemCode": "6",
       "name": "國立教育廣播電臺",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 1,
       "meetings": []
     },
     {
@@ -2089,10 +2089,10 @@
       "parentName": "教育部主管",
       "itemCode": "7",
       "name": "國家教育研究院",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 1,
       "meetings": []
     },
     {
@@ -2101,10 +2101,10 @@
       "parentName": "法務部主管",
       "itemCode": "1",
       "name": "法務部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-27",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 50,
       "meetings": [
         {
           "id": "委員會-11-5-36-15",
@@ -2144,10 +2144,10 @@
       "parentName": "法務部主管",
       "itemCode": "4",
       "name": "廉政署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 4,
       "meetings": []
     },
     {
@@ -2156,10 +2156,10 @@
       "parentName": "法務部主管",
       "itemCode": "5",
       "name": "矯正署及所屬",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 16,
       "meetings": []
     },
     {
@@ -2168,10 +2168,10 @@
       "parentName": "法務部主管",
       "itemCode": "6",
       "name": "行政執行署及所屬",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 2,
       "meetings": []
     },
     {
@@ -2180,10 +2180,10 @@
       "parentName": "法務部主管",
       "itemCode": "7",
       "name": "最高檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2192,10 +2192,10 @@
       "parentName": "法務部主管",
       "itemCode": "8",
       "name": "臺灣高等檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2204,10 +2204,10 @@
       "parentName": "法務部主管",
       "itemCode": "9",
       "name": "臺灣高等檢察署臺中檢察分署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2216,10 +2216,10 @@
       "parentName": "法務部主管",
       "itemCode": "10",
       "name": "臺灣高等檢察署臺南檢察分署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2228,10 +2228,10 @@
       "parentName": "法務部主管",
       "itemCode": "11",
       "name": "臺灣高等檢察署高雄檢察分署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2240,10 +2240,10 @@
       "parentName": "法務部主管",
       "itemCode": "12",
       "name": "臺灣高等檢察署花蓮檢察分署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2252,10 +2252,10 @@
       "parentName": "法務部主管",
       "itemCode": "13",
       "name": "臺灣高等檢察署智慧財產檢察分署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2264,10 +2264,10 @@
       "parentName": "法務部主管",
       "itemCode": "14",
       "name": "臺灣臺北地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2276,10 +2276,10 @@
       "parentName": "法務部主管",
       "itemCode": "15",
       "name": "臺灣士林地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2288,10 +2288,10 @@
       "parentName": "法務部主管",
       "itemCode": "16",
       "name": "臺灣新北地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2300,10 +2300,10 @@
       "parentName": "法務部主管",
       "itemCode": "17",
       "name": "臺灣桃園地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2312,10 +2312,10 @@
       "parentName": "法務部主管",
       "itemCode": "18",
       "name": "臺灣新竹地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2324,10 +2324,10 @@
       "parentName": "法務部主管",
       "itemCode": "19",
       "name": "臺灣苗栗地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2336,10 +2336,10 @@
       "parentName": "法務部主管",
       "itemCode": "20",
       "name": "臺灣臺中地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2348,10 +2348,10 @@
       "parentName": "法務部主管",
       "itemCode": "21",
       "name": "臺灣南投地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2360,10 +2360,10 @@
       "parentName": "法務部主管",
       "itemCode": "22",
       "name": "臺灣彰化地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2372,10 +2372,10 @@
       "parentName": "法務部主管",
       "itemCode": "23",
       "name": "臺灣雲林地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2384,10 +2384,10 @@
       "parentName": "法務部主管",
       "itemCode": "24",
       "name": "臺灣嘉義地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2396,10 +2396,10 @@
       "parentName": "法務部主管",
       "itemCode": "25",
       "name": "臺灣臺南地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2408,10 +2408,10 @@
       "parentName": "法務部主管",
       "itemCode": "26",
       "name": "臺灣橋頭地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2420,10 +2420,10 @@
       "parentName": "法務部主管",
       "itemCode": "27",
       "name": "臺灣高雄地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2432,10 +2432,10 @@
       "parentName": "法務部主管",
       "itemCode": "28",
       "name": "臺灣屏東地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2444,10 +2444,10 @@
       "parentName": "法務部主管",
       "itemCode": "29",
       "name": "臺灣臺東地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2456,10 +2456,10 @@
       "parentName": "法務部主管",
       "itemCode": "30",
       "name": "臺灣花蓮地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2468,10 +2468,10 @@
       "parentName": "法務部主管",
       "itemCode": "31",
       "name": "臺灣宜蘭地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2480,10 +2480,10 @@
       "parentName": "法務部主管",
       "itemCode": "32",
       "name": "臺灣基隆地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2492,10 +2492,10 @@
       "parentName": "法務部主管",
       "itemCode": "33",
       "name": "臺灣澎湖地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2504,10 +2504,10 @@
       "parentName": "法務部主管",
       "itemCode": "34",
       "name": "福建高等檢察署金門檢察分署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2516,10 +2516,10 @@
       "parentName": "法務部主管",
       "itemCode": "35",
       "name": "福建金門地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2528,10 +2528,10 @@
       "parentName": "法務部主管",
       "itemCode": "36",
       "name": "福建連江地方檢察署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 5,
       "meetings": []
     },
     {
@@ -2540,10 +2540,10 @@
       "parentName": "法務部主管",
       "itemCode": "37",
       "name": "調查局",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 6,
       "meetings": []
     },
     {
@@ -2665,10 +2665,10 @@
       "parentName": "經濟部主管",
       "itemCode": "6",
       "name": "水利署及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 12,
       "meetings": [
         {
           "id": "委員會-11-5-19-18",
@@ -2785,10 +2785,10 @@
       "parentName": "交通部主管",
       "itemCode": "1",
       "name": "交通部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 9,
       "latestReviewDate": "2026-06-24",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 58,
       "meetings": [
         {
           "id": "委員會-11-5-23-20",
@@ -2847,10 +2847,10 @@
       "parentName": "交通部主管",
       "itemCode": "3",
       "name": "中央氣象署",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 4,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 14,
       "meetings": [
         {
           "id": "委員會-11-5-23-15",
@@ -2884,10 +2884,10 @@
       "parentName": "交通部主管",
       "itemCode": "4",
       "name": "觀光署及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 4,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 24,
       "meetings": [
         {
           "id": "委員會-11-5-23-15",
@@ -2921,10 +2921,10 @@
       "parentName": "交通部主管",
       "itemCode": "5",
       "name": "運輸研究所",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-20",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 12,
       "meetings": [
         {
           "id": "委員會-11-5-23-14",
@@ -2940,10 +2940,10 @@
       "parentName": "交通部主管",
       "itemCode": "6",
       "name": "公路局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 4,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 36,
       "meetings": [
         {
           "id": "委員會-11-5-23-15",
@@ -2996,10 +2996,10 @@
       "parentName": "交通部主管",
       "itemCode": "8",
       "name": "航港局",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 4,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 16,
       "meetings": [
         {
           "id": "委員會-11-5-23-15",
@@ -3118,10 +3118,10 @@
       "parentName": "農業部主管",
       "itemCode": "1",
       "name": "農業部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-10",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 127,
       "meetings": [
         {
           "id": "委員會-11-5-19-17",
@@ -3143,10 +3143,10 @@
       "parentName": "農業部主管",
       "itemCode": "2",
       "name": "林業及自然保育署及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 30,
       "meetings": [
         {
           "id": "委員會-11-5-19-15",
@@ -3162,10 +3162,10 @@
       "parentName": "農業部主管",
       "itemCode": "3",
       "name": "農村發展及水土保持署及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 17,
       "meetings": [
         {
           "id": "委員會-11-5-19-15",
@@ -3205,10 +3205,10 @@
       "parentName": "農業部主管",
       "itemCode": "6",
       "name": "水產試驗所",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 1,
       "meetings": []
     },
     {
@@ -3241,10 +3241,10 @@
       "parentName": "農業部主管",
       "itemCode": "9",
       "name": "農業藥物試驗所",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 2,
       "meetings": []
     },
     {
@@ -3265,10 +3265,10 @@
       "parentName": "農業部主管",
       "itemCode": "11",
       "name": "茶及飲料作物改良場",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 1,
       "meetings": []
     },
     {
@@ -3373,10 +3373,10 @@
       "parentName": "農業部主管",
       "itemCode": "20",
       "name": "漁業署及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 31,
       "meetings": [
         {
           "id": "委員會-11-5-19-15",
@@ -3392,10 +3392,10 @@
       "parentName": "農業部主管",
       "itemCode": "21",
       "name": "動植物防疫檢疫署及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 26,
       "meetings": [
         {
           "id": "委員會-11-5-19-15",
@@ -3411,10 +3411,10 @@
       "parentName": "農業部主管",
       "itemCode": "22",
       "name": "農業金融署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 10,
       "meetings": []
     },
     {
@@ -3423,10 +3423,10 @@
       "parentName": "農業部主管",
       "itemCode": "23",
       "name": "農糧署及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 22,
       "meetings": [
         {
           "id": "委員會-11-5-19-15",
@@ -3442,10 +3442,10 @@
       "parentName": "農業部主管",
       "itemCode": "24",
       "name": "農田水利署",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-28",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 12,
       "meetings": [
         {
           "id": "委員會-11-5-19-15",
@@ -3601,10 +3601,10 @@
       "parentName": "環境部主管",
       "itemCode": "1",
       "name": "環境部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-05-21",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 132,
       "meetings": [
         {
           "id": "委員會-11-5-26-11",
@@ -3626,10 +3626,10 @@
       "parentName": "環境部主管",
       "itemCode": "2",
       "name": "氣候變遷署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 46,
       "meetings": []
     },
     {
@@ -3638,10 +3638,10 @@
       "parentName": "環境部主管",
       "itemCode": "3",
       "name": "資源循環署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 56,
       "meetings": []
     },
     {
@@ -3650,10 +3650,10 @@
       "parentName": "環境部主管",
       "itemCode": "4",
       "name": "化學物質管理署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 27,
       "meetings": []
     },
     {
@@ -3662,10 +3662,10 @@
       "parentName": "環境部主管",
       "itemCode": "5",
       "name": "環境管理署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 72,
       "meetings": []
     },
     {
@@ -3674,10 +3674,10 @@
       "parentName": "環境部主管",
       "itemCode": "6",
       "name": "國家環境研究院",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 18,
       "meetings": []
     },
     {
@@ -4159,10 +4159,10 @@
       "parentName": "國軍退除役官兵輔導委員會主管",
       "itemCode": "1",
       "name": "國軍退除役官兵輔導委員會",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-05-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 47,
       "meetings": [
         {
           "id": "委員會-11-5-35-17",
