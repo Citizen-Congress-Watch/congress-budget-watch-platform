@@ -889,6 +889,7 @@ type Proposal {
   budget: Budget
   budgetAmount: Float
   budgetImageUrl: String
+  budgetImageUrls: JSON
   budgetMajorCategory: String
   budgetMediumCategory: String
   budgetMinorCategory: String
@@ -931,6 +932,7 @@ type Proposal {
 input ProposalCreateInput {
   budget: BudgetRelateToOneForCreateInput
   budgetImageUrl: String
+  budgetImageUrls: JSON
   coSigners: PeopleRelateToManyForCreateInput
   description: String
   freezeAmount: Float
@@ -1019,6 +1021,7 @@ input ProposalUpdateArgs {
 input ProposalUpdateInput {
   budget: BudgetRelateToOneForUpdateInput
   budgetImageUrl: String
+  budgetImageUrls: JSON
   coSigners: PeopleRelateToManyForUpdateInput
   description: String
   freezeAmount: Float
