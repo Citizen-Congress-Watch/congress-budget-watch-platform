@@ -1,5 +1,6 @@
 # run pnpm build
 echo "Building project..."
+VITE_GQL_ENDPOINT="https://ly-budget-gql-dev-702918025200.asia-east1.run.app/api/graphql" \
 REACT_ROUTER_BASENAME="/project/3/dev-congress-budget-watch/" pnpm build
 echo "Build complete."
 
