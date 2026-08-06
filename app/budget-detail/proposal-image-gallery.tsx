@@ -31,7 +31,7 @@ const ProposalImageGallery = ({ imageUrls }: ProposalImageGalleryProps) => {
         </h2>
         <p className="text-sm text-neutral-500">共 {imageUrls.length} 張</p>
       </div>
-      <div className="grid grid-cols-1 gap-4 border-t border-black pt-4 lg:grid-cols-2 lg:gap-6">
+      <div className="grid grid-cols-1 gap-4 border-t border-black pt-4 md:grid-cols-2 xl:grid-cols-3 xl:gap-6">
         {visibleImages.map((imageUrl, index) => (
           <a
             key={`${imageUrl}-${index}`}
