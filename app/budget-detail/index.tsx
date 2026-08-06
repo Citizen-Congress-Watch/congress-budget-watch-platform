@@ -15,6 +15,7 @@ import {
   meetingsToTimeline,
   hasMergedProposals,
   hasHistoricalProposals,
+  getProposalImageUrls,
 } from "./helpers";
 import type { Proposal } from "~/graphql/graphql";
 import BudgetDetailView from "./BudgetDetailView";
@@ -50,7 +51,10 @@ const BudgetDetail = () => {
   );
   const hasMerged = hasMergedProposals(proposal);
 
-  const hasImage = !!proposal.budgetImageUrl;
+  const imageUrls = getProposalImageUrls(
+    proposal.budgetImageUrls,
+    proposal.budgetImageUrl
+  );
 
   // Prepare display values
   const budget = proposal.budget;
@@ -130,7 +134,7 @@ const BudgetDetail = () => {
       timelineData={timelineData}
       mergedProposalsData={mergedProposalsData}
       hasMerged={hasMerged}
-      hasImage={hasImage}
+      imageUrls={imageUrls}
       proposerName={proposerName || ""}
       cosignersText={cosignersText}
       proposalType={proposalType}

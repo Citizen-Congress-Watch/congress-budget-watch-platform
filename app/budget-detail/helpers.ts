@@ -35,6 +35,26 @@ export const PROPOSAL_TYPE_LABELS: Record<ProposalProposalTypeType, string> = {
   [ProposalProposalTypeTypeEnum.Other]: "主決議",
 };
 
+export function getProposalImageUrls(
+  imageUrls: unknown,
+  legacyImageUrl?: string | null
+): string[] {
+  const values = Array.isArray(imageUrls)
+    ? imageUrls
+    : typeof imageUrls === "string"
+      ? [imageUrls]
+      : [];
+  const normalizedUrls = values
+    .filter((value): value is string => typeof value === "string")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const normalizedLegacyUrl = legacyImageUrl?.trim();
+
+  if (normalizedLegacyUrl) normalizedUrls.push(normalizedLegacyUrl);
+
+  return [...new Set(normalizedUrls)];
+}
+
 export const PROPOSAL_RESULT_LABELS: Record<string, string> = {
   passed: "通過",
   rejected: "不通過",
