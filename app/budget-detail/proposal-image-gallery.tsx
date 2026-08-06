@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Image from "~/components/image";
+import { getProposalImageSources } from "./proposal-image-thumbnails";
 
 const IMAGE_BATCH_SIZE = 10;
 
@@ -32,27 +33,42 @@ const ProposalImageGallery = ({ imageUrls }: ProposalImageGalleryProps) => {
         <p className="text-sm text-neutral-500">共 {imageUrls.length} 張</p>
       </div>
       <div className="grid grid-cols-1 gap-4 border-t border-black pt-4 md:grid-cols-2 xl:grid-cols-3 xl:gap-6">
-        {visibleImages.map((imageUrl, index) => (
-          <a
-            key={`${imageUrl}-${index}`}
-            href={imageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            aria-label={`開啟第 ${index + 1} 張提案單圖檔原圖`}
-          >
-            <span className="absolute top-2 left-2 z-10 rounded-full bg-black/70 px-2.5 py-1 text-xs text-white">
-              第 {index + 1} 張
-            </span>
-            <Image
-              src={imageUrl}
-              alt={`提案單圖檔第 ${index + 1} 張，共 ${imageUrls.length} 張`}
-              loading="lazy"
-              decoding="async"
-              className="aspect-3/4 w-full bg-white object-contain transition-transform duration-200 group-hover:scale-[1.01]"
-            />
-          </a>
-        ))}
+        {visibleImages.map((imageUrl, index) => {
+          const imageSources = getProposalImageSources(imageUrl);
+
+          return (
+            <a
+              key={`${imageUrl}-${index}`}
+              href={imageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              aria-label={`開啟第 ${index + 1} 張提案單圖檔原圖`}
+            >
+              <span className="absolute top-2 left-2 z-10 rounded-full bg-black/70 px-2.5 py-1 text-xs text-white">
+                第 {index + 1} 張
+              </span>
+              <Image
+                src={imageSources.src}
+                srcSet={imageSources.srcSet}
+                sizes="(min-width: 1280px) 384px, (min-width: 768px) 50vw, 100vw"
+                width={900}
+                height={1200}
+                alt={`提案單圖檔第 ${index + 1} 張，共 ${imageUrls.length} 張`}
+                loading="lazy"
+                decoding="async"
+                onError={(event) => {
+                  const image = event.currentTarget;
+                  if (image.src === imageUrl) return;
+
+                  image.removeAttribute("srcset");
+                  image.src = imageUrl;
+                }}
+                className="aspect-3/4 w-full bg-white object-contain transition-transform duration-200 group-hover:scale-[1.01]"
+              />
+            </a>
+          );
+        })}
       </div>
       <div className="mt-5 flex flex-col items-center gap-3">
         <p className="text-sm text-neutral-500" aria-live="polite">
