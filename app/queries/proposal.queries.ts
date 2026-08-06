@@ -56,6 +56,7 @@ export const GET_PROPOSAL_BY_ID_QUERY = graphql(`
       result
       freezeAmount
       reductionAmount
+      budgetImageUrls
       budgetImageUrl
       proposalTypes
       recognitionAnswer
@@ -65,7 +66,6 @@ export const GET_PROPOSAL_BY_ID_QUERY = graphql(`
       react_disappoint
       react_good
       react_whatever
-      budgetImageUrl
       historicalParentProposals {
         id
       }
