@@ -1,6 +1,6 @@
 {
   "year": 115,
-  "generatedAt": "2026-08-02T21:53:32.367770+00:00",
+  "generatedAt": "2026-08-07T01:00:56.888633+00:00",
   "sources": {
     "governmentIndex": "gov_index.xlsx",
     "meetingSearch": "https://ly-budget.openfun.app/",
@@ -26,7 +26,7 @@
   "summary": {
     "totalAgencies": 239,
     "reviewedAgencies": 185,
-    "uploadedAgencies": 128,
+    "uploadedAgencies": 131,
     "notReviewedAgencies": 54,
     "matchedMeetings": 58
   },
@@ -326,10 +326,10 @@
       "parentName": "行政院主管",
       "itemCode": "13",
       "name": "公平交易委員會",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-06-04",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 51,
       "meetings": [
         {
           "id": "委員會-11-5-19-16",
@@ -1655,10 +1655,10 @@
       "parentName": "國防部主管",
       "itemCode": "1",
       "name": "國防部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 4,
       "latestReviewDate": "2026-06-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 70,
       "meetings": [
         {
           "id": "委員會-11-5-35-22",
@@ -1692,10 +1692,10 @@
       "parentName": "國防部主管",
       "itemCode": "2",
       "name": "國防部所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 4,
       "latestReviewDate": "2026-06-18",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 70,
       "meetings": [
         {
           "id": "委員會-11-5-35-22",
