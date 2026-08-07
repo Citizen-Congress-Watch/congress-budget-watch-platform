@@ -6,6 +6,7 @@ import { formatNumber } from "./helpers";
 import type { Proposal } from "~/graphql/graphql";
 import type { TimelineItem, MergedProposalInfo } from "./helpers";
 import ProposalImageGallery from "./proposal-image-gallery";
+import { getProposalBudgetAmount } from "~/utils/proposal-budget-amount";
 
 interface BudgetDetailViewProps {
   isDesktop: boolean;
@@ -83,6 +84,7 @@ const BudgetDetailView = ({
     return <p className={wrapperClassName}>請至主提案單確認結果</p>;
   };
   const budgetBookUrl = proposal.budget?.budgetUrl?.trim() ?? "";
+  const budgetAmount = getProposalBudgetAmount(proposal);
 
   if (isDesktop)
     return (
@@ -250,7 +252,7 @@ const BudgetDetailView = ({
                       預算金額
                     </p>
                     <p className="text-brand-accent flex w-fit border-t border-black pt-4 pr-32 font-bold">
-                      {formatNumber(proposal.budget?.budgetAmount)}
+                      {formatNumber(budgetAmount)}
                     </p>
                   </div>
                   <div>
@@ -472,7 +474,7 @@ const BudgetDetailView = ({
             <section className="flex flex-col gap-y-4">
               <p className="font-bold">預算金額</p>
               <p className="text-budget-warning">
-                {formatNumber(proposal.budget?.budgetAmount)}
+                {formatNumber(budgetAmount)}
               </p>
             </section>
             <section className="flex flex-col gap-y-4">

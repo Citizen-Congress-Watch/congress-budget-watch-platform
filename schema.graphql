@@ -898,6 +898,7 @@ type Proposal {
   budgetYear: Int
   coSigners(cursor: PeopleWhereUniqueInput, orderBy: [PeopleOrderByInput!]! = [], skip: Int! = 0, take: Int, where: PeopleWhereInput! = {}): [People!]
   coSignersCount(where: PeopleWhereInput! = {}): Int
+  cost: Float
   description: String
   freezeAmount: Float
   government: Government
@@ -934,6 +935,7 @@ input ProposalCreateInput {
   budgetImageUrl: String
   budgetImageUrls: JSON
   coSigners: PeopleRelateToManyForCreateInput
+  cost: Float
   description: String
   freezeAmount: Float
   government: GovernmentRelateToOneForCreateInput
@@ -968,6 +970,7 @@ input ProposalManyRelationFilter {
 input ProposalOrderByInput {
   budgetAmount: OrderDirection
   budgetImageUrl: OrderDirection
+  cost: OrderDirection
   description: OrderDirection
   freezeAmount: OrderDirection
   id: OrderDirection
@@ -1023,6 +1026,7 @@ input ProposalUpdateInput {
   budgetImageUrl: String
   budgetImageUrls: JSON
   coSigners: PeopleRelateToManyForUpdateInput
+  cost: Float
   description: String
   freezeAmount: Float
   government: GovernmentRelateToOneForUpdateInput
@@ -1056,6 +1060,7 @@ input ProposalWhereInput {
   budgetAmount: FloatNullableFilter
   budgetImageUrl: StringNullableFilter
   coSigners: PeopleManyRelationFilter
+  cost: FloatNullableFilter
   description: StringNullableFilter
   freezeAmount: FloatNullableFilter
   government: GovernmentWhereInput
