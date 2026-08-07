@@ -85,6 +85,9 @@ const BudgetDetailView = ({
   };
   const budgetBookUrl = proposal.budget?.budgetUrl?.trim() ?? "";
   const budgetAmount = getProposalBudgetAmount(proposal);
+  const hasSingleImage = imageUrls.length === 1;
+  const hasMultipleImages = imageUrls.length > 1;
+  const singleImageUrl = imageUrls[0] ?? "";
 
   if (isDesktop)
     return (
@@ -245,35 +248,104 @@ const BudgetDetailView = ({
                     </div>
                   </div>
                 </section>
-                {/* row 4 */}
-                <section className="flex">
-                  <div>
-                    <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                      預算金額
-                    </p>
-                    <p className="text-brand-accent flex w-fit border-t border-black pt-4 pr-32 font-bold">
-                      {formatNumber(budgetAmount)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                      減列金額
-                    </p>
-                    <p className="text-brand-accent flex w-fit border-t border-black pt-4 pr-[136px] font-bold">
-                      {formatNumber(proposal.reductionAmount)}
-                    </p>
-                  </div>
-                  <div className="grow">
-                    <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                      凍結金額
-                    </p>
-                    <p className="text-brand-accent flex border-t border-black pt-4 font-bold">
-                      {formatNumber(proposal.freezeAmount)}
-                    </p>
-                  </div>
-                </section>
-                {/* row 5 */}
-                {shouldShowBudgetInfo && (
+                {/* row 4 without a single image */}
+                {!hasSingleImage && (
+                  <section className="flex">
+                    <div>
+                      <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                        預算金額
+                      </p>
+                      <p className="text-brand-accent flex w-fit border-t border-black pt-4 pr-32 font-bold">
+                        {formatNumber(budgetAmount)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                        減列金額
+                      </p>
+                      <p className="text-brand-accent flex w-fit border-t border-black pt-4 pr-[136px] font-bold">
+                        {formatNumber(proposal.reductionAmount)}
+                      </p>
+                    </div>
+                    <div className="grow">
+                      <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                        凍結金額
+                      </p>
+                      <p className="text-brand-accent flex border-t border-black pt-4 font-bold">
+                        {formatNumber(proposal.freezeAmount)}
+                      </p>
+                    </div>
+                  </section>
+                )}
+                {/* row 4 with one image: preserve the original detail layout */}
+                {hasSingleImage && (
+                  <section className="flex">
+                    <div id="left" className="flex w-6/11 flex-col">
+                      <div className="flex">
+                        <div>
+                          <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                            預算金額
+                          </p>
+                          <p className="text-brand-accent flex w-fit border-t border-black pt-4 font-bold md:pr-8 lg:pr-16 xl:pr-32">
+                            {formatNumber(budgetAmount)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                            減列金額
+                          </p>
+                          <p className="text-brand-accent flex w-fit border-t border-black pt-4 font-bold md:pr-8 lg:pr-24 xl:pr-32">
+                            {formatNumber(proposal.reductionAmount)}
+                          </p>
+                        </div>
+                        <div className="grow">
+                          <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                            凍結金額
+                          </p>
+                          <p className="text-brand-accent flex border-t border-black pt-4 pr-[93px] font-bold">
+                            {formatNumber(proposal.freezeAmount)}
+                          </p>
+                        </div>
+                      </div>
+                      {shouldShowBudgetInfo && (
+                        <div className="mt-9 flex max-w-5/6 flex-col gap-y-9">
+                          <div className="grow">
+                            <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                              科目/計畫
+                            </p>
+                            <p className="flex border-t border-black pt-4 pr-9">
+                              {budgetCategoryDisplay}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                              計畫說明
+                            </p>
+                            <p className="flex border-t border-black pt-4 whitespace-pre-wrap">
+                              {projectDescriptionDisplay}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div id="right" className="w-5/11">
+                      <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                        提案單圖檔
+                      </p>
+                      <div className="flex border-t border-black pt-4 font-bold">
+                        <Image
+                          src={singleImageUrl}
+                          alt="提案單圖檔"
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full shadow-md"
+                        />
+                      </div>
+                    </div>
+                  </section>
+                )}
+                {/* row 5 without a single image */}
+                {!hasSingleImage && shouldShowBudgetInfo && (
                   <section className="flex">
                     <div className="grow">
                       <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
@@ -294,7 +366,7 @@ const BudgetDetailView = ({
                     </div>
                   </section>
                 )}
-                {imageUrls.length > 0 && (
+                {hasMultipleImages && (
                   <ProposalImageGallery imageUrls={imageUrls} />
                 )}
                 {/* row 6 */}
@@ -493,6 +565,23 @@ const BudgetDetailView = ({
               </p>
             </section>
           </div>
+          {hasSingleImage && (
+            <>
+              <div className="my-4 h-px w-full bg-gray-300" />
+              <div className="flex gap-x-10">
+                <section className="flex flex-col gap-y-4 px-3.5">
+                  <p className="font-bold">預算書圖檔</p>
+                  <Image
+                    src={singleImageUrl}
+                    alt="提案單圖檔"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full shadow-md"
+                  />
+                </section>
+              </div>
+            </>
+          )}
           {shouldShowBudgetInfo && (
             <>
               <div className="my-4 h-px w-full bg-gray-300" />
@@ -552,7 +641,7 @@ const BudgetDetailView = ({
               </div>
             </>
           )}
-          {imageUrls.length > 0 && (
+          {hasMultipleImages && (
             <>
               <div className="my-4 h-px w-full bg-gray-300" />
               <ProposalImageGallery imageUrls={imageUrls} />
