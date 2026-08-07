@@ -88,6 +88,8 @@ const BudgetDetailView = ({
   const hasSingleImage = imageUrls.length === 1;
   const hasMultipleImages = imageUrls.length > 1;
   const singleImageUrl = imageUrls[0] ?? "";
+  const hasReductionAmount = proposal.reductionAmount != null;
+  const hasFreezeAmount = proposal.freezeAmount != null;
 
   if (isDesktop)
     return (
@@ -259,22 +261,26 @@ const BudgetDetailView = ({
                         {formatNumber(budgetAmount)}
                       </p>
                     </div>
-                    <div>
-                      <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                        減列金額
-                      </p>
-                      <p className="text-brand-accent flex w-fit border-t border-black pt-4 pr-[136px] font-bold">
-                        {formatNumber(proposal.reductionAmount)}
-                      </p>
-                    </div>
-                    <div className="grow">
-                      <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                        凍結金額
-                      </p>
-                      <p className="text-brand-accent flex border-t border-black pt-4 font-bold">
-                        {formatNumber(proposal.freezeAmount)}
-                      </p>
-                    </div>
+                    {hasReductionAmount && (
+                      <div>
+                        <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                          減列金額
+                        </p>
+                        <p className="text-brand-accent flex w-fit border-t border-black pt-4 pr-[136px] font-bold">
+                          {formatNumber(proposal.reductionAmount)}
+                        </p>
+                      </div>
+                    )}
+                    {hasFreezeAmount && (
+                      <div className="grow">
+                        <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                          凍結金額
+                        </p>
+                        <p className="text-brand-accent flex border-t border-black pt-4 font-bold">
+                          {formatNumber(proposal.freezeAmount)}
+                        </p>
+                      </div>
+                    )}
                   </section>
                 )}
                 {/* row 4 with one image: preserve the original detail layout */}
@@ -290,22 +296,26 @@ const BudgetDetailView = ({
                             {formatNumber(budgetAmount)}
                           </p>
                         </div>
-                        <div>
-                          <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                            減列金額
-                          </p>
-                          <p className="text-brand-accent flex w-fit border-t border-black pt-4 font-bold md:pr-8 lg:pr-24 xl:pr-32">
-                            {formatNumber(proposal.reductionAmount)}
-                          </p>
-                        </div>
-                        <div className="grow">
-                          <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
-                            凍結金額
-                          </p>
-                          <p className="text-brand-accent flex border-t border-black pt-4 pr-[93px] font-bold">
-                            {formatNumber(proposal.freezeAmount)}
-                          </p>
-                        </div>
+                        {hasReductionAmount && (
+                          <div>
+                            <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                              減列金額
+                            </p>
+                            <p className="text-brand-accent flex w-fit border-t border-black pt-4 font-bold md:pr-8 lg:pr-24 xl:pr-32">
+                              {formatNumber(proposal.reductionAmount)}
+                            </p>
+                          </div>
+                        )}
+                        {hasFreezeAmount && (
+                          <div className="grow">
+                            <p className="bg-brand-accent w-fit rounded-t-lg border-2 border-black px-2.5 py-1 text-white">
+                              凍結金額
+                            </p>
+                            <p className="text-brand-accent flex border-t border-black pt-4 pr-[93px] font-bold">
+                              {formatNumber(proposal.freezeAmount)}
+                            </p>
+                          </div>
+                        )}
                       </div>
                       {shouldShowBudgetInfo && (
                         <div className="mt-9 flex max-w-5/6 flex-col gap-y-9">
@@ -549,22 +559,28 @@ const BudgetDetailView = ({
                 {formatNumber(budgetAmount)}
               </p>
             </section>
-            <section className="flex flex-col gap-y-4">
-              <p className="font-bold">減列金額</p>
-              <p className="text-budget-warning">
-                {formatNumber(proposal.reductionAmount)}
-              </p>
-            </section>
+            {hasReductionAmount && (
+              <section className="flex flex-col gap-y-4">
+                <p className="font-bold">減列金額</p>
+                <p className="text-budget-warning">
+                  {formatNumber(proposal.reductionAmount)}
+                </p>
+              </section>
+            )}
           </div>
-          <div className="my-4 h-px w-full bg-gray-300" />
-          <div className="flex gap-x-10">
-            <section className="flex flex-col gap-y-4">
-              <p className="font-bold">凍結金額</p>
-              <p className="text-budget-warning">
-                {formatNumber(proposal.freezeAmount)}
-              </p>
-            </section>
-          </div>
+          {hasFreezeAmount && (
+            <>
+              <div className="my-4 h-px w-full bg-gray-300" />
+              <div className="flex gap-x-10">
+                <section className="flex flex-col gap-y-4">
+                  <p className="font-bold">凍結金額</p>
+                  <p className="text-budget-warning">
+                    {formatNumber(proposal.freezeAmount)}
+                  </p>
+                </section>
+              </div>
+            </>
+          )}
           {hasSingleImage && (
             <>
               <div className="my-4 h-px w-full bg-gray-300" />
