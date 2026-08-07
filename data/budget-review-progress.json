@@ -1,6 +1,6 @@
 {
   "year": 115,
-  "generatedAt": "2026-08-07T01:00:56.888633+00:00",
+  "generatedAt": "2026-08-07T21:36:22.967693+00:00",
   "sources": {
     "governmentIndex": "gov_index.xlsx",
     "meetingSearch": "https://ly-budget.openfun.app/",
@@ -25,9 +25,9 @@
   ],
   "summary": {
     "totalAgencies": 239,
-    "reviewedAgencies": 185,
-    "uploadedAgencies": 131,
-    "notReviewedAgencies": 54,
+    "reviewedAgencies": 190,
+    "uploadedAgencies": 147,
+    "notReviewedAgencies": 49,
     "matchedMeetings": 58
   },
   "agencies": [
@@ -2589,10 +2589,10 @@
       "parentName": "經濟部主管",
       "itemCode": "2",
       "name": "產業發展署",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-07-02",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 45,
       "meetings": [
         {
           "id": "委員會-11-5-19-19",
@@ -2627,10 +2627,10 @@
       "parentName": "經濟部主管",
       "itemCode": "4",
       "name": "標準檢驗局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-07-02",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 19,
       "meetings": [
         {
           "id": "委員會-11-5-19-19",
@@ -2646,10 +2646,10 @@
       "parentName": "經濟部主管",
       "itemCode": "5",
       "name": "智慧財產局",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-07-02",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 12,
       "meetings": [
         {
           "id": "委員會-11-5-19-19",
@@ -2690,10 +2690,10 @@
       "parentName": "經濟部主管",
       "itemCode": "7",
       "name": "商業發展署",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-07-02",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 13,
       "meetings": [
         {
           "id": "委員會-11-5-19-19",
@@ -2709,10 +2709,10 @@
       "parentName": "經濟部主管",
       "itemCode": "8",
       "name": "中小及新創企業署",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-07-02",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 22,
       "meetings": [
         {
           "id": "委員會-11-5-19-19",
@@ -2728,10 +2728,10 @@
       "parentName": "經濟部主管",
       "itemCode": "9",
       "name": "產業園區管理局及所屬",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-07-02",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 14,
       "meetings": [
         {
           "id": "委員會-11-5-19-19",
@@ -2828,10 +2828,10 @@
       "parentName": "交通部主管",
       "itemCode": "2",
       "name": "民用航空局",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-06-17",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 31,
       "meetings": [
         {
           "id": "委員會-11-5-23-19",
@@ -3033,10 +3033,10 @@
       "parentName": "勞動部主管",
       "itemCode": "1",
       "name": "勞動部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 2,
       "latestReviewDate": "2026-06-04",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 112,
       "meetings": [
         {
           "id": "委員會-11-5-26-13",
@@ -3058,10 +3058,10 @@
       "parentName": "勞動部主管",
       "itemCode": "2",
       "name": "勞工保險局",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 44,
       "meetings": []
     },
     {
@@ -3070,10 +3070,10 @@
       "parentName": "勞動部主管",
       "itemCode": "3",
       "name": "勞動力發展署及所屬",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 67,
       "meetings": []
     },
     {
@@ -3082,10 +3082,10 @@
       "parentName": "勞動部主管",
       "itemCode": "4",
       "name": "職業安全衛生署",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 67,
       "meetings": []
     },
     {
@@ -3094,10 +3094,10 @@
       "parentName": "勞動部主管",
       "itemCode": "5",
       "name": "勞動基金運用局",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 11,
       "meetings": []
     },
     {
@@ -3106,10 +3106,10 @@
       "parentName": "勞動部主管",
       "itemCode": "6",
       "name": "勞動及職業安全衛生研究所",
-      "status": "notReviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 0,
       "latestReviewDate": null,
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 8,
       "meetings": []
     },
     {
@@ -3825,10 +3825,10 @@
       "parentName": "數位發展部主管",
       "itemCode": "1",
       "name": "數位發展部",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 4,
       "latestReviewDate": "2026-07-02",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 62,
       "meetings": [
         {
           "id": "委員會-11-5-23-21",
@@ -3936,10 +3936,10 @@
       "parentName": "僑務委員會主管",
       "itemCode": "1",
       "name": "僑務委員會",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-06-25",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 49,
       "meetings": [
         {
           "id": "委員會-11-5-35-23",
@@ -4073,10 +4073,10 @@
       "parentName": "金融監督管理委員會主管",
       "itemCode": "4",
       "name": "保險局",
-      "status": "reviewed",
+      "status": "uploaded",
       "reviewedMeetingCount": 1,
       "latestReviewDate": "2026-06-08",
-      "uploadedProposalCount": 0,
+      "uploadedProposalCount": 44,
       "meetings": [
         {
           "id": "委員會-11-5-20-17",
