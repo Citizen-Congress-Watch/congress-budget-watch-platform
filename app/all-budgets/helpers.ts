@@ -22,6 +22,7 @@ import {
   PROPOSAL_RESULT_LABELS,
 } from "~/budget-detail/helpers";
 import type { BudgetTableData } from "~/components/budget-table";
+import { getProposalBudgetAmount } from "~/utils/proposal-budget-amount";
 
 const UNFREEZE_STATUS_LABELS: Record<string, string> = {
   not_reviewed: "尚未審議",
@@ -250,7 +251,8 @@ export function proposalToBudgetTableData(
     proposalType: flow(prop("proposalTypes"), getProposalTypeDisplay),
     proposalResult: flow(prop("result"), transformProposalResult),
     proposalContent: flow(prop("reason"), defaultTo("無提案內容")),
-    originalAmount: flow(get("budget.budgetAmount"), formatNumber),
+    originalAmount: (p: ProposalInput) =>
+      formatNumber(getProposalBudgetAmount(p)),
     reducedAmount: (p: ProposalInput) =>
       formatReducedAndFrozenAmount(p.reductionAmount, p.freezeAmount),
     tags: () => undefined,

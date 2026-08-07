@@ -10,6 +10,7 @@ export const GET_PROPOSALS_QUERY = graphql(`
       result
       freezeAmount
       reductionAmount
+      cost
       budgetImageUrl
       proposalTypes
       recognitionAnswer
@@ -56,6 +57,7 @@ export const GET_PROPOSAL_BY_ID_QUERY = graphql(`
       result
       freezeAmount
       reductionAmount
+      cost
       budgetImageUrls
       budgetImageUrl
       proposalTypes
@@ -254,6 +256,7 @@ export const GET_PAGINATED_PROPOSALS_QUERY = graphql(`
       result
       freezeAmount
       reductionAmount
+      cost
       proposalTypes
       react_angry
       react_disappoint
