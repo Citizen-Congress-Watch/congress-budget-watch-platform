@@ -1,4 +1,4 @@
-import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.js";r(`
+import{i as r}from"./gql-DBU8L8X5.js";import{j as d}from"./jsx-runtime-DmS2nb87.js";r(`
   query GetBudgetsWithGovernment {
     budgets {
       id
@@ -39,7 +39,7 @@ import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.
       }
     }
   }
-`),s={all:["governments"],lists:()=>[...s.all,"list"],list:e=>[...s.lists(),{filters:e}],proposalLists:()=>[...s.all,"proposal-list"],proposalList:e=>[...s.proposalLists(),{filters:e}]},_=r(`
+`),a={all:["governments"],lists:()=>[...a.all,"list"],list:e=>[...a.lists(),{filters:e}],proposalLists:()=>[...a.all,"proposal-list"],proposalList:e=>[...a.proposalLists(),{filters:e}]},_=r(`
   query GetPeopleList {
     peopleList(orderBy: [{ name: asc }]) {
       id
@@ -62,6 +62,7 @@ import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.
       result
       freezeAmount
       reductionAmount
+      cost
       budgetImageUrl
       proposalTypes
       recognitionAnswer
@@ -106,6 +107,8 @@ import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.
       result
       freezeAmount
       reductionAmount
+      cost
+      budgetImageUrls
       budgetImageUrl
       proposalTypes
       recognitionAnswer
@@ -115,7 +118,6 @@ import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.
       react_disappoint
       react_good
       react_whatever
-      budgetImageUrl
       historicalParentProposals {
         id
       }
@@ -219,7 +221,7 @@ import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.
       unfreezeProgress
     }
   }
-`),t={all:["proposals"],lists:()=>[...t.all,"list"],list:e=>[...t.lists(),{filters:e}],paginated:(e,a)=>[...t.lists(),"paginated",{where:e,year:a}],details:()=>[...t.all,"detail"],detail:e=>[...t.details(),e],years:()=>[...t.all,"years"]},S={all:["proposals"],lists:()=>[...t.all,"list"],list:e=>[...t.lists(),{filters:e}],paginated:(e,a,n,o,l)=>[...t.lists(),"paginated",{page:e,pageSize:a,sort:n,where:o,year:l}],details:()=>[...t.all,"detail"],detail:e=>[...t.details(),e],years:()=>[...t.all,"years"]},h=r(`
+`),t={all:["proposals"],lists:()=>[...t.all,"list"],list:e=>[...t.lists(),{filters:e}],paginated:(e,s)=>[...t.lists(),"paginated",{where:e,year:s}],details:()=>[...t.all,"detail"],detail:e=>[...t.details(),e],years:()=>[...t.all,"years"]},S={all:["proposals"],lists:()=>[...t.all,"list"],list:e=>[...t.lists(),{filters:e}],paginated:(e,s,n,o,l)=>[...t.lists(),"paginated",{page:e,pageSize:s,sort:n,where:o,year:l}],details:()=>[...t.all,"detail"],detail:e=>[...t.details(),e],years:()=>[...t.all,"years"]},h=r(`
   query GetPaginatedProposals(
     $skip: Int!
     $take: Int!
@@ -249,6 +251,7 @@ import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.
       result
       freezeAmount
       reductionAmount
+      cost
       proposalTypes
       react_angry
       react_disappoint
@@ -298,7 +301,7 @@ import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.
       year
     }
   }
-`),i={all:["budgetYear"],list:(e=0,a=1)=>[...i.all,"list",{skip:e,take:a}],latest:()=>[...i.all,"latest"],years:()=>[...i.all,"years"]},I=r(`
+`),i={all:["budgetYear"],list:(e=0,s=1)=>[...i.all,"list",{skip:e,take:s}],latest:()=>[...i.all,"latest"],years:()=>[...i.all,"years"]},I=r(`
   query GetVisualizationProposals($where: ProposalWhereInput!) {
     proposals(where: $where) {
       ...VisualizationProposalWithContext
@@ -330,4 +333,4 @@ import{i as r}from"./gql-DjA2HIMG.js";import{j as d}from"./jsx-runtime-DmS2nb87.
       }
     }
   }
-`),m="/".replace(/\/$/,""),u=`${m}/`,$=500,y=/^([a-z][a-z\d+\-.]*:)?\/\//i,b=({src:e,...a})=>{const o=y.test(e)?e:`${u}${e.startsWith("/")?e.slice(1):e}`;return d.jsx("img",{src:o,...a})};export{h as G,b as I,$ as S,T as U,E as a,S as b,A as c,G as d,i as e,u as f,R as g,I as h,P as i,s as j,_ as k,p as l,t as p};
+`),m="/".replace(/\/$/,""),u=`${m}/`,$=500,y=/^([a-z][a-z\d+\-.]*:)?\/\//i,b=({src:e,...s})=>{const o=y.test(e)?e:`${u}${e.startsWith("/")?e.slice(1):e}`;return d.jsx("img",{src:o,...s})};export{h as G,b as I,$ as S,T as U,E as a,S as b,A as c,G as d,i as e,u as f,R as g,I as h,P as i,a as j,_ as k,p as l,t as p};
