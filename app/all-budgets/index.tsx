@@ -59,13 +59,17 @@ import {
 } from "~/utils/progress";
 import type { BudgetProgressStage } from "~/types/progress";
 
-const NON_NULL_BUDGET_CONDITION: ProposalWhereInput = {
+type AmountSortField = (typeof sortOptions)[number]["field"];
+
+const createNonNullAmountCondition = (
+  field: AmountSortField
+): ProposalWhereInput => ({
   OR: [
-    { budgetAmount: { gt: 0 } },
-    { budgetAmount: { lt: 0 } },
-    { budgetAmount: { equals: 0 } },
+    { [field]: { gt: 0 } },
+    { [field]: { lt: 0 } },
+    { [field]: { equals: 0 } },
   ],
-};
+});
 
 const PROGRESS_TABS: ProgressTab[] = [
   { key: "latest", label: "最新進度" },
@@ -286,7 +290,7 @@ export const AllBudgets = () => {
 
   // 計算 GraphQL 參數
   const skip = (currentPage - 1) * pageSize;
-  const { orderBy, isBudgetAmountSort } = useMemo(() => {
+  const { orderBy, amountSortField } = useMemo(() => {
     // 預設以預算金額由大到小排序，確保結果穩定
     const budgetAmountDesc: ProposalOrderByInput = {
       budgetAmount: OrderDirection.Desc,
@@ -297,7 +301,7 @@ export const AllBudgets = () => {
     if (!sortOption)
       return {
         orderBy: [budgetAmountDesc],
-        isBudgetAmountSort: true,
+        amountSortField: "budgetAmount" as const,
       };
 
     const direction =
@@ -314,18 +318,18 @@ export const AllBudgets = () => {
       if (direction === OrderDirection.Desc) {
         return {
           orderBy: [budgetAmountDesc],
-          isBudgetAmountSort: true,
+          amountSortField: sortOption.field,
         };
       }
       return {
         orderBy: [primaryOrder],
-        isBudgetAmountSort: true,
+        amountSortField: sortOption.field,
       };
     }
 
     return {
       orderBy: [primaryOrder, budgetAmountDesc],
-      isBudgetAmountSort: false,
+      amountSortField: sortOption.field,
     };
   }, [selectedSort]);
 
@@ -379,16 +383,18 @@ export const AllBudgets = () => {
   ]);
 
   // 修改後的 React Query（支援分頁）
-  const fetchBudgetAmountSorted = useCallback(async () => {
+  const fetchAmountSorted = useCallback(async () => {
     const combineWithBaseFilters = (
       extra: ProposalWhereInput
     ): ProposalWhereInput => ({
       AND: [whereFilter, extra],
     });
 
-    const nonNullWhere = combineWithBaseFilters(NON_NULL_BUDGET_CONDITION);
+    const nonNullAmountCondition =
+      createNonNullAmountCondition(amountSortField);
+    const nonNullWhere = combineWithBaseFilters(nonNullAmountCondition);
     const nullWhere = combineWithBaseFilters({
-      NOT: [NON_NULL_BUDGET_CONDITION],
+      NOT: [nonNullAmountCondition],
     });
 
     const [nonNullMeta, nullMeta] = await Promise.all([
@@ -446,7 +452,7 @@ export const AllBudgets = () => {
       ],
       proposalsCount: totalCount,
     } satisfies PaginatedProposalsResult;
-  }, [whereFilter, skip, pageSize, orderBy]);
+  }, [whereFilter, skip, pageSize, orderBy, amountSortField]);
 
   const { data, isLoading, isError, isPlaceholderData } =
     useQuery<PaginatedProposalsResult>({
@@ -458,14 +464,7 @@ export const AllBudgets = () => {
         selectedYear
       ),
       queryFn: () =>
-        isBudgetAmountSort
-          ? fetchBudgetAmountSorted()
-          : execute(GET_PAGINATED_PROPOSALS_QUERY, {
-              skip,
-              take: pageSize,
-              orderBy,
-              where: whereFilter,
-            }),
+        fetchAmountSorted(),
       placeholderData: keepPreviousData, // 避免切頁時閃爍
     });
   // 更新總數到 store（用於計算總頁數）

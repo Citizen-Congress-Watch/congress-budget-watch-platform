@@ -1,7 +1,16 @@
 import { SortDirection } from "~/constants/enums";
 import type { SelectOption } from "~/types/visualization";
 
-export const sortOptions = [
+type AmountSortField = "budgetAmount" | "freezeAmount" | "reductionAmount";
+
+type AmountSortOption = {
+  value: string;
+  label: string;
+  field: AmountSortField;
+  direction: SortDirection;
+};
+
+export const sortOptions: AmountSortOption[] = [
   {
     value: "budget-amount-desc",
     label: "預算金額 (降序)",
@@ -12,6 +21,30 @@ export const sortOptions = [
     value: "budget-amount-asc",
     label: "預算金額 (升序)",
     field: "budgetAmount",
+    direction: SortDirection.ASC,
+  },
+  {
+    value: "freeze-amount-desc",
+    label: "凍結金額 (降序)",
+    field: "freezeAmount",
+    direction: SortDirection.DESC,
+  },
+  {
+    value: "freeze-amount-asc",
+    label: "凍結金額 (升序)",
+    field: "freezeAmount",
+    direction: SortDirection.ASC,
+  },
+  {
+    value: "reduction-amount-desc",
+    label: "減列金額 (降序)",
+    field: "reductionAmount",
+    direction: SortDirection.DESC,
+  },
+  {
+    value: "reduction-amount-asc",
+    label: "減列金額 (升序)",
+    field: "reductionAmount",
     direction: SortDirection.ASC,
   },
 ];
