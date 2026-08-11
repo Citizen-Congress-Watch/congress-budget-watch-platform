@@ -498,9 +498,22 @@ def fetch_uploaded_governments(agencies: list[dict[str, Any]]) -> dict[str, int]
 
     try:
         data = json.loads(fetch_text(GQL_ENDPOINT, payload))
-    except Exception as error:  # pragma: no cover - local prototype resilience
-        print(f"GraphQL upload lookup failed: {error}")
-        return {}
+    except Exception as error:
+        raise RuntimeError(
+            f"GraphQL upload lookup failed; keeping the existing progress data: {error}"
+        ) from error
+
+    if data.get("errors"):
+        raise RuntimeError(
+            "GraphQL upload lookup returned errors; keeping the existing progress data: "
+            f"{data['errors']}"
+        )
+
+    proposals = data.get("data", {}).get("proposals")
+    if not isinstance(proposals, list) or not proposals:
+        raise RuntimeError(
+            "GraphQL upload lookup returned no proposals; keeping the existing progress data"
+        )
 
     counts: dict[str, int] = defaultdict(int)
     canonical_aliases: dict[str, set[str]] = defaultdict(set)
@@ -510,9 +523,9 @@ def fetch_uploaded_governments(agencies: list[dict[str, Any]]) -> dict[str, int]
             continue
         canonical_aliases[canonical].update(get_match_names(agency))
 
-    for proposal in data.get("data", {}).get("proposals", []) or []:
+    for proposal in proposals:
         government_name = normalize_name(
-            proposal.get("government", {}).get("name") or ""
+            (proposal.get("government") or {}).get("name") or ""
         )
         if not government_name:
             continue
@@ -520,6 +533,11 @@ def fetch_uploaded_governments(agencies: list[dict[str, Any]]) -> dict[str, int]
         for agency_name, aliases in canonical_aliases.items():
             if any(alias == government_name or alias in government_name for alias in aliases):
                 counts[agency_name] += 1
+
+    if not counts:
+        raise RuntimeError(
+            "GraphQL upload lookup matched no agencies; keeping the existing progress data"
+        )
 
     return dict(counts)
 
