@@ -2,9 +2,71 @@ import json
 import runpy
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 SCRIPT_PATH = Path(__file__).with_name("prototype-budget-review-progress.py")
+
+
+class FetchTextTest(unittest.TestCase):
+    def setUp(self) -> None:
+        module = runpy.run_path(str(SCRIPT_PATH))
+        self.fetch_text = module["fetch_text"]
+        self.module_globals = self.fetch_text.__globals__
+        self.urllib = self.module_globals["urllib"]
+        self.time = self.module_globals["time"]
+
+    def response(self, body: bytes) -> mock.MagicMock:
+        response = mock.MagicMock()
+        response.__enter__.return_value.read.return_value = body
+        return response
+
+    def test_retries_timeouts_with_backoff(self) -> None:
+        urlopen = mock.Mock(
+            side_effect=[
+                TimeoutError("first timeout"),
+                TimeoutError("second timeout"),
+                self.response(b"ok"),
+            ]
+        )
+
+        with (
+            mock.patch.object(self.urllib.request, "urlopen", urlopen),
+            mock.patch.object(self.time, "sleep") as sleep,
+        ):
+            self.assertEqual(self.fetch_text("https://example.com"), "ok")
+
+        self.assertEqual(urlopen.call_count, 3)
+        sleep.assert_has_calls([mock.call(2), mock.call(5)])
+
+    def test_raises_after_retryable_errors_are_exhausted(self) -> None:
+        urlopen = mock.Mock(side_effect=TimeoutError("still timing out"))
+
+        with (
+            mock.patch.object(self.urllib.request, "urlopen", urlopen),
+            mock.patch.object(self.time, "sleep") as sleep,
+        ):
+            with self.assertRaisesRegex(TimeoutError, "still timing out"):
+                self.fetch_text("https://example.com")
+
+        self.assertEqual(urlopen.call_count, 3)
+        sleep.assert_has_calls([mock.call(2), mock.call(5)])
+
+    def test_does_not_retry_non_transient_http_errors(self) -> None:
+        error = self.urllib.error.HTTPError(
+            "https://example.com", 400, "Bad Request", None, None
+        )
+        urlopen = mock.Mock(side_effect=error)
+
+        with (
+            mock.patch.object(self.urllib.request, "urlopen", urlopen),
+            mock.patch.object(self.time, "sleep") as sleep,
+        ):
+            with self.assertRaises(self.urllib.error.HTTPError):
+                self.fetch_text("https://example.com")
+
+        urlopen.assert_called_once()
+        sleep.assert_not_called()
 
 
 class FetchUploadedGovernmentsTest(unittest.TestCase):

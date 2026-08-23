@@ -15,6 +15,8 @@ import base64
 import json
 import os
 import re
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from collections import defaultdict
@@ -32,6 +34,9 @@ LY_BUDGET_BASE = "https://ly-budget.openfun.app/"
 GQL_ENDPOINT = "https://ly-budget-gql-prod-702918025200.asia-east1.run.app/api/graphql"
 TARGET_YEAR = int(os.environ.get("BUDGET_REVIEW_YEAR", "115"))
 MAX_PAGES = 20
+FETCH_TIMEOUT_SECONDS = 30
+FETCH_RETRY_DELAYS_SECONDS = (2, 5)
+RETRYABLE_HTTP_STATUS_CODES = {408, 425, 429, 500, 502, 503, 504}
 EXCLUDED_PARENT_NAMES = {"直轄市及縣市政府"}
 ADDITIONAL_BUDGET_REVIEW_MEETING_IDS = {
     # Source subject misses "繼續審查", but this is a 115年度 budget review meeting.
@@ -177,6 +182,12 @@ def read_agencies() -> list[dict[str, Any]]:
     return agencies
 
 
+def is_retryable_fetch_error(error: Exception) -> bool:
+    if isinstance(error, urllib.error.HTTPError):
+        return error.code in RETRYABLE_HTTP_STATUS_CODES
+    return isinstance(error, (TimeoutError, ConnectionError, urllib.error.URLError))
+
+
 def fetch_text(url: str, payload: dict[str, Any] | None = None) -> str:
     body = None
     headers = {"User-Agent": "budget-review-progress-prototype/0.1"}
@@ -184,9 +195,26 @@ def fetch_text(url: str, payload: dict[str, Any] | None = None) -> str:
         body = json.dumps(payload).encode("utf-8")
         headers["Content-Type"] = "application/json"
 
-    request = urllib.request.Request(url, data=body, headers=headers)
-    with urllib.request.urlopen(request, timeout=30) as response:
-        return response.read().decode("utf-8")
+    attempts = len(FETCH_RETRY_DELAYS_SECONDS) + 1
+    for attempt in range(1, attempts + 1):
+        request = urllib.request.Request(url, data=body, headers=headers)
+        try:
+            with urllib.request.urlopen(
+                request, timeout=FETCH_TIMEOUT_SECONDS
+            ) as response:
+                return response.read().decode("utf-8")
+        except Exception as error:
+            if attempt >= attempts or not is_retryable_fetch_error(error):
+                raise
+
+            delay = FETCH_RETRY_DELAYS_SECONDS[attempt - 1]
+            print(
+                f"Fetch attempt {attempt}/{attempts} failed for {url}: {error}; "
+                f"retrying in {delay}s."
+            )
+            time.sleep(delay)
+
+    raise RuntimeError(f"Fetch failed unexpectedly for {url}")
 
 
 def scrape_meetings() -> list[dict[str, str]]:
