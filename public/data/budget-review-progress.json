@@ -1,6 +1,6 @@
 {
   "year": 115,
-  "generatedAt": "2026-10-21T23:53:48.645905+00:00",
+  "generatedAt": "2026-10-22T23:53:07.237973+00:00",
   "sources": {
     "governmentIndex": "gov_index.xlsx",
     "meetingSearch": "https://ly-budget.openfun.app/",
@@ -3125,7 +3125,7 @@
       "meetings": [
         {
           "id": "委員會-11-5-19-17",
-          "date": "1911-10-22",
+          "date": "1911-10-23",
           "name": "第11屆第5會期經濟委員會第17次全體委員會議",
           "dataUrl": "https://ly-budget.openfun.app/meet.php?id=%E5%A7%94%E5%93%A1%E6%9C%83-11-5-19-17"
         },
