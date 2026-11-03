@@ -1,4 +1,4 @@
-import{i as r}from"./gql-C5wlG8dK.js";import{j as d}from"./jsx-runtime-CmMgrD05.js";r(`
+import{i as r}from"./gql-Cwc5BIb0.js";import{j as d}from"./jsx-runtime-CmMgrD05.js";r(`
   query GetBudgetsWithGovernment {
     budgets {
       id
