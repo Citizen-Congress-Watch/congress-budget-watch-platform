@@ -23,18 +23,19 @@ jobs:
             echo "CUSTOM_DOMAIN=" >> "$GITHUB_ENV"
             echo "VITE_GQL_ENDPOINT=https://ly-budget-gql-dev-702918025200.asia-east1.run.app/api/graphql" >> "$GITHUB_ENV"
           fi
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
+          cache: pnpm
       - name: Install deps
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
       - name: Build
-        run: pnpm build 
+        env:
+          DISABLE_MKCERT: "1"
+        run: pnpm build
       - name: Copy fallback
         run: cp build/client/index.html build/client/404.html
       - name: Write custom domain file

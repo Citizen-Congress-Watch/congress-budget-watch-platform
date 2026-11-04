@@ -2,6 +2,7 @@
   "name": "congress-budget-watch-platform",
   "homepage": "https://readr-media.github.io/congress-budget-watch-platform/",
   "private": true,
+  "packageManager": "pnpm@10.23.0",
   "type": "module",
   "scripts": {
     "build": "react-router build",
